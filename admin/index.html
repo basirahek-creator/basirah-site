@@ -83,15 +83,21 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;bor
 .hd p{color:var(--sub)}
 .hd .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .upd{font-size:13px;color:var(--sub)}
+.menu{display:contents}.mnb{display:none}
 @media(max-width:860px){
  .shell{display:block}
- .side{position:sticky;top:0;z-index:20;height:auto;flex-direction:row;align-items:center;gap:8px;padding:8px 12px;border-inline-end:0;border-bottom:1px solid var(--line);overflow-x:auto}
- .brand{font-size:23px;padding:0 6px 0 0}.brand small{display:none}
- .side nav{flex-direction:row;margin:0;gap:2px}
- .nv{width:auto;padding:8px 12px;white-space:nowrap}.nv svg{display:none}
- .side{gap:4px}.nv{padding:8px 10px;font-size:15px}
- .side .out{margin:0 0 0 auto}.side .out span{display:none}.side .out svg{display:block}
+ .side{position:sticky;top:0;z-index:20;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:0 10px;padding:8px 14px;border-inline-end:0;border-bottom:1px solid var(--line);max-height:100vh;overflow-y:auto}
+ .brand{font-size:23px;padding:0;margin-inline-end:auto}.brand small{display:none}
+ .mnb{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 14px;border:1.5px solid var(--line);border-radius:99px;background:var(--cream);color:var(--teal);font-weight:700;max-width:70%}
+ .mnb svg{width:20px;height:20px;flex:none}.mcur{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+ .mct{background:var(--amberbg);color:var(--amber);border-radius:99px;padding:0 8px;font-size:12.5px}
+ .menu{display:none;flex-basis:100%;padding:10px 0 6px;grid-template-columns:1fr 1fr;gap:6px}
+ .side.open .menu{display:grid}
+ .side nav{display:contents}
+ .nv{width:auto;padding:10px 12px;min-height:44px;border:1px solid var(--line);font-size:15px}.nv svg{display:block}
+ .side .out{margin:0}
 }
+
 
 /* cards */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:26px}
@@ -120,7 +126,7 @@ button.cd:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:va
 .tb{display:grid;grid-template-columns:minmax(200px,1.6fr) repeat(4,minmax(130px,1fr));gap:10px;margin-bottom:14px;align-items:end}
 @media(max-width:1100px){.tb{grid-template-columns:repeat(3,1fr)}.tb .sr{grid-column:1/-1}}
 @media(max-width:600px){.tb{grid-template-columns:1fr 1fr}}
-.tw{overflow-x:auto}
+.tw{overflow-x:auto;position:relative}
 table{width:100%;border-collapse:collapse;font-size:15px}
 th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);font-weight:700;text-align:start;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:color-mix(in srgb,var(--sage) 55%,var(--card))}
 td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -161,6 +167,21 @@ tbody tr:last-child td{border-bottom:0}
 .smq p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16.5px}.smq audio{width:100%;margin-top:6px}
 @media print{body>*:not(#sm){display:none!important}.smv{position:static;overflow:visible;background:#fff}.smt,.smq audio{display:none}.smb{max-width:none;padding:0}:root{--cream:#fff;--sage:#eef2ef;--line:#ccc;--txt:#0B4F4C;--sub:#555}}
 /* packages */
+.pkl{display:grid;gap:18px}.pkc{padding:0!important}.pkh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 22px;border-bottom:1px solid var(--line)}.pkh h2{padding:0;font-size:24px;margin:0}.pkh .tg{display:flex;gap:6px;flex-wrap:wrap;margin-inline-end:auto}.pkh .tools{display:flex;gap:4px}
+.pkb{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr);gap:22px;padding:20px 22px}@media(max-width:900px){.pkb{grid-template-columns:1fr}}
+.pkb .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}@media(max-width:600px){.pkb .g2{grid-template-columns:1fr}}
+.frow{display:flex;gap:8px;margin-bottom:8px;align-items:center}.frow input{flex:1;min-width:0}.pkt{margin-top:14px}
+.pkp{position:sticky;top:12px;align-self:start}
+.pvc{position:relative;border:1.5px solid var(--line);border-radius:18px;padding:22px 18px 18px;background:var(--cream);overflow:hidden}.pvc.f{border-color:var(--gold);box-shadow:0 10px 30px -18px rgba(185,138,44,.7)}.pvc.hid{opacity:.55}
+.pvc .rib{position:absolute;top:12px;inset-inline-end:-30px;transform:rotate(35deg);background:var(--gold);color:#fff;font:700 11px Inter,sans-serif;padding:3px 34px;letter-spacing:.04em}
+.pvc h4{font:600 22px 'Cormorant Garamond',serif;margin:0 0 6px;padding-inline-end:34px}.pvc .pp{font:600 30px 'Cormorant Garamond',serif;color:var(--teal)}.pvc .pp s{font-size:18px;color:var(--sub);font-weight:500}.pvc .pp em{font:700 12px Inter,sans-serif;font-style:normal;background:var(--goldbg);color:var(--amber);border-radius:99px;padding:2px 8px;vertical-align:middle}
+.pvc .cdn{font-size:13px;color:var(--amber);font-weight:600;margin:2px 0 6px}.pvc p{font-size:14px;color:var(--sub);margin:6px 0}.pvc .cn{font-size:13.5px;font-weight:600;margin:6px 0}.pvc ul{list-style:none;padding:0;margin:8px 0 0}.pvc li{font-size:14px;padding:3px 0 3px 22px;position:relative}.pvc li:before{content:'✓';position:absolute;left:0;color:var(--teal);font-weight:700}
+.ann{background:linear-gradient(90deg,#0B4F4C,#146b66);color:#fff;border-radius:12px;padding:10px 16px;text-align:center;font-weight:600;font-size:14.5px}.ann.off{background:var(--greybg);color:var(--sub);font-weight:500}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chp{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-size:14px;cursor:pointer;background:var(--card)}.chp input{accent-color:var(--teal)}.chp:has(input:checked){border-color:var(--teal);background:var(--greenbg)}
+.cdc .ph{align-items:flex-end}.cdc .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}@media(max-width:600px){.cdc .g2{grid-template-columns:1fr}}
+.tips{margin:8px 0 0;padding-inline-start:20px;line-height:1.7;color:var(--sub)}.tips b{color:var(--txt)}
+.imgr{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.imgr img,.imgph{width:150px;aspect-ratio:1200/630;object-fit:cover;border-radius:12px;border:1.5px solid var(--line)}.imgph{display:grid;place-items:center;background:var(--greybg);color:var(--sub);font-size:13px}.imgb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:1;min-width:200px}.imgb .hint{flex-basis:100%}
+.pvc .pvi{display:block;width:calc(100% + 36px);margin:-22px -18px 12px;aspect-ratio:1200/630;object-fit:cover}
 .pk{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
 .pk .panel{padding:22px}
 .pk h2{padding:0;font-size:28px}
@@ -296,7 +317,22 @@ details[open]>summary::after{content:"–"}
 .tabs{display:flex;gap:6px;margin:4px 0 16px}.tabs button{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:7px 16px;font-weight:700}.tabs button[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
 .on-site{background:var(--greenbg);color:var(--green)}
 
-.phr{display:flex;gap:8px;direction:ltr}.phr .ccs{flex:0 1 44%;min-width:0;text-overflow:ellipsis}.phr input{flex:1 1 56%;min-width:0}
+.phr{display:flex;gap:8px;direction:ltr;align-items:stretch}.phr .nat{flex:1 1 54%;min-width:0}
+/* country picker */
+.ccp{flex:0 1 44%;min-width:0;display:flex}
+.ccp .ccb{display:flex;align-items:center;gap:8px;width:100%;min-width:0;font:inherit;color:var(--teal);background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 10px;cursor:pointer;text-align:start}
+.ccp .ccb:hover{border-color:var(--teal2)}.ccp .ccb:focus-visible{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 38%,transparent)}
+.ccp .ccb b{flex:none}.ccp .ccb .cn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub);font-size:.92em}
+.ccp .ccb i{flex:none;width:8px;height:8px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg) translateY(-2px)}
+.ccm{position:fixed;z-index:2147483000;background:var(--card);border:1.5px solid var(--line);border-radius:16px;box-shadow:0 18px 50px -12px rgba(0,0,0,.45);display:flex;flex-direction:column;overflow:hidden;direction:ltr}
+.ccm .ccq{margin:10px;width:calc(100% - 20px);box-sizing:border-box;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--cream);color:var(--txt,var(--teal))}
+.ccm .ccq:focus{outline:none;border-color:var(--teal)}
+.ccm .ccl{list-style:none;margin:0;padding:0 6px 8px;overflow-y:auto;overscroll-behavior:contain}
+.ccm li{display:flex;gap:10px;align-items:baseline;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--txt,var(--teal))}
+.ccm li b{flex:none;min-width:54px}.ccm li span{color:var(--sub)}
+.ccm li.on,.ccm li:hover{background:var(--sage)}.ccm li[aria-selected=true] span{color:var(--teal);font-weight:600}
+.ccm li.none{color:var(--sub);cursor:default;justify-content:center}.ccm li.none:hover{background:none}
+
 
 .al{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-radius:16px;padding:12px 16px;margin:0 0 16px;font-weight:700;border:1.5px solid}
 .al.late{background:var(--redbg);color:var(--red);border-color:var(--red)}.al.soon{background:var(--amberbg);color:var(--amber);border-color:var(--amber)}
@@ -305,10 +341,21 @@ details[open]>summary::after{content:"–"}
 @media(prefers-reduced-motion:reduce){.al.late .ic{animation:none}}
 .dq{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}.dq .cd{flex:1;min-width:150px;cursor:default}
 .dq .cd.late{border-color:var(--red)}.dq .cd.late .v{color:var(--red)}.dq .cd.soon{border-color:var(--amber)}.dq .cd.soon .v{color:var(--amber)}
-.rm{padding:14px 18px;margin:0 0 16px}.rm .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.rm select{width:auto}
+.rm{padding:14px 18px;margin:0 0 16px}.rm .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.rm select{width:auto}.rm .wm{display:inline-flex;align-items:center;gap:10px;border:0;background:none;padding:0}.rm .wm label{margin:0;position:static;font-weight:600;white-space:nowrap}
 .pb{height:6px;border-radius:99px;background:var(--greybg);overflow:hidden;margin-top:6px;min-width:90px}.pb i{display:block;height:100%;background:var(--green);border-radius:99px}.pb.soon i{background:var(--amber)}.pb.late i{background:var(--red)}
 .nt{font-size:12.5px;color:var(--sub);display:block;margin-top:3px}
 .ra{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---- phone refinements: comfortable tap size, 2-up stat cards, no iOS zoom ---- */
+@media(max-width:860px){
+ .btn.sm{min-height:44px;padding:8px 16px}.ib{min-width:44px;min-height:44px}
+ input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]),select,textarea{min-height:44px;font-size:16px}
+ .cards{grid-template-columns:1fr 1fr;gap:10px}.cd{padding:14px}.cd .v{font-size:32px}.cd .v.mn{font-size:22px}
+ .cards .cd:last-child:nth-child(odd){grid-column:1/-1}
+ .hd{flex-direction:column;align-items:stretch;gap:10px}.hd .acts{justify-content:flex-start}
+ .main{overflow-x:hidden}
+}
+@media(max-width:380px){.cards{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -318,9 +365,10 @@ details[open]>summary::after{content:"–"}
 /* ============ helpers ============ */
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const PKDEF=[{id:'profile',price:200,name:'Full Personality Profile',name_ar:'الملف الشخصي الكامل',desc:'The complete assessment and your full personality profile report, with personalized practical recommendations.',desc_ar:'التقييم الكامل وتقرير ملفك الشخصي الكامل، مع توصيات عملية مخصّصة.',hidden:false},{id:'consultation',price:400,name:'Full Analysis + 1-to-1 Consultation',name_ar:'التحليل الكامل + استشارة فردية',desc:'The full analysis report plus a private one-to-one consultation call to discuss your results and next steps.',desc_ar:'تقرير التحليل الكامل مع استشارة فردية خاصة عبر مكالمة لمناقشة نتائجك وخطواتك التالية.',hidden:false}];
+const PKDEF=[{id:'profile',price:200,name:'Full Personality Profile',name_ar:'الملف الشخصي الكامل',desc:'The complete assessment and your full personality profile report, with personalized practical recommendations.',desc_ar:'التقييم الكامل وتقرير ملفك الشخصي الكامل، مع توصيات عملية مخصّصة.',hidden:false,features:[],badge:'',badge_ar:'',featured:false,consult:false,sale_price:null,sale_ends:''},{id:'consultation',price:400,name:'Full Analysis + 1-to-1 Consultation',name_ar:'التحليل الكامل + استشارة فردية',desc:'The full analysis report plus a private one-to-one consultation call to discuss your results and next steps.',desc_ar:'تقرير التحليل الكامل مع استشارة فردية خاصة عبر مكالمة لمناقشة نتائجك وخطواتك التالية.',hidden:false,features:[],badge:'',badge_ar:'',featured:false,consult:true,sale_price:null,sale_ends:''}];
 const INFODEF={duration_en:'15–20 minutes',duration_ar:'من 15 إلى 20 دقيقة',delivery_en:'within 24 hours',delivery_ar:'خلال 24 ساعة'};
-const PK={profile:{name:'Full Personality Profile',price:200},consultation:{name:'Full Analysis + 1-to-1 Consultation',price:400}};
+const PK=new Proxy({profile:{name:'Full Personality Profile',price:200,consult:false},consultation:{name:'Full Analysis + 1-to-1 Consultation',price:400,consult:true}},{get:(o,k)=>typeof k==='symbol'||k in o?o[k]:{name:String(k),price:0}});
+const learnPk=()=>{for(const s of st.subs){if(!Object.prototype.hasOwnProperty.call(PK,s.package))PK[s.package]={name:s.package_name||s.package,price:s.list_price||s.price_sar,consult:!!s.consult_status,hidden:true}}};
 const PAYL={pending:['Awaiting check','amber'],verified:['Verified','green'],rejected:['Rejected','red']};
 const REPL={not_started:['Not started','grey'],in_progress:['In preparation','blue'],ready:['Ready to send','gold'],delivered:['Delivered','green']};
 const CONL={not_scheduled:'Not scheduled',scheduled:'Scheduled',completed:'Completed'};
@@ -338,7 +386,7 @@ const span=ms=>{const a=Math.abs(ms),h=Math.floor(a/HOUR),m=Math.floor(a%HOUR/6e
 const ago=iso=>span(Date.now()-Date.parse(iso));
 const ICON={
  home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
- clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 3L2 6M19 3l3 3"/>',chart:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ tag:'<path d="M3 12V4h8l10 10-8 8zM7.5 8h.01"/>',clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 3L2 6M19 3l3 3"/>',chart:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
  out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>',
  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
  qs:'<path d="M9 9a3 3 0 115 2c-1 .8-2 1.2-2 3M12 18h.01"/><circle cx="12" cy="12" r="10"/>',
@@ -359,7 +407,7 @@ async function api(method,path,body){
 function signOut(msg){store.set('bat',null);st.token=null;st.subs=[];st.loaded=false;st.msg=msg||'';st.openId=null;st.detail=null;render()}
 async function load(silent){
   if(st.loading)return;st.loading=true;if(!silent){st.error='';renderBody()}
-  try{const j=await api('GET','/submissions');st.subs=j.submissions;st.loaded=true;st.error='';st.at=new Date();if(st.pendingOpen){const p=st.pendingOpen;st.pendingOpen=null;setTimeout(()=>openDrawer(p.id,p.tpl),0)}}
+  try{const j=await api('GET','/submissions');st.subs=j.submissions;learnPk();loadCfg().then(()=>{if(['submissions','overview','insights','delivery'].includes(st.view)&&!document.querySelector('.cf'))renderBody()}).catch(()=>{});st.loaded=true;st.error='';st.at=new Date();if(st.pendingOpen){const p=st.pendingOpen;st.pendingOpen=null;setTimeout(()=>openDrawer(p.id,p.tpl),0)}}
   catch(e){if(e.handled)return;st.error=e.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':e.message;if(!silent)st.loaded=st.loaded}
   finally{st.loading=false;if(st.token){renderNav();renderBody();checkAlarms();if(!st.cfg)loadCfg().then(()=>renderBody()).catch(()=>{})}}
 }
@@ -384,15 +432,18 @@ function render(){
       catch(err){b.disabled=false;b.textContent='Sign in';$('#le').textContent=err.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':err.message;p.setAttribute('aria-invalid','true');p.select()}};
     return;
   }
-  app.innerHTML=`<div class="shell"><aside class="side"><div class="brand">Basirah<small>ADMIN</small></div><nav id="nav" aria-label="Sections"></nav><a class="nv" href="/admin/studio.html" style="text-decoration:none">${ic('doc')}<span>Feedback studio</span></a><button class="nv out" id="so">${ic('out')}<span>Sign out</span></button></aside><main class="main" id="main"></main></div>`;
-  $('#so').onclick=()=>signOut();renderNav();renderBody();
+  app.innerHTML=`<div class="shell"><aside class="side"><div class="brand">Basirah<small>ADMIN</small></div><button class="mnb" id="mnb" aria-expanded="false" aria-controls="menu"><span class="mcur" id="mcur"></span><span class="mct" id="mct"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="menu" id="menu"><nav id="nav" aria-label="Sections"></nav><a class="nv" href="/admin/studio.html" style="text-decoration:none">${ic('doc')}<span>Feedback studio</span></a><button class="nv out" id="so">${ic('out')}<span>Sign out</span></button></div></aside><main class="main" id="main"></main></div>`;
+  $('#so').onclick=()=>signOut();$('#mnb').onclick=()=>{const o=!$('.side').classList.contains('open');$('.side').classList.toggle('open',o);$('#mnb').setAttribute('aria-expanded',o)};renderNav();renderBody();
 }
-const VIEWS=[['overview','Overview','home'],['insights','Growth & revenue','chart'],['submissions','Submissions','list'],['delivery','Delivery queue','send'],['packages','Packages','box'],['reviews','Reviews','star'],['questions','Questions','qs'],['settings','Settings','gear']];
+const VIEWS=[['overview','Overview','home'],['insights','Growth & revenue','chart'],['submissions','Submissions','list'],['delivery','Delivery queue','send'],['packages','Packages','box'],['promos','Promotions','tag'],['reviews','Reviews','star'],['questions','Questions','qs'],['settings','Settings','gear']];
 function renderNav(){
   const nav=$('#nav');if(!nav)return;const d=D();
   const ct={submissions:d.pend.length,delivery:d.queue.length};
   nav.innerHTML=VIEWS.map(([k,l,i])=>`<button class="nv" data-v="${k}" ${st.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${ct[k]?`<span class="ct${k==='delivery'&&d.over.length?' red':''}" title="${k==='submissions'?'Payments awaiting check':'Reports still to deliver'}">${ct[k]}</span>`:''}</button>`).join('');
   $$('[data-v]',nav).forEach(b=>b.onclick=()=>go(b.dataset.v));
+  const cur=VIEWS.find(v=>v[0]===st.view),tot=(ct.submissions||0)+(ct.delivery||0);
+  if($('#mcur'))$('#mcur').textContent=cur?cur[1]:'Menu';if($('#mct')){$('#mct').textContent=tot||'';$('#mct').hidden=!tot}
+  const sd=$('.side');if(sd){sd.classList.remove('open');$('#mnb')&&$('#mnb').setAttribute('aria-expanded','false')}
 }
 function go(v,f){st.view=v;if(v==='reviews')st.reviews=null;if(f)Object.assign(st,{q:'',fPay:'',fRep:'',fPkg:'',page:1},f);history.replaceState(null,'','#'+v);renderNav();renderBody();window.scrollTo(0,0)}
 function head(t,p,acts=''){return `<div class="hd"><div><h1>${t}</h1><p>${p}</p></div><div class="acts">${st.at?`<span class="upd">Updated ${st.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>`:''}${acts}<button class="ib" id="rf" aria-label="Refresh" title="Refresh">${st.loading?'<span class="sp"></span>':ic('refresh')}</button></div></div>${st.view==='delivery'?'':alarmHtml()}`}
@@ -402,10 +453,10 @@ function bindErr(){const r=$('#retry');if(r)r.onclick=()=>load()}
 function renderBody(){
   const m=$('#main');if(!m)return;
   if($('.cfgw',m)&&m.dataset.cv===st.view){bindHead();return}   // never redraw the form while someone is typing in it
-  ({overview:vOverview,submissions:vSubs,delivery:vDelivery,packages:vPackages,reviews:vReviews,insights:vInsights,questions:vQuestions,settings:vSettings}[st.view]||vOverview)(m);
+  ({overview:vOverview,submissions:vSubs,delivery:vDelivery,packages:vPackages,promos:vPromos,reviews:vReviews,insights:vInsights,questions:vQuestions,settings:vSettings}[st.view]||vOverview)(m);
   bindHead();bindErr();
 }
-const emptyAll=()=>`<div class="panel empty">${ic('inbox')}<h3>No submissions yet</h3><p>New assessments appear here automatically as soon as a client submits one on the website. If you have earlier submissions in your email, you can add them by hand.</p><button class="btn" data-add>Add a submission</button></div>`;
+const emptyAll=()=>`<div class="panel empty">${ic('inbox')}<h3>No submissions yet</h3><p>New assessments appear here automatically as soon as a client submits one on the website. If an order reaches you outside the website, such as during downtime or by WhatsApp, you can record it by hand.</p><button class="btn" data-add>Record manual order</button></div>`;
 const loadingRows=()=>`<div class="panel" aria-busy="true" aria-label="Loading">${Array(6).fill('<div class="skr"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>').join('')}</div>`;
 function bindAdd(){$$('[data-add]').forEach(b=>b.onclick=addDialog)}
 function bindOpen(root=document){$$('[data-open]',root).forEach(b=>b.onclick=e=>{e.stopPropagation();openDrawer(b.dataset.open)})}
@@ -417,7 +468,7 @@ function vOverview(m){
   const d=D(),n=st.subs.length;
   const card=(k,v,s,cls,fn)=>`<button class="cd ${cls||''}" data-go="${fn}"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></button>`;
   const needSet=st.cfg&&!st.cfg.whatsapp.length&&!st.cfg.payments.length;
-  m.innerHTML=head('Overview',n?`${n} submission${n===1?'':'s'} in total`:'Everything at a glance','<button class="btn sm" data-add>Add a submission</button>')+errBanner()+(needSet?`<div class="setup"><div><b>Finish setting up</b><span class="hint">Add your WhatsApp number and ways to pay so clients can reach you and pay you.</span></div><button class="btn sm" data-go="settings">Open settings</button></div>`:'')+
+  m.innerHTML=head('Overview',n?`${n} submission${n===1?'':'s'} in total`:'Everything at a glance','<button class="btn sm" data-add>Record manual order</button>')+errBanner()+(needSet?`<div class="setup"><div><b>Finish setting up</b><span class="hint">Add your WhatsApp number and ways to pay so clients can reach you and pay you.</span></div><button class="btn sm" data-go="settings">Open settings</button></div>`:'')+
   (n?`<div class="cards">
     ${card('Payments to check',d.pend.length,d.pend.length?'Oldest waiting '+ago(d.pend.at(-1).created_at):'All payments checked',d.pend.length?'warn':'','pay')}
     ${card('Reports to prepare',d.prep.length,'Verified, not yet ready','','prep')}
@@ -448,7 +499,7 @@ const opts=(o,cur,all)=>`<option value="">${all}</option>`+Object.entries(o).map
 function vSubs(m){
   if(!st.loaded&&!st.error){m.innerHTML=head('Submissions','Loading…')+loadingRows();return}
   if(!st.loaded){m.innerHTML=head('Submissions','')+errBanner();return}
-  m.innerHTML=head('Submissions','Search, filter and open any client record.',`<button class="btn sm o" id="csv">Export CSV</button><button class="btn sm" data-add>Add a submission</button>`)+errBanner()+
+  m.innerHTML=head('Submissions','Search, filter and open any client record.',`<button class="btn sm o" id="csv">Export CSV</button><button class="btn sm" data-add>Record manual order</button>`)+errBanner()+
   `<div class="tb"><div class="fld sr"><label for="q">Search</label><input id="q" type="search" placeholder="Name, contact, payment reference or code" value="${esc(st.q)}"></div>
    <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}</select></div>
    <div class="fld"><label for="fr">Report</label><select id="fr">${opts(REPL,st.fRep,'All reports')}</select></div>
@@ -545,7 +596,7 @@ function vDelivery(m){
   m.innerHTML=head('Delivery queue','Verified clients still waiting for their report, most urgent first.')+alarmHtml()+errBanner()+(q.length?
    `<div class="dq"><div class="cd ${late.length?'late':''}"><span class="k">Overdue</span><span class="v">${late.length}</span><span class="s">${late.length?'Tell these clients about the delay':'Nothing overdue'}</span></div><div class="cd ${soon.length?'soon':''}"><span class="k">Due within ${pr.lead} hour${pr.lead===1?'':'s'}</span><span class="v">${soon.length}</span><span class="s">Finish these next</span></div><div class="cd"><span class="k">On track</span><span class="v">${ok}</span><span class="s">More than ${pr.lead} hours left</span></div></div>
    <section class="panel rm"><div class="row"><label class="chk" style="margin:0"><input type="checkbox" id="remon" ${pr.on?'checked':''}><span><b>Alert me</b> when a report is nearly due or overdue</span></label>
-    <span class="seg"><label style="margin-inline-end:6px" for="remlead">Warn me</label><select id="remlead">${[1,2,3,6].map(h=>`<option value="${h}" ${pr.lead===h?'selected':''}>${h} hour${h===1?'':'s'} before</option>`).join('')}</select></span>
+    <span class="wm"><label for="remlead">Warn me</label><select id="remlead">${[1,2,3,6].map(h=>`<option value="${h}" ${pr.lead===h?'selected':''}>${h} hour${h===1?'':'s'} before</option>`).join('')}</select></span>
     <label class="chk" style="margin:0"><input type="checkbox" id="remsnd" ${pr.sound?'checked':''}><span>Play a soft sound</span></label>
     <button class="btn sm o" id="icsall">Add all to my calendar</button></div>
     <p class="hint" style="margin-top:8px">Alerts work while Basirah Admin is open on your phone or computer (a pinned tab or the phone app is fine). For an alarm that rings even when the app is closed, use the clock button on a client, or <b>Add all to my calendar</b>, and your phone calendar will remind you 3 hours and 1 hour before each deadline.</p></section>
@@ -709,46 +760,154 @@ function rvQuestions(m,box){
     if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;re();return}
     if(b.id==='csave')saveCfg(b)};
 }
+/* Packages: stats, plus an editor to add packages, offers, ribbons and what is included */
+const newPk=()=>({id:'new'+Math.random().toString(36).slice(2,6),price:300,name:'New package',name_ar:'باقة جديدة',desc:'',desc_ar:'',hidden:false,features:[],badge:'',badge_ar:'',featured:false,consult:false,sale_price:null,sale_ends:''});
+const pkFull=p=>({features:[],badge:'',badge_ar:'',featured:false,consult:p.id==='consultation',sale_price:null,sale_ends:'',...p,features:(p.features||[]).map(f=>({...f}))});
+const toLoc=iso=>{if(!iso)return '';const d=new Date(iso),z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'T'+z(d.getHours())+':'+z(d.getMinutes())};
+const fromLoc=v=>{if(!v)return '';const d=new Date(v);return isNaN(d)?'':d.toISOString()};
+const saleLive=p=>+p.sale_price>0&&+p.sale_price<+p.price&&(!p.sale_ends||Date.parse(p.sale_ends)>Date.now());
 function vPackages(m){
   if(!st.loaded&&!st.error){m.innerHTML=head('Packages','Loading…')+loadingRows();return}
   if(!st.loaded){m.innerHTML=head('Packages','')+errBanner();return}
-  m.innerHTML=head('Packages','How each package is performing, from the same records as everywhere else.')+errBanner()+`<div class="pk">${Object.entries(PK).map(([k,p])=>{
+  m.innerHTML=head('Packages','Add packages, set offers and see how each one is performing.')+errBanner()+`<div class="pk">${Object.entries(PK).filter(([k,p])=>!p.hidden||st.subs.some(x=>x.package===k)).map(([k,p])=>{
     const s=st.subs.filter(x=>x.package===k),ver=s.filter(x=>x.payment_status==='verified'),del=ver.filter(x=>x.delivered_at),
     avg=del.length?del.reduce((a,x)=>a+Date.parse(x.delivered_at)-Date.parse(x.verified_at),0)/del.length:null;
-    return `<section class="panel"><h2>${esc(p.name)}</h2><div class="pr">${money(p.price)}</div><dl class="kv">
+    return `<section class="panel"><h2>${esc(p.name)}${p.hidden?' <span class="bd grey">Hidden</span>':''}</h2><div class="pr">${money(p.price)}</div><dl class="kv">
      <dt>Submissions</dt><dd>${s.length}</dd><dt>Awaiting payment check</dt><dd>${s.filter(x=>x.payment_status==='pending').length}</dd>
      <dt>Verified payments</dt><dd>${ver.length}</dd><dt>Verified revenue</dt><dd>${money(ver.reduce((a,x)=>a+x.price_sar,0))}</dd>
      <dt>Reports delivered</dt><dd>${del.length}</dd><dt>Average time to deliver</dt><dd>${avg===null?'—':span(avg)}</dd>
-     ${k==='consultation'?`<dt>Consultations scheduled</dt><dd>${ver.filter(x=>x.consult_status==='scheduled').length}</dd><dt>Consultations completed</dt><dd>${ver.filter(x=>x.consult_status==='completed').length}</dd>`:''}</dl>
-     <div class="row" style="margin-top:16px"><button class="btn sm o" data-pkg="${k}">View submissions</button></div></section>`}).join('')}</div>
+     ${p.consult?`<dt>Consultations scheduled</dt><dd>${ver.filter(x=>x.consult_status==='scheduled').length}</dd><dt>Consultations completed</dt><dd>${ver.filter(x=>x.consult_status==='completed').length}</dd>`:''}</dl>
+     <div class="row" style="margin-top:16px"><button class="btn sm o" data-pkg="${esc(k)}">View submissions</button></div></section>`}).join('')}</div>
    <div id="pked"></div>`;
   $$('[data-pkg]',m).forEach(b=>b.onclick=()=>go('submissions',{fPkg:b.dataset.pkg}));
   if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='packages')vPackages($('#main'))}).catch(()=>{});return}
   pkEditor(m);
 }
+function pkPreview(p,i){
+  const live=saleLive(p),pct=live?Math.round(100-100*p.sale_price/p.price):0;
+  return `<div class="pvc${p.featured?' f':''}${p.hidden?' hid':''}">${p.image?`<img class="pvi" src="${esc(p.image)}" alt="">`:''}${p.badge?`<span class="rib">${esc(p.badge)}</span>`:''}<h4>${esc(p.name)||'—'}</h4>
+   <div class="pp">${live?`<s>SAR ${esc(p.price)}</s> `:''}<b>SAR ${esc(live?p.sale_price:p.price)}</b>${live?` <em>−${pct}%</em>`:''}</div>
+   ${live&&p.sale_ends?`<div class="cdn">⏳ Offer ends ${esc(fmtD(p.sale_ends))}</div>`:''}
+   ${p.desc?`<p>${esc(p.desc)}</p>`:''}${p.consult?'<div class="cn">📞 Includes a 1-to-1 consultation</div>':''}
+   <ul>${(p.features||[]).filter(f=>f.en).map(f=>`<li>${esc(f.en)}</li>`).join('')}</ul></div>`;
+}
 function pkEditor(m){
-  m.dataset.cv='packages';const d=st.cfgDraft,list=d.packages||PKDEF.map(x=>({...x})),inf={...INFODEF,...(d.info||{})};
-  const own=()=>{const c=st.cfgDraft;if(!c.packages)c.packages=PKDEF.map(x=>({...x}));return c.packages};
-  const info=()=>{const c=st.cfgDraft;if(!c.info)c.info={...INFODEF};return c.info};
-  const f=(id,lab,k,v,o={})=>`<div class="fld"><label for="${id}">${lab}</label>${o.area?`<textarea id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" rows="2" maxlength="300">${esc(v)}</textarea>`:`<input id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" value="${esc(v)}" maxlength="80" ${o.num?'type="number" inputmode="numeric" min="1" max="100000"':''}>`}</div>`;
-  const cards=list.map((p,i)=>`<section class="panel"><h2>Package ${i+1}${i===1?' (includes the consultation call)':''}</h2>
+  m.dataset.cv='packages';
+  const d=st.cfgDraft,own=()=>{const c=st.cfgDraft;if(!c.packages)c.packages=PKDEF.map(pkFull);return c.packages},info=()=>{const c=st.cfgDraft;if(!c.info)c.info={...INFODEF};return c.info};
+  const list=(d.packages||PKDEF).map(pkFull),inf={...INFODEF,...(d.info||{})};
+  const f=(id,lab,k,v,o={})=>`<div class="fld"><label for="${id}">${lab}</label>${o.area?`<textarea id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" rows="2" maxlength="300">${esc(v)}</textarea>`:`<input id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" value="${esc(v??'')}" maxlength="${o.max||80}" ${o.num?'type="number" inputmode="numeric" min="1" max="100000"':''} ${o.ph?`placeholder="${esc(o.ph)}"`:''}>`}</div>`;
+  const cards=list.map((p,i)=>`<section class="panel pkc" data-i="${i}"><div class="pkh"><h2>${esc(p.name)||'Package '+(i+1)}</h2>
+    <span class="tg">${p.hidden?'<span class="bd grey">Hidden</span>':''}${p.featured?'<span class="bd green">Highlighted</span>':''}${saleLive(p)?'<span class="bd amber">Offer live</span>':''}</span>
+    <span class="tools">${p.hidden?'':`<button class="btn sm o" data-psh="${i}">Share on WhatsApp</button>`}<button class="ib" data-mv="${i}:-1" ${i===0?'disabled':''} aria-label="Move up">↑</button><button class="ib" data-mv="${i}:1" ${i===list.length-1?'disabled':''} aria-label="Move down">↓</button></span></div>
+    <div class="pkb"><div class="pkf">
     <div class="g2">${f('pk'+i+'n','Name (English)','packages.'+i+'.name',p.name)}${f('pk'+i+'na','Name (Arabic)','packages.'+i+'.name_ar',p.name_ar,{rtl:1})}</div>
-    <div class="g2">${f('pk'+i+'d','Description (English)','packages.'+i+'.desc',p.desc,{area:1})}${f('pk'+i+'da','Description (Arabic)','packages.'+i+'.desc_ar',p.desc_ar,{area:1,rtl:1})}</div>
-    <div class="g2">${f('pk'+i+'p','Price (SAR)','packages.'+i+'.price',p.price,{num:1})}<label class="chk" style="align-self:end"><input type="checkbox" data-pkshow="${i}" ${p.hidden?'':'checked'}><span>Show this package on the website</span></label></div></section>`).join('');
-  $('#pked',m).innerHTML=`<div class="cfgw"><div class="panel"><h2>Edit what clients see</h2>
-    <p class="hint">Change prices, names and wording here. The website keeps the same look. Changes apply after you save. The server charges the saved price, and clients who already paid keep the price they were charged.</p>
-    <div class="note" style="margin-top:0">The FAQ price lines on the website update by themselves. If you hide a package, hide it here and check the FAQ wording.</div></div>
-    <div class="pk">${cards}</div>
+    <div class="g2">${f('pk'+i+'d','Short description (English)','packages.'+i+'.desc',p.desc,{area:1})}${f('pk'+i+'da','Short description (Arabic)','packages.'+i+'.desc_ar',p.desc_ar,{area:1,rtl:1})}</div>
+    <div class="g2">${f('pk'+i+'p','Normal price (SAR)','packages.'+i+'.price',p.price,{num:1})}${f('pk'+i+'sp','Offer price (SAR) – optional','packages.'+i+'.sale_price',p.sale_price||'',{num:1,ph:'e.g. '+Math.round(p.price*0.8)})}</div>
+    <div class="g2"><div class="fld"><label for="pk${i}se">Offer ends – optional</label><input id="pk${i}se" type="datetime-local" data-dt="packages.${i}.sale_ends" value="${toLoc(p.sale_ends)}"></div><p class="hint" style="align-self:end;margin:0 0 8px">${+p.sale_price?'Clients see the normal price crossed out, the offer price, the % saved and a live countdown. With no end date the offer stays until you clear it.':'Add an offer price to show a crossed-out price and a countdown.'}</p></div>
+    <div class="g2">${f('pk'+i+'b','Ribbon (English), e.g. Most popular','packages.'+i+'.badge',p.badge,{max:24})}${f('pk'+i+'ba','Ribbon (Arabic)','packages.'+i+'.badge_ar',p.badge_ar,{rtl:1,max:24})}</div>
+    ${imgFld(p.image,i)}
+    <div class="fld"><label>What is included (shown as a check-list)</label>${(p.features||[]).map((x,j)=>`<div class="frow"><input data-k="packages.${i}.features.${j}.en" value="${esc(x.en)}" maxlength="90" placeholder="English" aria-label="Item ${j+1} English"><input dir="rtl" data-k="packages.${i}.features.${j}.ar" value="${esc(x.ar)}" maxlength="90" placeholder="العربية" aria-label="Item ${j+1} Arabic"><button class="ib" data-df="${i}:${j}" aria-label="Remove item">✕</button></div>`).join('')}
+      <button class="btn sm o" data-af="${i}" ${(p.features||[]).length>=8?'disabled':''}>+ Add an item</button></div>
+    <div class="pkt"><label class="chk"><input type="checkbox" data-pkshow="${i}" ${p.hidden?'':'checked'}><span>Show this package on the website</span></label>
+      <label class="chk"><input type="checkbox" data-pkfeat="${i}" ${p.featured?'checked':''}><span>Highlight this package (only one at a time)</span></label>
+      <label class="chk"><input type="checkbox" data-pkcons="${i}" ${p.consult?'checked':''}><span>Includes a consultation call (adds the scheduling tools to its orders)</span></label></div>
+    </div><div class="pkp"><div class="hint" style="margin:0 0 6px">How it looks to clients (English)</div><div id="pv${i}">${pkPreview(p,i)}</div></div></div></section>`).join('');
+  $('#pked',m).innerHTML=`<div class="cfgw"><div class="panel"><h2>Packages on the website</h2>
+    <p class="hint">Add as many packages as you like. Everything here appears on the client app in the same elegant style, in English and Arabic. The server charges the saved price (or the offer price while it runs). Clients who already ordered keep the price they were charged. Packages can be hidden but not deleted, so old orders always keep their name.</p>
+    <div class="row"><button class="btn sm" id="pkadd" ${list.length>=12?'disabled':''}>+ Add a package</button></div></div>
+    <div class="pkl">${cards}</div>
     <section class="panel"><h2>Times shown to clients</h2><div class="g2">${f('ifdu','Assessment length (English)','info.duration_en',inf.duration_en)}${f('ifdua','Assessment length (Arabic)','info.duration_ar',inf.duration_ar,{rtl:1})}</div>
     <div class="g2">${f('ifde','Report delivery (English)','info.delivery_en',inf.delivery_en)}${f('ifdea','Report delivery (Arabic)','info.delivery_ar',inf.delivery_ar,{rtl:1})}</div>
     <div class="row"><button class="btn sm o" id="pkreset" ${d.packages||d.info?'':'disabled'}>Go back to the original packages</button></div></section></div>
     <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`;
-  m.oninput=e=>{const t=e.target,k=t.dataset&&t.dataset.k;if(!k)return;const[a,i,f2]=k.split('.');if(a==='packages')own()[+i][f2]=t.value;else if(a==='info')info()[i]=t.value;markDirty()};
-  m.onchange=e=>{const t=e.target;if(t.dataset&&t.dataset.pkshow!==undefined){const a=own(),i=+t.dataset.pkshow;if(t.checked===false&&a.filter(x=>!x.hidden).length<2){t.checked=true;return toast('Keep at least one package visible.',true)}a[i].hidden=!t.checked;markDirty()}};
+  const pv=i=>{const e=$('#pv'+i,m);if(e)e.innerHTML=pkPreview(pkFull(own()[i]),i)};
+  m.oninput=e=>{const t=e.target,k=t.dataset&&(t.dataset.k||t.dataset.dt);if(!k)return;const ks=k.split('.');
+    if(ks[0]==='info'){info()[ks[1]]=t.value}else{own();setPath(st.cfgDraft,k,t.dataset.dt?fromLoc(t.value):t.value);pv(+ks[1]);const h=t.closest('.pkc')&&$('h2',t.closest('.pkc'));if(h&&ks[2]==='name')h.textContent=t.value||'Package '+(+ks[1]+1)}
+    markDirty()};
+  m.onchange=e=>{const t=e.target,a=()=>(own(),st.cfgDraft.packages);if(!t.dataset)return;
+    if(t.dataset.pkshow!==undefined){const x=a(),i=+t.dataset.pkshow;if(t.checked===false&&x.filter(y=>!y.hidden).length<2){t.checked=true;return toast('Keep at least one package visible.',true)}x[i].hidden=!t.checked;if(x[i].hidden)x[i].featured=false;markDirty();pkEditor(m)}
+    else if(t.dataset.pkfeat!==undefined){const x=a(),i=+t.dataset.pkfeat;x.forEach((y,j)=>y.featured=t.checked&&j===i);markDirty();pkEditor(m)}
+    else if(t.dataset.pkcons!==undefined){a()[+t.dataset.pkcons].consult=t.checked;markDirty();pv(+t.dataset.pkcons)}};
+  m.onclick=async e=>{
+    const b=e.target.closest('button');if(!b)return;const x=()=>(own(),st.cfgDraft.packages);
+    if(b.id==='pkadd'){x().push(newPk());markDirty();pkEditor(m);const c=$$('.pkc',m).pop();if(c)c.scrollIntoView({behavior:'smooth',block:'center'});return}
+    if(b.dataset.mv){const[i,dir]=b.dataset.mv.split(':').map(Number),a=x(),j=i+dir;if(j<0||j>=a.length)return;const[y]=a.splice(i,1);a.splice(j,0,y);markDirty();pkEditor(m);return}
+    if(b.dataset.img!==undefined){const i=+b.dataset.img;pickImg(path=>{x()[i].image=path;markDirty();pkEditor(m)});return}
+    if(b.dataset.imgx!==undefined){x()[+b.dataset.imgx].image='';markDirty();pkEditor(m);return}
+    if(b.dataset.psh!==undefined){shareDialog('pkg',x()[+b.dataset.psh]);return}
+    if(b.dataset.af){const p=x()[+b.dataset.af];p.features=p.features||[];p.features.push({en:'',ar:''});markDirty();pkEditor(m);return}
+    if(b.dataset.df){const[i,j]=b.dataset.df.split(':').map(Number);x()[i].features.splice(j,1);markDirty();pkEditor(m);return}
+    if(b.id==='pkreset'){if(!await confirmBox({title:'Go back to the original packages?',body:'Your extra packages, prices, offers and wording are replaced by the original ones when you save.',ok:'Go back'}))return;st.cfgDraft.packages=null;st.cfgDraft.info=null;markDirty();vPackages($('#main'));return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;vPackages($('#main'));return}
+    if(b.id==='csave')saveCfg(b);
+  };
+}
+
+/* ---- Promotions page: announcement bar, price note, promo codes ---- */
+const PROMO_EX=[
+ {en:'🌙 Launch offer: save on every package, this week only',ar:'🌙 عرض الإطلاق: وفّر على جميع الباقات، هذا الأسبوع فقط'},
+ {en:'✨ New: book the Full Analysis with a 1-to-1 consultation',ar:'✨ جديد: احجز التحليل الكامل مع استشارة فردية'},
+ {en:'🎁 Use code WELCOME10 at checkout for 10% off',ar:'🎁 استخدم الكود WELCOME10 عند الدفع لخصم 10٪'}];
+const newCode=()=>({code:'',type:'percent',value:10,packages:[],starts_at:'',ends_at:'',max_uses:0,active:true,combine:true,note:''});
+function vPromos(m){
+  m.innerHTML=head('Promotions','Offers, promo codes and an announcement bar that appear on the client app')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
+  bindHead();
+  if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='promos')vPromos($('#main'))}).catch(()=>{});return}
+  m.dataset.cv='promos';
+  const pr=()=>{const c=st.cfgDraft;if(!c.promo)c.promo={banner:{on:false,en:'',ar:'',ends_at:''},note_en:'',note_ar:'',codes:[]};return c.promo};
+  const P=pr(),B=P.banner,pks=(st.cfgDraft.packages||PKDEF).map(pkFull),uses=st.promoUses||{},site=location.origin;
+  const bar=(t)=>t?`<div class="ann"><span>${esc(t)}</span></div>`:'<div class="ann off"><span>Your announcement will appear here</span></div>';
+  const codeCards=P.codes.map((c,i)=>{const u=uses[(c.code||'').toUpperCase()]||0,exp=c.ends_at&&Date.parse(c.ends_at)<=Date.now(),full=c.max_uses>0&&u>=c.max_uses;
+    return `<div class="pm cdc" data-ci="${i}"><div class="ph"><div class="fld"><label for="cc${i}">Code</label><input id="cc${i}" data-c="code" value="${esc(c.code)}" maxlength="24" dir="ltr" style="text-transform:uppercase;font-weight:700;letter-spacing:.06em" placeholder="WELCOME10"></div>
+      <span class="kd">${!c.active?'Paused':exp?'Expired':full?'Used up':'Live'}</span><span class="tools"><button class="ib" data-cshare="${i}" aria-label="Share on WhatsApp" title="Share on WhatsApp">💬</button><button class="ib" data-ccopy="${i}" aria-label="Copy a link that applies this code" title="Copy a link that applies this code">🔗</button><button class="ib" data-cdel="${i}" aria-label="Delete code">✕</button></span></div>
+     <div class="g2"><div class="fld"><label for="ct${i}">Takes off</label><select id="ct${i}" data-c="type"><option value="percent" ${c.type==='percent'?'selected':''}>A percentage (%)</option><option value="fixed" ${c.type==='fixed'?'selected':''}>A fixed amount (SAR)</option></select></div>
+      <div class="fld"><label for="cv${i}">${c.type==='percent'?'Percent off (1–90)':'Riyals off'}</label><input id="cv${i}" data-c="value" type="number" inputmode="numeric" min="1" value="${esc(c.value)}"></div></div>
+     <div class="fld"><label>Works on</label><div class="chips">${pks.map(p=>`<label class="chp"><input type="checkbox" data-cp="${i}:${esc(p.id)}" ${(c.packages||[]).includes(p.id)?'checked':''}><span>${esc(p.name)}</span></label>`).join('')}</div><p class="hint" style="margin:4px 0 0">${(c.packages||[]).length?'Only the ticked packages.':'Nothing ticked means every package.'}</p></div>
+     <div class="g2"><div class="fld"><label for="cs${i}">Starts – optional</label><input id="cs${i}" type="datetime-local" data-cdt="starts_at" value="${toLoc(c.starts_at)}"></div><div class="fld"><label for="ce${i}">Ends – optional</label><input id="ce${i}" type="datetime-local" data-cdt="ends_at" value="${toLoc(c.ends_at)}"></div></div>
+     <div class="g2"><div class="fld"><label for="cm${i}">Limit of uses (0 = no limit)</label><input id="cm${i}" data-c="max_uses" type="number" inputmode="numeric" min="0" value="${esc(c.max_uses)}"><p class="hint" style="margin:4px 0 0">Used so far: <b>${u}</b>${c.max_uses>0?' of '+c.max_uses:''}</p></div>
+      <div class="fld"><label for="cn${i}">Note to yourself (clients never see it)</label><input id="cn${i}" data-c="note" value="${esc(c.note)}" maxlength="100" placeholder="e.g. Instagram story, October"></div></div>
+     ${imgFld(c.image,'c:'+i)}<p class="hint" style="margin:-6px 0 12px">Shown to the client when they use this code, and in the WhatsApp preview when you share it.</p>
+     <label class="chk"><input type="checkbox" data-cb="${i}:active" ${c.active?'checked':''}><span>Code is active</span></label>
+     <label class="chk"><input type="checkbox" data-cb="${i}:combine" ${c.combine?'checked':''}><span>Can be used on top of an offer price</span></label></div>`}).join('');
+  m.innerHTML+=`<div class="cfgw">
+   <section class="panel"><h2>Announcement bar</h2><p class="hint">A slim, elegant bar at the very top of the website. Best for one clear offer and a real deadline.</p>
+    <label class="chk"><input type="checkbox" id="anon" ${B.on?'checked':''}><span>Show the announcement bar</span></label>
+    <div class="g2"><div class="fld"><label for="ane">Text (English)</label><input id="ane" data-b="en" value="${esc(B.en)}" maxlength="160"></div><div class="fld"><label for="ana">Text (Arabic)</label><input id="ana" dir="rtl" data-b="ar" value="${esc(B.ar)}" maxlength="160"></div></div>
+    ${imgFld(B.image,'banner')}<p class="hint" style="margin:-6px 0 12px">Shown as an offer poster above the packages while the announcement is on.</p>
+    <div class="fld"><label for="and">Hide it automatically on – optional</label><input id="and" type="datetime-local" data-bdt="ends_at" value="${toLoc(B.ends_at)}"></div>
+    <div class="hint" style="margin-top:10px">Need an idea? Tap one to use it:</div><div class="row">${PROMO_EX.map((x,i)=>`<button class="btn sm o" data-ex="${i}">${esc(x.en.slice(0,34))}…</button>`).join('')}</div>
+    <div class="hint" style="margin:14px 0 6px">Preview</div><div id="anp">${bar(B.en)}</div>
+    <div class="row" style="margin-top:12px"><button class="btn sm o" id="ashare">Share on WhatsApp</button></div></section>
+   <section class="panel"><h2>Promo codes</h2><p class="hint">Clients type a code on the package screen and see the new price straight away. The server checks the code again when the order arrives. The 🔗 button copies a website link that fills the code in for them. Perfect for Instagram, WhatsApp status or a flyer.</p>
+    ${codeCards||'<p class="hint">No codes yet.</p>'}<div class="row"><button class="btn sm" id="cadd" ${P.codes.length>=40?'disabled':''}>+ Add a promo code</button></div></section>
+   <section class="panel"><h2>Message under the prices</h2><p class="hint">One reassuring line builds trust, for example your privacy promise or delivery time.</p>
+    <div class="g2"><div class="fld"><label for="pne">Message (English)</label><input id="pne" data-n="note_en" value="${esc(P.note_en)}" maxlength="200" placeholder="Secure payment · Private report · Delivered within 24 hours"></div><div class="fld"><label for="pna">Message (Arabic)</label><input id="pna" dir="rtl" data-n="note_ar" value="${esc(P.note_ar)}" maxlength="200" placeholder="دفع آمن · تقرير خاص · التسليم خلال 24 ساعة"></div></div></section>
+   <section class="panel"><h2>Quick marketing guide</h2><ul class="tips"><li><b>Show the saving.</b> A crossed-out normal price next to the offer price makes the value clear.</li><li><b>Use a real deadline.</b> The live countdown works best when the end date is honest. Fake urgency costs trust.</li><li><b>Highlight one package.</b> A single ribbon such as “Most popular” guides undecided clients.</li><li><b>Limit codes.</b> A cap such as 20 uses, or an end date, makes a code feel special and protects your margin.</li><li><b>One code per channel.</b> Give Instagram and WhatsApp different codes, then check the “Used so far” count to see what works.</li><li><b>Keep the bar short.</b> One offer, one action, one deadline.</li></ul></section></div>
+   <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`;
+  const p2=()=>pr();
+  m.oninput=e=>{const t=e.target,D=t.dataset;if(!D)return;const ci=t.closest('[data-ci]');
+    if(D.b){p2().banner[D.b]=t.value;const x=$('#anp',m);if(x)x.innerHTML=bar(p2().banner[document.documentElement.lang==='ar'?'ar':'en']||p2().banner.en)}
+    else if(D.n)p2()[D.n]=t.value;
+    else if(D.c&&ci){let v=t.value;if(D.c==='code')v=v.toUpperCase().replace(/[^A-Z0-9_-]/g,'');p2().codes[+ci.dataset.ci][D.c]=D.c==='value'||D.c==='max_uses'?(v===''?'':+v):v}
+    else if(D.bdt)p2().banner.ends_at=fromLoc(t.value);
+    else if(D.cdt&&ci)p2().codes[+ci.dataset.ci][D.cdt]=fromLoc(t.value);
+    else return;markDirty()};
+  m.onchange=e=>{const t=e.target,D=t.dataset;
+    if(t.id==='anon'){p2().banner.on=t.checked;markDirty();return}
+    if(D.c==='type'){p2().codes[+t.closest('[data-ci]').dataset.ci].type=t.value;markDirty();vPromos(m);return}
+    if(D.cp){const[i,id]=D.cp.split(':'),c=p2().codes[+i];c.packages=c.packages||[];c.packages=t.checked?[...new Set([...c.packages,id])]:c.packages.filter(x=>x!==id);markDirty();vPromos(m);return}
+    if(D.cb){const[i,k]=D.cb.split(':');p2().codes[+i][k]=t.checked;markDirty();vPromos(m)}};
   m.onclick=async e=>{
     const b=e.target.closest('button');if(!b)return;
-    if(b.id==='pkreset'){if(!await confirmBox({title:'Go back to the original packages?',body:'Your prices, names and wording are replaced by the original ones when you save.',ok:'Go back'}))return;st.cfgDraft.packages=null;st.cfgDraft.info=null;markDirty();vPackages($('#main'));return}
-    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;vPackages($('#main'));return}
+    if(b.dataset.img!==undefined){const k=b.dataset.img;pickImg(path=>{if(k==='banner')p2().banner.image=path;else p2().codes[+k.slice(2)].image=path;markDirty();vPromos(m)});return}
+    if(b.dataset.imgx!==undefined){const k=b.dataset.imgx;if(k==='banner')p2().banner.image='';else p2().codes[+k.slice(2)].image='';markDirty();vPromos(m);return}
+    if(b.id==='ashare'){if(!(B.en||B.ar))return toast('Write the announcement text first.',true);shareDialog('ann',B);return}
+    if(b.dataset.ex!==undefined){const x=PROMO_EX[+b.dataset.ex];p2().banner.en=x.en;p2().banner.ar=x.ar;p2().banner.on=true;markDirty();vPromos(m);return}
+    if(b.id==='cadd'){p2().codes.push(newCode());markDirty();vPromos(m);const c=$$('.cdc',m).pop();if(c){c.scrollIntoView({behavior:'smooth',block:'center'});const i=$('input',c);if(i)i.focus()}return}
+    if(b.dataset.cdel!==undefined){if(!await confirmBox({title:'Delete this promo code?',body:'Clients will no longer be able to use it. Orders that already used it keep their discount.',ok:'Delete',danger:true}))return;p2().codes.splice(+b.dataset.cdel,1);markDirty();vPromos(m);return}
+    if(b.dataset.cshare!==undefined){const c=p2().codes[+b.dataset.cshare];if(!c.code)return toast('Type the code first.',true);shareDialog('code',c);return}
+    if(b.dataset.ccopy!==undefined){const c=p2().codes[+b.dataset.ccopy];if(!c.code)return toast('Type the code first.',true);const u=site+'/?code='+encodeURIComponent(c.code);try{await navigator.clipboard.writeText(u);toast('Link copied. It fills in the code for the client.')}catch(er){prompt('Copy this link',u)}return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;vPromos($('#main'));return}
     if(b.id==='csave')saveCfg(b);
   };
 }
@@ -764,29 +923,104 @@ function confirmBox({title,body,ok,cancel='Cancel',danger}){
     document.addEventListener('keydown',kd,true);document.body.appendChild(d);$('[data-r="0"]',d).focus();
   });
 }
+/* ---- pictures: cropped to a wide card shape, shrunk, then stored on the site ---- */
+async function shrinkImg(file){
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw new Error('Please choose a JPG, PNG or WebP picture.');
+  const url=URL.createObjectURL(file);
+  try{const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('That picture could not be read.'));i.src=url});
+    const W=1200,H2=630,c=document.createElement('canvas');c.width=W;c.height=H2;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H2);
+    const k=Math.max(W/img.width,H2/img.height),w=img.width*k,h=img.height*k;x.drawImage(img,(W-w)/2,(H2-h)/2,w,h);
+    for(const q of[.86,.74,.62,.5]){const b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));if(b&&b.size<=1200000)return b}
+    throw new Error('That picture is too detailed. Try a simpler one.');
+  }finally{URL.revokeObjectURL(url)}
+}
+async function uploadImg(blob){
+  const r=await fetch('/api/admin/image',{method:'POST',headers:{'Content-Type':'image/jpeg',Authorization:'Bearer '+st.token},body:blob});
+  let j={};try{j=await r.json()}catch{}
+  if(r.status===401){signOut('Your session expired. Please sign in again.');throw Object.assign(new Error('auth'),{handled:true})}
+  if(!r.ok)throw new Error(j.error||'The picture could not be saved.');
+  return j.path;
+}
+function pickImg(done){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/webp';
+  inp.onchange=async()=>{const f=inp.files[0];if(!f)return;toast('Uploading picture…');
+    try{done(await uploadImg(await shrinkImg(f)));toast('Picture added. Save to publish it.')}catch(e){if(!e.handled)toast(e.message==='Failed to fetch'?'Can’t reach the server.':e.message,true)}};
+  inp.click();
+}
+const imgFld=(path,key)=>`<div class="fld imgf"><label>Picture (optional)</label><div class="imgr">${path?`<img src="${esc(path)}" alt="Picture preview">`:'<div class="imgph">No picture</div>'}<div class="imgb"><button type="button" class="btn sm o" data-img="${key}">${path?'Change picture':'Choose picture'}</button>${path?`<button type="button" class="btn sm o" data-imgx="${key}">Remove</button>`:''}<p class="hint" style="margin:6px 0 0">Wide pictures work best (about 1200 × 630). We crop and shrink it for you.</p></div></div></div>`;
+
+/* ---- Share an offer or promo code on WhatsApp ---- */
+const fmtShareDate=(iso,L)=>{try{return new Intl.DateTimeFormat(L==='ar'?'ar-SA':'en-GB',{dateStyle:'long',timeStyle:'short'}).format(new Date(iso))}catch(e){return iso}};
+const numL=(n,L)=>L==='ar'?String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]):String(n);
+function shareText(kind,it,L,who){
+  if(kind==='ann'){const ar=L==='ar',tx=(ar?it.ar||it.en:it.en||it.ar)||'',hi=who?(ar?`أهلاً ${who} 🌿\n`:`Hello ${who} 🌿\n`):(ar?'السلام عليكم 🌿\n':'Peace be upon you 🌿\n'),biz=(st.cfg&&st.cfg.business_name)||'Basirah';return `${hi}📣 ${tx}\n\n${ar?'تعرّف على الباقات 👇':'See what is on offer 👇'}\n${location.origin}/s?ann=1\n\n✨ ${biz}${ar?' من إحسان\nبصيرة… لترى نفسك بوضوح':' by EhsanKey\nSee yourself clearly.'}`}
+  const site=location.origin,biz=(st.cfg&&st.cfg.business_name)||'Basirah',ar=L==='ar',hi=who?(ar?`أهلاً ${who} 🌿\n`:`Hello ${who} 🌿\n`):(ar?'السلام عليكم 🌿\n':'Peace be upon you 🌿\n');
+  const sig=ar?`\n\n✨ ${biz} من إحسان\nبصيرة… لترى نفسك بوضوح`:`\n\n✨ ${biz} by EhsanKey\nSee yourself clearly.`;
+  if(kind==='code'){
+    const names=(it.packages||[]).map(id=>{const p=(st.cfgDraft.packages||PKDEF).find(x=>x.id===id);return p?(ar?p.name_ar:p.name):''}).filter(Boolean);
+    const off=it.type==='percent'?(ar?numL(it.value,L)+'٪':it.value+'%'):(ar?numL(it.value,L)+' ر.س':'SAR '+it.value);
+    const ends=it.ends_at?fmtShareDate(it.ends_at,L):'',lim=+it.max_uses>0;
+    return ar
+      ?`${hi}🎁 هدية صغيرة من ${biz}\n\nاستخدم الكود *${it.code}* لتحصل على خصم ${off}${names.length?' على '+names.join(' / '):' على أي باقة'} ✨\n${ends?'\n⏳ ينتهي العرض: '+ends:''}${lim?'\n🔥 العدد محدود: '+numL(it.max_uses,L)+' استخدام فقط':''}\n\nابدأ رحلتك لفهم نفسك الآن 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(الكود يُطبَّق تلقائياً)${sig}`
+      :`${hi}🎁 A little gift from ${biz}\n\nUse code *${it.code}* for ${off} off ${names.length?names.join(' / '):'any package'} ✨\n${ends?'\n⏳ Ends: '+ends:''}${lim?'\n🔥 Limited: only '+it.max_uses+' uses':''}\n\nBegin your journey of self-insight 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(the code applies automatically)${sig}`;
+  }
+  const p=pkFull(it),live=saleLive(p),pct=live?Math.round(100-100*p.sale_price/p.price):0,name=ar?p.name_ar:p.name,desc=ar?p.desc_ar:p.desc;
+  const feats=(p.features||[]).map(f=>ar?f.ar||f.en:f.en||f.ar).filter(Boolean).map(f=>'✔ '+f).join('\n');
+  const cur=n=>ar?numL(n,L)+' ر.س':'SAR '+n,ends=live&&p.sale_ends?fmtShareDate(p.sale_ends,L):'',badge=ar?p.badge_ar:p.badge;
+  return ar
+    ?`${hi}${live?'✨ عرض خاص من '+biz:'✨ نقدّم لك من '+biz}\n\n*${name}*${badge?' · '+badge:''}\n${desc?desc+'\n':''}${feats?'\n'+feats+'\n':''}\n${live?`💰 بدلاً من ${cur(p.price)} → *${cur(p.sale_price)}* (وفّر ${numL(pct,L)}٪)${ends?'\n⏳ ينتهي العرض: '+ends:''}`:`💰 السعر: *${cur(p.price)}*`}\n\nاكتشف نفسك بوضوح 👇\n${site}/s?pkg=${p.id}${sig}`
+    :`${hi}${live?'✨ A special offer from '+biz:'✨ Introducing from '+biz}\n\n*${name}*${badge?' · '+badge:''}\n${desc?desc+'\n':''}${feats?'\n'+feats+'\n':''}\n${live?`💰 Was ${cur(p.price)} → *${cur(p.sale_price)}* (save ${pct}%)${ends?'\n⏳ Offer ends: '+ends:''}`:`💰 Price: *${cur(p.price)}*`}\n\nDiscover yourself with clarity 👇\n${site}/s?pkg=${p.id}${sig}`;
+}
+function shareDialog(kind,it){
+  const prev=document.activeElement,o=document.createElement('div');o.className='cf';
+  const S2={lang:'en',who:'',phone:'',text:''};const gen=()=>{S2.text=shareText(kind,it,S2.lang,S2.who)};gen();
+  const unsaved=st.cfgDirty||(kind==='pkg'&&/^new/.test(it.id))||(kind==='ann'&&!(st.cfg&&st.cfg.promo&&st.cfg.promo.banner&&(st.cfg.promo.banner.en||st.cfg.promo.banner.ar)));
+  o.innerHTML=`<div class="cfb" style="max-width:600px" role="dialog" aria-modal="true" aria-labelledby="sht"><h3 id="sht">${kind==='code'?'Share this promo code':kind==='ann'?'Share this announcement':'Share this package'} on WhatsApp</h3>
+   ${unsaved?'<div class="note">You have unsaved changes. Save first so the link and price clients see are up to date.</div>':''}
+   <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fld"><label for="shl">Language</label><select id="shl"><option value="en">English</option><option value="ar">العربية</option></select></div><div class="fld"><label for="shn">Client’s first name (optional)</label><input id="shn" maxlength="40" placeholder="Adds a personal greeting"></div></div>
+   <div class="fld"><label for="shph">WhatsApp number (optional)</label>${phoneField('shph','')}</div>
+   <div class="fld"><label for="sht2">Message (you can edit it)</label><textarea id="sht2" rows="11" style="min-height:230px"></textarea></div>
+   <p class="hint" style="margin:0 0 10px">The link shows a preview card in WhatsApp: ${it.image?'your picture':'the Basirah logo'}. It opens the website${kind==='code'?' with the code already filled in':kind==='ann'?' at the packages':' at this package'}.</p>
+   <div class="row"><button class="btn o" data-r="0">Close</button><button class="btn o" id="shc">Copy message</button><button class="btn" id="shw">Open WhatsApp</button></div></div>`;
+  const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
+  const kd=e=>{if(e.key==='Escape'){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
+  const ta=$('#sht2',o);ta.value=S2.text;
+  const regen=()=>{S2.lang=$('#shl',o).value;S2.who=$('#shn',o).value.trim();gen();ta.value=S2.text;ta.dir=S2.lang==='ar'?'rtl':'ltr'};
+  o.onchange=e=>{if(e.target.id==='shl')regen()};
+  o.oninput=e=>{if(e.target.id==='shn')regen();else if(e.target.id==='sht2')S2.text=e.target.value};
+  o.onclick=async e=>{
+    if(e.target===o||e.target.closest('[data-r]'))return done();
+    const b=e.target.closest('button');if(!b)return;
+    if(b.id==='shc'){try{await navigator.clipboard.writeText(ta.value);toast('Message copied')}catch(er){ta.select();toast('Press copy on your keyboard',true)}}
+    if(b.id==='shw'){const ph=normPh($('#shph',o).value),u=ph?'https://wa.me/'+ph+'?text=':'https://wa.me/?text=';window.open(u+encodeURIComponent(ta.value),'_blank','noopener')}};
+  document.body.appendChild(o);$('#shn',o).focus();
+}
+
 function addDialog(){
   const prev=document.activeElement,o=document.createElement('div');o.className='cf';
-  o.innerHTML=`<form class="cfb" style="max-width:560px" role="dialog" aria-modal="true" aria-labelledby="adt" novalidate><h3 id="adt">Add a submission</h3><p>For a client whose assessment reached you by email before this dashboard existed.</p>
+  o.innerHTML=`<form class="cfb" style="max-width:560px" role="dialog" aria-modal="true" aria-labelledby="adt" novalidate><h3 id="adt">Record an order manually</h3><p>Use this when an order reaches you outside the website, for example during downtime, by WhatsApp, by bank transfer, in person, or any other exception. It joins the same queue and follows the same steps.</p>
   <div class="fgrid"><div class="fld full"><label for="a1">Full name</label><input id="a1" type="text" autocomplete="off"></div>
   <div class="fld"><label for="a2">Contact method</label><select id="a2"><option>Email</option><option>WhatsApp</option><option>Mobile</option></select></div>
-  <div class="fld"><label for="a3">Contact</label><input id="a3" type="text" dir="ltr" autocomplete="off"></div>
+  <div class="fld"><label for="a3">Contact</label><div id="a3w"><input id="a3" type="text" dir="ltr" autocomplete="off" placeholder="name@example.com"></div></div>
   <div class="fld"><label for="a4">Package</label><select id="a4">${Object.entries(PK).map(([k,p])=>`<option value="${k}">${esc(p.name)} · ${money(p.price)}</option>`).join('')}</select></div>
+  <div class="fld full"><label for="a9">How did it reach you?</label><select id="a9"><option>Website downtime</option><option>WhatsApp or direct message</option><option>Bank transfer or in person</option><option>Email</option><option>Other exception</option></select></div>
   <div class="fld"><label for="a5">Date received</label><input id="a5" type="date"></div>
   <div class="fld"><label for="a6">Payment reference</label><input id="a6" type="text" dir="ltr" autocomplete="off"></div>
   <div class="fld"><label for="a7">Receipt link (optional)</label><input id="a7" type="text" dir="ltr" placeholder="https://" autocomplete="off"></div>
   <div class="fld full"><label for="a8">Notes (optional)</label><textarea id="a8" style="min-height:70px"></textarea></div></div>
-  <div class="err" id="ae" role="alert" style="margin-top:8px"></div><div class="row"><button type="button" class="btn o" data-r="0">Cancel</button><button class="btn" id="as">Add submission</button></div></form>`;
+  <div class="err" id="ae" role="alert" style="margin-top:8px"></div><div class="row"><button type="button" class="btn o" data-r="0">Cancel</button><button class="btn" id="as">Record order</button></div></form>`;
   const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
-  const kd=e=>{if(e.key==='Escape'){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
+  const kd=e=>{if(e.key==='Escape'&&!ccOpen){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
   o.onclick=e=>{if(e.target===o||e.target.closest('[data-r]'))done()};
+  $('#a2',o).onchange=e=>{$('#a3w',o).innerHTML=e.target.value==='Email'?'<input id="a3" type="text" dir="ltr" autocomplete="off" placeholder="name@example.com">':phoneField('a3','')};
   $('form',o).onsubmit=async e=>{e.preventDefault();const g=i=>$('#'+i,o),v=i=>g(i).value.trim(),bad=(i,m)=>{$('#ae',o).textContent=m;g(i).setAttribute('aria-invalid','true');g(i).focus()};
     $$('[aria-invalid]',o).forEach(x=>x.removeAttribute('aria-invalid'));$('#ae',o).textContent='';
-    if(!v('a1'))return bad('a1','Enter the client’s full name.');if(!v('a3'))return bad('a3','Enter the client’s contact.');
+    if(!v('a1'))return bad('a1','Enter the client’s full name.');if(!v('a3'))return bad('a3','Enter the client’s contact.');if(v('a2')!=='Email'&&!normPh(v('a3')))return bad('a3','Enter a valid phone number.');
     if(v('a7')&&!safeUrl(v('a7')))return bad('a7','The receipt link must start with http:// or https://');
-    const b=g('as');b.disabled=true;b.innerHTML='<span class="sp"></span> Adding…';
-    try{const j=await api('POST','/submissions',{full_name:v('a1'),contact_method:v('a2'),contact:v('a3'),package:v('a4'),created_at:v('a5')||undefined,payment_reference:v('a6'),payment_receipt:v('a7'),notes:v('a8')});
-      st.subs.unshift(j.submission);st.subs.sort(SORTS.new[1]);done();renderNav();renderBody();toast('Submission added');openDrawer(j.submission.id)}
-    catch(err){if(err.handled)return;b.disabled=false;b.textContent='Add submission';$('#ae',o).textContent=err.message}};
+    const b=g('as');b.disabled=true;b.innerHTML='<span class="sp"></span> Recording…';
+    try{const j=await api('POST','/submissions',{full_name:v('a1'),contact_method:v('a2'),contact:v('a3'),package:v('a4'),created_at:v('a5')||undefined,payment_reference:v('a6'),payment_receipt:v('a7'),notes:('Recorded manually ('+v('a9')+').'+(v('a8')?'\n'+v('a8'):''))});
+      st.subs.unshift(j.submission);st.subs.sort(SORTS.new[1]);done();renderNav();renderBody();toast('Order recorded');openDrawer(j.submission.id)}
+    catch(err){if(err.handled)return;b.disabled=false;b.textContent='Record order';$('#ae',o).textContent=err.message}};
   document.body.appendChild(o);$('#a1',o).focus();
 }
 
@@ -849,7 +1083,7 @@ function drawer(){
     <div class="row"><button class="btn" id="rn" ${B} ${!verified||s.report_status==='delivered'?'disabled':''}>${NEXT[s.report_status]?NEXT[s.report_status][0]:'Delivered'}</button>
      <button class="btn o" id="rb" ${B} ${s.report_status==='not_started'?'disabled':''}>Move back a step</button></div>
     <div class="fld" style="margin-top:12px"><label for="dn">Delivery note (optional, e.g. “sent by WhatsApp”)</label><input id="dn" type="text" value="${esc(s.delivery_note)}" maxlength="1000"></div></section>
-   ${s.package==='consultation'?`<section class="sec"><h3>Consultation call</h3><div class="fgrid" style="margin-top:0"><div class="fld"><label for="cs">Status</label><select id="cs">${Object.entries(CONL).map(([k,v])=>`<option value="${k}" ${s.consult_status===k?'selected':''}>${v}</option>`).join('')}</select></div>
+   ${s.consult_status?`<section class="sec"><h3>Consultation call</h3><div class="fgrid" style="margin-top:0"><div class="fld"><label for="cs">Status</label><select id="cs">${Object.entries(CONL).map(([k,v])=>`<option value="${k}" ${s.consult_status===k?'selected':''}>${v}</option>`).join('')}</select></div>
     <div class="fld"><label for="ca">Date and time</label><input id="ca" type="datetime-local" value="${s.consult_at?toLocalInput(s.consult_at):''}"></div></div>
     <div class="row" style="margin-top:12px"><button class="btn sm" id="csv2" ${B}>Save consultation</button></div></section>`:''}
    <section class="sec"><h3>Notes</h3><textarea id="nt" aria-label="Notes" maxlength="4000" placeholder="Anything worth remembering about this client">${esc(s.notes)}</textarea><div class="row" style="margin-top:10px"><button class="btn sm" id="ns" ${B}>Save notes and delivery note</button></div></section>
@@ -905,7 +1139,7 @@ function summaryView(s){
   const ans=s.answers||[],voice=ans.filter(a=>a.a.startsWith(VOICEP)).length,skip=ans.filter(a=>a.a===SKIPPED).length,typed=ans.length-voice-skip;
   o.innerHTML=`<div class="smb" role="dialog" aria-modal="true" aria-label="Answer summary"><div class="smt"><div class="row"><a class="btn sm" href="${studioUrl(s)}" target="_blank" rel="noopener">${s.report_link?'Edit feedback report':'Write feedback report'}</a><button class="btn sm o" id="smp">Print or save as PDF</button><button class="btn sm o" id="smc">Close</button></div></div>
    <header><div class="brand" style="padding:0">Basirah <small style="display:inline;font-size:14px">ANSWER SUMMARY</small></div><h1 dir="auto">${esc(s.full_name)}</h1>
-   <p class="hint">${esc(PK[s.package].name)} · ${esc(s.id)} · received ${fmtD(s.created_at)}<br>${esc(s.contact_method)}: <span dir="ltr">${esc(s.contact)}</span>${s.consent_at?'<br>Consent given '+fmtD(s.consent_at):''}</p>
+   <p class="hint">${esc(s.package_name||PK[s.package].name)} · ${esc(s.id)} · received ${fmtD(s.created_at)}<br>${s.promo_code?`Promo code <b>${esc(s.promo_code)}</b>: SAR ${esc(s.discount_sar)} off (normal price ${money(s.list_price)})<br>`:''}${s.promo_invalid?`<b style="color:var(--red,#b3261e)">The client entered code ${esc(s.promo_invalid)}, but it was no longer valid when the order arrived. They may have paid the discounted amount. Check the receipt.</b><br>`:''}${esc(s.contact_method)}: <span dir="ltr">${esc(s.contact)}</span>${s.consent_at?'<br>Consent given '+fmtD(s.consent_at):''}</p>
    <div class="rvs2"><span><b>${ans.length}</b> questions</span><span><b>${typed}</b> typed</span><span><b>${voice}</b> voice</span><span><b>${skip}</b> skipped</span></div></header>
    ${ans.map(a=>{const v=voiceUrl(a);return `<section class="smq"><div class="smn">${a.n}</div><div><h3>${esc(a.q)}</h3>${v?`<p class="hint">Voice answer · <a href="${esc(v)}" target="_blank" rel="noopener">open recording</a></p><audio controls preload="none" src="${esc(v)}"></audio>`:a.a===SKIPPED?'<p class="hint">Skipped by the client</p>':`<p dir="auto">${esc(a.a)||'—'}</p>`}</div></section>`}).join('')}</div>`;
   const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
@@ -916,6 +1150,7 @@ function toLocalInput(iso){const d=new Date(iso),p=n=>String(n).padStart(2,'0');
 
 /* ============ settings + messages to clients ============ */
 /* Country calling codes: [id, code, English name, Arabic name]. Saudi Arabia first, then the rest A to Z. */
+/* Country calling codes: [id, code, English name, Arabic name]. Saudi Arabia first, then the rest A to Z. */
 const CCS=[["SA","966","Saudi Arabia","السعودية"],["AE","971","United Arab Emirates","الإمارات"],["BH","973","Bahrain","البحرين"],["KW","965","Kuwait","الكويت"],["OM","968","Oman","عُمان"],["QA","974","Qatar","قطر"],["PH","63","Philippines","الفلبين"],["EG","20","Egypt","مصر"],["IN","91","India","الهند"],["PK","92","Pakistan","باكستان"],["BD","880","Bangladesh","بنغلاديش"],["LK","94","Sri Lanka","سريلانكا"],["NP","977","Nepal","نيبال"],["ID","62","Indonesia","إندونيسيا"],["JO","962","Jordan","الأردن"],["LB","961","Lebanon","لبنان"],["SY","963","Syria","سوريا"],["IQ","964","Iraq","العراق"],["YE","967","Yemen","اليمن"],["PS","970","Palestine","فلسطين"],["SD","249","Sudan","السودان"],
 ["AF","93","Afghanistan","أفغانستان"],["AL","355","Albania","ألبانيا"],["DZ","213","Algeria","الجزائر"],["AR","54","Argentina","الأرجنتين"],["AM","374","Armenia","أرمينيا"],["AU","61","Australia","أستراليا"],["AT","43","Austria","النمسا"],["AZ","994","Azerbaijan","أذربيجان"],["BE","32","Belgium","بلجيكا"],["BA","387","Bosnia and Herzegovina","البوسنة والهرسك"],["BR","55","Brazil","البرازيل"],["BG","359","Bulgaria","بلغاريا"],["KH","855","Cambodia","كمبوديا"],["CM","237","Cameroon","الكاميرون"],["CA","1","Canada","كندا"],["CL","56","Chile","تشيلي"],["CN","86","China","الصين"],["CO","57","Colombia","كولومبيا"],["HR","385","Croatia","كرواتيا"],["CY","357","Cyprus","قبرص"],["CZ","420","Czechia","التشيك"],["DK","45","Denmark","الدنمارك"],["DJ","253","Djibouti","جيبوتي"],["EC","593","Ecuador","الإكوادور"],["ET","251","Ethiopia","إثيوبيا"],["FI","358","Finland","فنلندا"],["FR","33","France","فرنسا"],["GE","995","Georgia","جورجيا"],["DE","49","Germany","ألمانيا"],["GH","233","Ghana","غانا"],["GR","30","Greece","اليونان"],["HK","852","Hong Kong","هونغ كونغ"],["HU","36","Hungary","المجر"],["IR","98","Iran","إيران"],["IE","353","Ireland","أيرلندا"],["IT","39","Italy","إيطاليا"],["JP","81","Japan","اليابان"],["KZ","7","Kazakhstan","كازاخستان"],["KE","254","Kenya","كينيا"],["KR","82","South Korea","كوريا الجنوبية"],["KG","996","Kyrgyzstan","قيرغيزستان"],["LY","218","Libya","ليبيا"],["MY","60","Malaysia","ماليزيا"],["MV","960","Maldives","المالديف"],["MR","222","Mauritania","موريتانيا"],["MX","52","Mexico","المكسيك"],["MA","212","Morocco","المغرب"],["MM","95","Myanmar","ميانمار"],["NL","31","Netherlands","هولندا"],["NZ","64","New Zealand","نيوزيلندا"],["NG","234","Nigeria","نيجيريا"],["NO","47","Norway","النرويج"],["PE","51","Peru","بيرو"],["PL","48","Poland","بولندا"],["PT","351","Portugal","البرتغال"],["RO","40","Romania","رومانيا"],["RU","7","Russia","روسيا"],["SN","221","Senegal","السنغال"],["RS","381","Serbia","صربيا"],["SG","65","Singapore","سنغافورة"],["SO","252","Somalia","الصومال"],["ZA","27","South Africa","جنوب أفريقيا"],["ES","34","Spain","إسبانيا"],["SE","46","Sweden","السويد"],["CH","41","Switzerland","سويسرا"],["TW","886","Taiwan","تايوان"],["TZ","255","Tanzania","تنزانيا"],["TH","66","Thailand","تايلاند"],["TN","216","Tunisia","تونس"],["TR","90","Türkiye","تركيا"],["UG","256","Uganda","أوغندا"],["UA","380","Ukraine","أوكرانيا"],["GB","44","United Kingdom","المملكة المتحدة"],["US","1","United States","الولايات المتحدة"],["UZ","998","Uzbekistan","أوزبكستان"],["VN","84","Vietnam","فيتنام"],["ZM","260","Zambia","زامبيا"],["ZW","263","Zimbabwe","زيمبابوي"]];
 /* split "+63 917 123 4567" into its country and the rest; numbers without a plus use the fallback country */
@@ -924,8 +1159,76 @@ function ccSplit(v,fb){
   if(raw[0]==='+'){const d=raw.replace(/\D/g,'');let best=null;for(const c of CCS){if(d.startsWith(c[1])&&(!best||c[1].length>best[1].length))best=c}if(best)return{cc:best[0],dial:best[1],nat:d.slice(best[1].length)}}
   const c=CCS.find(x=>x[0]===fb)||CCS[0];return{cc:c[0],dial:c[1],nat:raw.replace(/\D/g,'')};
 }
+/* ----- searchable country picker for phone fields (shared by the website and the admin) ----- */
+const ccNm=c=>{let ar=false;try{ar=lang==='ar'}catch(e){}return ar?c[3]:c[2]};
+const ccTx=(k,d)=>{try{return T[lang][k]||d}catch(e){return d}};
+const ccEsc=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function ccPick(selId,iso,attrs){
+  const cur=CCS.find(c=>c[0]===iso)||CCS[0];
+  return `<div class="ccp"><select id="${selId}" class="ccs" hidden tabindex="-1" aria-hidden="true" ${attrs||''}>${CCS.map(c=>`<option value="${c[0]}" ${c[0]===cur[0]?'selected':''}>+${c[1]}</option>`).join('')}</select><button type="button" class="ccb" aria-haspopup="listbox" aria-expanded="false" aria-label="${ccEsc(ccTx('ccL','Country code'))}"><b>+${cur[1]}</b><span class="cn">${ccEsc(ccNm(cur))}</span><i aria-hidden="true"></i></button></div>`;
+}
+let ccOpen=null,ccAt=0;
+function ccClose(){if(!ccOpen)return;const m=ccOpen.menu;m.remove();ccOpen.btn.setAttribute('aria-expanded','false');ccOpen=null}
+function ccFill(list,q,selIso){
+  q=q.trim().toLowerCase().replace(/^\+/,'');
+  const rows=CCS.filter(c=>!q||c[2].toLowerCase().includes(q)||c[3].includes(q)||c[1].startsWith(q)||c[0].toLowerCase()===q);
+  list.innerHTML=rows.length?rows.map(c=>`<li role="option" data-iso="${c[0]}" ${c[0]===selIso?'aria-selected="true"':''} dir="auto"><b>+${c[1]}</b><span>${ccEsc(ccNm(c))}</span></li>`).join(''):`<li class="none">${ccEsc(ccTx('ccNone','No country found'))}</li>`;
+  const first=list.querySelector('[role=option]');if(first)first.classList.add('on');
+}
+function ccShow(btn,seed){
+  ccClose();const wrap=btn.closest('.ccp'),sel=wrap.querySelector('select');
+  const menu=document.createElement('div');menu.className='ccm';
+  menu.innerHTML=`<input class="ccq" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ccEsc(ccTx('ccSearch','Search country or code'))}" aria-label="${ccEsc(ccTx('ccSearch','Search country or code'))}"><ul role="listbox" class="ccl"></ul>`;
+  document.body.appendChild(menu);
+  const r=btn.getBoundingClientRect(),W=Math.min(Math.max(r.width,280),window.innerWidth-16),below=window.innerHeight-r.bottom-12,up=r.top-12;
+  menu.style.width=W+'px';menu.style.left=Math.max(8,Math.min(r.left,window.innerWidth-W-8))+'px';
+  const mh=Math.min(340,Math.max(below,up));
+  if(below<260&&up>below){menu.style.bottom=(window.innerHeight-r.top+6)+'px';menu.style.maxHeight=Math.min(340,up)+'px'}else{menu.style.top=(r.bottom+6)+'px';menu.style.maxHeight=Math.min(340,below)+'px'}
+  const q=menu.querySelector('.ccq'),list=menu.querySelector('.ccl');q.value=seed||'';ccFill(list,q.value,sel.value);
+  btn.setAttribute('aria-expanded','true');ccOpen={menu,btn,sel};
+  const act=list.querySelector('[aria-selected=true]');if(act&&!seed){list.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));act.classList.add('on');act.scrollIntoView({block:'center'})}
+  ccAt=Date.now();q.focus({preventScroll:true});
+}
+function ccChoose(iso){
+  if(!ccOpen)return;const {sel,btn}=ccOpen,c=CCS.find(x=>x[0]===iso);if(!c)return;
+  sel.value=iso;btn.innerHTML=`<b>+${c[1]}</b><span class="cn">${ccEsc(ccNm(c))}</span><i aria-hidden="true"></i>`;
+  ccClose();sel.dispatchEvent(new Event('input',{bubbles:true}));sel.dispatchEvent(new Event('change',{bubbles:true}));
+  const nat=sel.closest('.phr')&&sel.closest('.phr').querySelector('input:not([type=hidden])');if(nat)nat.focus();else btn.focus();
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('.ccb');
+  if(b){e.preventDefault();ccOpen&&ccOpen.btn===b?ccClose():ccShow(b);return}
+  const li=e.target.closest&&e.target.closest('.ccm [role=option]');if(li){ccChoose(li.dataset.iso);return}
+  if(ccOpen&&!e.target.closest('.ccm'))ccClose();
+},true);
+document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('ccq')&&ccOpen){e.stopPropagation();ccFill(ccOpen.menu.querySelector('.ccl'),e.target.value,ccOpen.sel.value)}},true);
+document.addEventListener('keydown',e=>{
+  const b=e.target.closest&&e.target.closest('.ccb');
+  if(b&&!ccOpen&&(e.key==='ArrowDown'||(e.key.length===1&&/[\p{L}\d+]/u.test(e.key)&&!e.ctrlKey&&!e.metaKey&&!e.altKey))){e.preventDefault();ccShow(b,e.key==='ArrowDown'?'':e.key);return}
+  if(!ccOpen)return;
+  const list=ccOpen.menu.querySelector('.ccl'),items=[...list.querySelectorAll('[role=option]')],i=items.findIndex(x=>x.classList.contains('on'));
+  if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();const bt=ccOpen.btn;ccClose();bt.focus()}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!items.length)return;const n=Math.max(0,Math.min(items.length-1,i+(e.key==='ArrowDown'?1:-1)));items.forEach(x=>x.classList.remove('on'));items[n].classList.add('on');items[n].scrollIntoView({block:'nearest'})}
+  else if(e.key==='Enter'&&e.target.classList.contains('ccq')){e.preventDefault();e.stopImmediatePropagation();const it=items[Math.max(0,i)];if(it)ccChoose(it.dataset.iso)}
+  else if(e.key==='Tab')ccClose();
+},true);
+window.addEventListener('resize',ccClose);document.addEventListener('scroll',e=>{if(ccOpen&&Date.now()-ccAt>500&&!(e.target.closest&&e.target.closest('.ccm')))ccClose()},true);
+/* admin phone field: country picker + only the remaining digits. The full number lives in a hidden box with the real id. */
+function phoneField(id,full,attrs){
+  const v=String(full||'').trim(),plus=/^(\+|00)/.test(v),sp=ccSplit(v,'SA'),nat=String(sp.nat||'').replace(/^0+/,'');
+  const hid=v&&!plus?(nat?'+'+(CCS.find(c=>c[0]==='SA')[1])+' '+nat:''):v;
+  return `<div class="phr">${ccPick(id+'_cc',plus?sp.cc:'SA','data-ccfor="'+id+'"')}<input type="tel" class="nat" data-natfor="${id}" inputmode="tel" autocomplete="off" dir="ltr" value="${esc(nat)}" placeholder="5X XXX XXXX" aria-label="Phone number without the country code"><input type="hidden" id="${id}" value="${esc(hid)}" ${attrs||''}></div>`;
+}
+function phSync(natEl){
+  const id=natEl.dataset.natfor,hid=document.getElementById(id);if(!hid)return;const wrap=natEl.closest('.phr'),sel=wrap.querySelector('select.ccs');
+  let v=natEl.value;
+  if(/^\s*(\+|00)/.test(v)){const sp=ccSplit(v);sel.value=sp.cc;const c=CCS.find(x=>x[0]===sp.cc);const bt=wrap.querySelector('.ccb');bt.innerHTML=`<b>+${c[1]}</b><span class="cn">${ccEsc(ccNm(c))}</span><i aria-hidden="true"></i>`;v=String(sp.nat||'');natEl.value=v}
+  const d=v.replace(/\D/g,'').replace(/^0+/,''),c=CCS.find(x=>x[0]===sel.value)||CCS[0];
+  hid.value=d?'+'+c[1]+' '+d:'';hid.dispatchEvent(new Event('input',{bubbles:true}));
+}
+document.addEventListener('input',e=>{const n=e.target;if(n.classList&&n.classList.contains('nat')&&n.dataset.natfor)phSync(n)});
+document.addEventListener('change',e=>{const sel=e.target;if(!(sel.classList&&sel.classList.contains('ccs')&&sel.dataset.ccfor))return;const nat=sel.closest('.phr').querySelector('.nat');if(nat)phSync(nat)});
 
-const ccSel=(forId,val)=>{const sp=ccSplit(val&&/^\s*(\+|00)/.test(val)?val:'');const has=!!(val&&/^\s*(\+|00)/.test(val));return `<select class="ccs" data-ccfor="${forId}" aria-label="Country code">${CCS.map(c=>`<option value="${c[0]}" ${(has?c[0]===sp.cc:c[0]==='SA')?'selected':''}>+${c[1]} · ${esc(c[2])}</option>`).join('')}</select>`};
 const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(raw.startsWith('00'))d=d.slice(2);else if(/^05\d{8}$/.test(d))d='966'+d.slice(1);else if(/^5\d{8}$/.test(d))d='966'+d;return d.length>=8&&d.length<=15?d:''};
 const showPh=d=>{if(!d)return '';if(/^966\d{9}$/.test(d))return '+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4');const sp=ccSplit('+'+d);return '+'+sp.dial+' '+sp.nat};
 const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {business} 🌿\nبصيرة… لترى نفسك بوضوح.';
@@ -953,10 +1256,10 @@ const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR co
 st.cfg=null;st.cfgDraft=null;st.cfgDirty=false;st.tk='report';st.mc=null;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const uid=()=>'n'+Math.random().toString(36).slice(2,8);
-function applyPk(c){for(const d of PKDEF){const x=c&&Array.isArray(c.packages)&&c.packages.find(y=>y.id===d.id);PK[d.id].name=(x&&x.name)||d.name;PK[d.id].price=x?x.price:d.price}}
+function applyPk(c){const list=c&&Array.isArray(c.packages)&&c.packages.length?c.packages:PKDEF;for(const k of Object.keys(PK))if(!list.some(x=>x.id===k)&&!PKDEF.some(x=>x.id===k))delete PK[k];for(const x of list){const live=saleLive(x);PK[x.id]={name:x.name,price:live?+x.sale_price:+x.price,list:+x.price,consult:x.consult===undefined?x.id==='consultation':!!x.consult,hidden:!!x.hidden}}learnPk()}
 async function loadCfg(force){
   if(st.cfg&&!force)return st.cfg;
-  try{const j=await api('GET','/settings');st.cfg=j.settings;applyPk(st.cfg);if(!st.cfgDirty)st.cfgDraft=clone(st.cfg)}catch(e){if(e.handled)throw e}
+  try{const j=await api('GET','/settings');st.cfg=j.settings;st.promoUses=j.promo_uses||{};applyPk(st.cfg);if(!st.cfgDirty)st.cfgDraft=clone(st.cfg)}catch(e){if(e.handled)throw e}
   return st.cfg;
 }
 const tplEffective=(key,lang)=>((st.cfg&&st.cfg.templates&&st.cfg.templates[key]&&st.cfg.templates[key][lang])||DEF_TPL[key][lang]);
@@ -978,7 +1281,7 @@ function mstate(s){
   return st.mc;
 }
 function composer(s){
-  const m=mstate(s),keys=['received','payment_issue','delay','report','report_file','review',...(s.package==='consultation'?['consult','consult_confirm']:[])];
+  const m=mstate(s),keys=['received','payment_issue','delay','report','report_file','review',...(s.consult_status?['consult','consult_confirm']:[])];
   const blocked=m.tpl?tplBlocked(m.tpl,s):'',isEmail=s.contact_method==='Email'&&/@/.test(s.contact),B=st.busy?'disabled':'';
   const hasPh=!!normPh(m.phone);
   return `<section class="sec" id="msc"><h3>Message the client</h3>${s.delivered_at&&!s.review_at&&!s.review_requested_at?`<div class="note" style="margin:0 0 10px">✨ The report has been delivered. This is the right moment to ask for a review. <button type="button" class="chip" style="padding:2px 12px" data-do="tpl" data-v="review">Ask for a review</button></div>`:''}${s.review_at?`<p class="hint" style="margin-bottom:8px">⭐ Review received ${fmtD(s.review_at)}. <button type="button" class="chip" style="padding:2px 12px" data-go-reviews>See it</button></p>`:s.review_requested_at?`<p class="hint" style="margin-bottom:8px">Review link created ${fmtD(s.review_requested_at)}. No review yet.</p>`:''}
@@ -988,7 +1291,7 @@ function composer(s){
    <textarea id="mt" dir="auto" aria-label="Message" placeholder="Choose a message type above, or write your own here.">${esc(m.text)}</textarea>
    ${m.tpl==='report_file'&&!blocked?`<div class="note" style="background:var(--sage);color:var(--txt)" role="status"><b>To attach the PDF:</b> 1. <button type="button" class="chip" style="padding:2px 12px" data-do="dlpdf">Download the PDF</button> 2. Press <b>Open WhatsApp</b> 3. In the chat, tap the paperclip and choose the file.</div>`:''}
    ${blocked?`<div class="note" role="status">${esc(blocked)}${m.tpl==='report'?` <a href="${studioUrl(s)}" target="_blank" rel="noopener" style="color:inherit;font-weight:700">Open the studio</a>`:''}</div>`:''}
-   <div class="fld" style="margin-top:10px"><label for="mph">WhatsApp number</label><div class="phr">${ccSel('mph',m.phone)}<input id="mph" type="text" inputmode="tel" dir="ltr" value="${esc(m.phone)}" placeholder="+63 917 123 4567"></div><span class="ph2" id="mphn">${s.contact_method==='Email'&&!m.phone?'This client chose email. Add a number only if they gave you one.':hasPh?'Will open WhatsApp chat with '+showPh(normPh(m.phone)):m.phone?'This number does not look right.':''}</span></div>
+   <div class="fld" style="margin-top:10px"><label for="mph">WhatsApp number</label>${phoneField('mph',m.phone)}<span class="ph2" id="mphn">${s.contact_method==='Email'&&!m.phone?'This client chose email. Add a number only if they gave you one.':hasPh?'Will open WhatsApp chat with '+showPh(normPh(m.phone)):m.phone?'This number does not look right.':''}</span></div>
    <div class="row" style="margin-top:10px"><button class="btn" data-do="wa" ${B} ${!m.text.trim()||!hasPh||blocked?'disabled':''}>Open WhatsApp</button>${isEmail?`<button class="btn o" data-do="mail" ${B} ${!m.text.trim()||blocked?'disabled':''}>Email</button>`:''}<button class="btn o" data-do="copy" ${!m.text.trim()?'disabled':''}>Copy message</button></div>
    <p class="hint" style="margin-top:8px">WhatsApp opens with the message ready. Check it, then press send there.</p></section>`;
 }
@@ -1032,7 +1335,7 @@ function vSettings(m){
   const d=st.cfgDraft;m.dataset.cv='settings';
   const waRows=d.whatsapp.map((w,i)=>`<div class="crow" data-i="${i}"><div class="fld"><label for="wl${i}">Name (English)</label><input id="wl${i}" type="text" data-k="whatsapp.${i}.label" value="${esc(w.label)}" maxlength="40" placeholder="e.g. Consultations"></div>
     <div class="fld"><label for="wa${i}">Name (Arabic)</label><input id="wa${i}" type="text" dir="rtl" data-k="whatsapp.${i}.label_ar" value="${esc(w.label_ar)}" maxlength="40" placeholder="مثال: الاستشارات"></div>
-    <div class="fld num2"><label for="wn${i}">Number</label><div class="phr">${ccSel('wn'+i,w.number?'+'+String(w.number).replace(/^\+/,''):'')}<input id="wn${i}" type="text" inputmode="tel" dir="ltr" data-k="whatsapp.${i}.number" value="${esc(w.number?(/^\d+$/.test(w.number)?'+'+w.number:w.number):'')}" placeholder="+966 55 123 4567"></div><span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
+    <div class="fld num2"><label for="wn${i}">Number</label>${phoneField('wn'+i,w.number?(/^\d+$/.test(w.number)?'+'+w.number:w.number):'','data-k="whatsapp.'+i+'.number"')}<span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
     <div class="row" style="padding-bottom:20px"><a class="btn sm o" data-test="${i}" href="#" rel="noopener">Test</a><button class="ib" data-rm="whatsapp.${i}" aria-label="Remove this number" title="Remove">${ic('x')}</button></div></div>`).join('');
   const qrHtml=(p,i)=>`<div class="qrs">${p.qr.map((q,j)=>`<div class="qrc"><div class="im"><img src="${esc(q.src)}" alt="QR code ${j+1}"><button data-rm="payments.${i}.qr.${j}" aria-label="Remove this QR code">×</button></div><input type="text" data-k="payments.${i}.qr.${j}.caption" value="${esc(q.caption)}" maxlength="60" placeholder="Caption (optional)" aria-label="Caption"></div>`).join('')}${p.qr.length<4?`<button class="qadd" data-qr="${i}">+ Add a QR code<br><span style="font-weight:400;font-size:12.5px">PNG or JPG</span></button>`:''}</div>`;
   const pmCards=d.payments.map((p,i)=>{
@@ -1058,8 +1361,7 @@ function vSettings(m){
     ${d.whatsapp.length<6?'<button class="btn sm o" id="addwa">+ Add a WhatsApp number</button>':''}
     <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><div class="fld"><label for="wge">First message clients send (English)</label><textarea id="wge" style="min-height:130px" data-k="wa_greeting.en" maxlength="500">${esc(d.wa_greeting.en)}</textarea></div><div class="fld"><label for="wga">First message clients send (Arabic)</label><textarea id="wga" dir="rtl" style="min-height:130px" data-k="wa_greeting.ar" maxlength="500">${esc(d.wa_greeting.ar)}</textarea></div></div></section>
    <section class="panel"><h2>Ways to pay</h2><p class="hint">Clients see these on the payment step and choose one. Add as many as you like: STC Pay, bank transfer, Apple Pay or any payment link, and several QR codes.</p>
-    <label class="chk"><input type="checkbox" data-k="show_default_qr" ${d.show_default_qr?'checked':''}><span>Also show the original QR code that is already on the website<span class="hint" style="display:block;font-weight:400">Untick this when your new methods replace it.</span></span></label>
-    ${pmCards||'<p class="hint" style="margin-bottom:12px">No extra methods yet. Clients see the original QR code.</p>'}
+    ${pmCards||'<p class="hint" style="margin-bottom:12px">No payment methods yet. Add yours below. Until you add one, clients see a temporary QR code.</p>'}
     ${d.payments.length<10?`<div class="addrow">${Object.keys(KIND_NAMES).map(k=>`<button class="btn sm o" data-addpm="${k}">+ ${KIND_NAMES[k]}</button>`).join('')}</div>`:''}
     <p class="hint" style="margin-top:12px">Apple Pay cannot be paid to a plain number. To accept it, use a payment link from your payment provider and add it under Apple Pay.</p></section>
    <section class="panel"><h2>Message wording</h2><p class="hint">These are the messages you can send from a client’s record. Change the wording to suit you. Words in curly brackets are filled in automatically: {name} {business} {code} {link} {date}.</p>
@@ -1091,21 +1393,17 @@ function vSettings(m){
 }
 
 /* country code pickers: choosing a country writes its code at the start of the number; typing a code picks the country */
-document.addEventListener('change',e=>{const sel=e.target.closest&&e.target.closest('.ccs[data-ccfor]');if(!sel)return;const inp=document.getElementById(sel.dataset.ccfor);if(!inp)return;
-  const c=CCS.find(x=>x[0]===sel.value)||CCS[0],cur=inp.value.trim(),sp=/^(\+|00)/.test(cur)?ccSplit(cur):{nat:cur.replace(/\D/g,'')};
-  inp.value='+'+c[1]+' '+String(sp.nat||'').replace(/^0+/,'');inp.dispatchEvent(new Event('input',{bubbles:true}));inp.focus()});
-document.addEventListener('input',e=>{const inp=e.target;if(!inp.id||!/^(mph|wn\d+)$/.test(inp.id))return;const sel=document.querySelector('.ccs[data-ccfor="'+inp.id+'"]');if(sel&&/^\s*(\+|00)/.test(inp.value)){const sp=ccSplit(inp.value);if(sel.value!==sp.cc&&CCS.find(c=>c[0]===sel.value)[1]!==sp.dial)sel.value=sp.cc}});
-const redrawCfg=()=>(st.view==='questions'?vQuestions:st.view==='packages'?vPackages:st.view==='reviews'?vReviews:vSettings)($('#main'));
+const redrawCfg=()=>(st.view==='questions'?vQuestions:st.view==='packages'?vPackages:st.view==='promos'?vPromos:st.view==='reviews'?vReviews:vSettings)($('#main'));
 async function saveCfg(btn){
-  const d=clone(st.cfgDraft);
+  const d=clone(st.cfgDraft);d.show_default_qr=false;
   for(const k of Object.keys(d.templates)){for(const l of['en','ar']){if(d.templates[k][l]===DEF_TPL[k][l])d.templates[k][l]=''}if(!d.templates[k].en&&!d.templates[k].ar)delete d.templates[k]}
   if(d.questions&&sameAsOrig(d.questions))d.questions=null;
-  if(d.packages&&JSON.stringify(d.packages.map(x=>({...x,price:+x.price})))===JSON.stringify(PKDEF))d.packages=null;
   if(d.info&&Object.keys(INFODEF).every(k=>(d.info[k]||'')===INFODEF[k]||!d.info[k]))d.info=null;
   if(d.review_questions&&JSON.stringify(d.review_questions.map(({id,type,required,hidden,en,ar})=>({id,type,required:!!required,hidden:!!hidden,en,ar})))===JSON.stringify(RQDEF.map(q=>({...q,hidden:false}))))d.review_questions=null;
-  if(d.packages)d.packages=d.packages.map(x=>({...x,price:Math.round(+x.price)}));
+  if(d.packages)d.packages=d.packages.map(x=>({...x,price:Math.round(+x.price),sale_price:x.sale_price===''||x.sale_price==null?null:Math.round(+x.sale_price),features:(x.features||[]).filter(f=>(f.en||'').trim()||(f.ar||'').trim())}));
+  if(d.promo)d.promo={...d.promo,codes:(d.promo.codes||[]).map(c=>({...c,value:Math.round(+c.value),max_uses:Math.round(+c.max_uses)||0}))};
   btn.disabled=true;btn.innerHTML='<span class="sp"></span> Saving…';
-  try{const j=await api('PUT','/settings',{...d,updated_at:st.cfg.updated_at});st.cfg=j.settings;applyPk(st.cfg);st.cfgDraft=clone(st.cfg);st.cfgDirty=false;toast(st.view==='questions'?'Questions saved':st.view==='packages'?'Packages saved':st.view==='reviews'?'Review questions saved':'Settings saved');redrawCfg()}
+  try{const j=await api('PUT','/settings',{...d,updated_at:st.cfg.updated_at});st.cfg=j.settings;applyPk(st.cfg);st.cfgDraft=clone(st.cfg);st.cfgDirty=false;toast(st.view==='questions'?'Questions saved':st.view==='promos'?'Promotions saved':st.view==='packages'?'Packages saved':st.view==='reviews'?'Review questions saved':'Settings saved');redrawCfg()}
   catch(e){if(e.handled)return;btn.disabled=false;btn.textContent='Save changes';
     if(e.status===409&&e.body?.settings){st.cfg=e.body.settings;applyPk(st.cfg);st.cfgDraft=clone(st.cfg);st.cfgDirty=false;redrawCfg()}
     toast(e.message==='Failed to fetch'?'Can’t reach the server. Nothing was saved.':e.message,true)}
@@ -1182,7 +1480,7 @@ window.addEventListener('beforeunload',e=>{if(st.cfgDirty){e.preventDefault();e.
 /* ============ start ============ */
 window.name='basirah-admin';   // lets the studio send you back to this same tab
 {const qp=new URLSearchParams(location.search);if(/^BSR-[A-Z0-9]{4,10}$/.test(qp.get('open')||'')){st.pendingOpen={id:qp.get('open'),tpl:qp.get('tpl')||''};history.replaceState(null,'',location.pathname+location.hash)}}
-const h=location.hash.slice(1);if(['overview','submissions','delivery','packages','questions','settings'].includes(h))st.view=h;
+const h=location.hash.slice(1);if(['overview','submissions','delivery','packages','promos','questions','settings'].includes(h))st.view=h;
 render();if(st.token){load();loadCfg().then(()=>{if(st.view==='overview')renderBody()}).catch(()=>{})}
 setInterval(()=>{if(st.token&&!document.hidden&&!st.busy)load(true)},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&st.token){load(true);refreshReport()}});

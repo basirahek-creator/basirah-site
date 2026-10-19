@@ -7,12 +7,56 @@ export const PACKAGES = {
   profile: { name: 'Full Personality Profile', price: 200 },
   consultation: { name: 'Full Analysis + 1-to-1 Consultation', price: 400 },
 };
-export const PKG_IDS = ['profile', 'consultation'];
-const priceFor = async (store, pkg) => {
-  const set = await store.get('settings');
-  const p = Array.isArray(set?.packages) ? set.packages.find((x) => x.id === pkg) : null;
-  return p ? p.price : PACKAGES[pkg].price;
+export const PKG_IDS = ['profile', 'consultation'];          // the two original packages; they can be hidden but never deleted (old orders refer to them)
+const PKG_MAX = 12;
+const defaultPkgs = () => Object.entries(PACKAGES).map(([id, p]) => ({ id, price: p.price, name: p.name, consult: id === 'consultation' }));
+const pkgList = async (store) => { const set = await store.get('settings'); return Array.isArray(set?.packages) && set.packages.length ? set.packages : defaultPkgs(); };
+const saleOn = (p, t = Date.now()) => Number(p.sale_price) > 0 && Number(p.sale_price) < p.price && (!p.sale_ends || Date.parse(p.sale_ends) > t);
+const effPrice = (p, t) => (saleOn(p, t) ? Number(p.sale_price) : p.price);
+// the price the server really charges: the saved price, or the sale price while the sale is running. Never a number sent by the browser.
+const pkgInfo = async (store, id) => {
+  const p = (await pkgList(store)).find((x) => x.id === id);
+  if (!p) return null;
+  return { id: p.id, name: p.name, list: p.price, price: effPrice(p), sale: saleOn(p), consult: p.consult === undefined ? p.id === 'consultation' : p.consult === true };
 };
+/* promo codes */
+const normCode = (v) => (typeof v === 'string' ? v.toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 24) : '');
+const promoWhy = (c, pk, t, used) => {
+  if (!c || c.active === false) return 'invalid';
+  if (c.starts_at && Date.parse(c.starts_at) > t) return 'soon';
+  if (c.ends_at && Date.parse(c.ends_at) <= t) return 'expired';
+  if (c.max_uses > 0 && used >= c.max_uses) return 'used_up';
+  if (Array.isArray(c.packages) && c.packages.length && !c.packages.includes(pk.id)) return 'wrong_package';
+  if (c.combine === false && pk.sale) return 'no_combine';
+  return '';
+};
+const promoMath = (c, base) => {
+  const raw = c.type === 'percent' ? Math.round((base * c.value) / 100) : c.value;
+  const discount = Math.max(0, Math.min(raw, base - 1));          // the price never goes below 1 SAR
+  return { discount, final: base - discount };
+};
+const promoUsed = async (store, code) => (await store.get('promouse/' + code))?.n || 0;
+// returns { ok, code, discount, final, base, type, value } or { ok:false, reason }
+async function checkPromo(store, rawCode, pk) {
+  const code = normCode(rawCode);
+  if (!code || !pk) return { ok: false, reason: 'invalid' };
+  const set = await store.get('settings');
+  const c = Array.isArray(set?.promo?.codes) ? set.promo.codes.find((x) => x.code === code) : null;
+  const why = promoWhy(c, pk, Date.now(), c ? await promoUsed(store, code) : 0);
+  if (why) return { ok: false, reason: why };
+  return { ok: true, code, type: c.type, value: c.value, base: pk.price, image: c.image || '', ...promoMath(c, pk.price) };
+}
+export async function handlePromo(req, store) {
+  if (req.method !== 'POST') return fail(405, 'Method not allowed');
+  let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
+  const ip = req.headers.get('x-nf-client-connection-ip') || (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'x';
+  const rk = 'promorl/' + createHash('sha256').update(ip).digest('hex').slice(0, 12) + '-' + Math.floor(Date.now() / 3600000);
+  const n = ((await store.get(rk))?.n || 0) + 1;
+  if (n > 40) return fail(429, 'Too many tries. Please wait a little and try again.');
+  await store.set(rk, { n });
+  const pk = await pkgInfo(store, b?.package);
+  return json(await checkPromo(store, b?.code, pk));
+}
 export const PAYMENT = ['pending', 'verified', 'rejected'];
 export const REPORT = ['not_started', 'in_progress', 'ready', 'delivered'];
 export const CONSULT = ['not_scheduled', 'scheduled', 'completed'];
@@ -26,6 +70,16 @@ const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const now = () => new Date().toISOString();
 const keyOf = (id) => 'sub/' + id;
 
+// applies a promo code to a new order; the code is checked again here, and a code that stopped being valid is only flagged for the admin
+async function promoFor(store, raw, pki) {
+  const code = normCode(raw);
+  if (!code) return {};
+  const r = await checkPromo(store, code, pki);
+  if (!r.ok) return { promo_invalid: code + ' (' + r.reason + ')' };
+  await store.set('promouse/' + code, { n: (await promoUsed(store, code)) + 1 });
+  return { promo_code: code, discount_sar: r.discount, price_sar: r.final };
+}
+
 /* ---------------- public: the site posts every finished assessment here ---------------- */
 export async function handleSubmit(req, store) {
   if (req.method !== 'POST') return fail(405, 'Method not allowed');
@@ -37,7 +91,7 @@ export async function handleSubmit(req, store) {
 
   const id = str(b.submission_id, 16);
   if (!/^BSR-[A-Z0-9]{4,10}$/.test(id)) return fail(400, 'Missing or invalid submission_id');
-  const pkg = PACKAGES[b.package] ? b.package : null;
+  const pki = await pkgInfo(store, b.package), pkg = pki ? pki.id : null;
   const name = str(b.full_name, 200), contact = str(b.contact, 200);
   if (!pkg || !name || !contact) return fail(400, 'Missing required fields');
   if (await store.get(keyOf(id))) return json({ ok: true, duplicate: true });   // a retry of the same submission
@@ -48,14 +102,15 @@ export async function handleSubmit(req, store) {
   const t = now();
   const rec = {
     id, source: 'site', created_at: t, updated_at: t,
-    full_name: name, package: pkg, price_sar: await priceFor(store, pkg),
+    full_name: name, package: pkg, package_name: pki.name, price_sar: pki.price, list_price: pki.list,
+    ...(await promoFor(store, b.promo_code, pki)),
     contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
     payment_reference: str(b.payment_reference, 200), payment_receipt: str(b.payment_receipt, 2000), payment_method: str(b.payment_method, 80),
     language: b.language === 'ar' ? 'ar' : 'en', answers,
     consent_at: b.consent_given === true && b.consent_at && !isNaN(Date.parse(b.consent_at)) ? new Date(b.consent_at).toISOString() : null,
     consent_language: b.consent_language === 'ar' ? 'ar' : 'en',
     payment_status: 'pending', report_status: 'not_started',
-    consult_status: pkg === 'consultation' ? 'not_scheduled' : null, consult_at: null,
+    consult_status: pki.consult ? 'not_scheduled' : null, consult_at: null,
     verified_at: null, delivered_at: null, delivery_note: '', notes: '',
     history: [{ at: t, by: 'client', action: 'Assessment submitted' }],
   };
@@ -114,6 +169,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   if (parts[0] === 'docs') return handleDocs(req, store, parts[1]);
   if (parts[0] === 'translate') return handleTranslate(req, env);
   if (parts[0] === 'settings') return handleAdminSettings(req, store);
+  if (parts[0] === 'image') return handleAdminImage(req, store);
   if (parts[0] === 'reviews') return handleAdminReviews(req, store, parts[1]);
   if (parts[0] !== 'submissions') return fail(404, 'Not found');
   const id = parts[1];
@@ -129,15 +185,15 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
 
   if (!id && m === 'POST') {            // record a submission that arrived before the dashboard existed (e.g. from an email)
     let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
-    const pkg = PACKAGES[b.package] ? b.package : null, name = str(b.full_name, 200), contact = str(b.contact, 200);
+    const pki = await pkgInfo(store, b.package), pkg = pki ? pki.id : null, name = str(b.full_name, 200), contact = str(b.contact, 200);
     if (!pkg || !name || !contact) return fail(400, 'Name, contact and package are required');
     const t = now(), when = b.created_at && !isNaN(Date.parse(b.created_at)) ? new Date(b.created_at).toISOString() : t;
     const nid = 'BSR-M' + randomBytes(3).toString('hex').toUpperCase().slice(0, 5);
     const rec = {
-      id: nid, source: 'manual', created_at: when, updated_at: t, full_name: name, package: pkg, price_sar: await priceFor(store, pkg),
+      id: nid, source: 'manual', created_at: when, updated_at: t, full_name: name, package: pkg, package_name: pki.name, price_sar: pki.price, list_price: pki.list,
       contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
       payment_reference: str(b.payment_reference, 200), payment_receipt: str(b.payment_receipt, 2000), language: 'en', answers: [], consent_at: null, consent_language: 'en',
-      payment_status: 'pending', report_status: 'not_started', consult_status: pkg === 'consultation' ? 'not_scheduled' : null, consult_at: null,
+      payment_status: 'pending', report_status: 'not_started', consult_status: pki.consult ? 'not_scheduled' : null, consult_at: null,
       verified_at: null, delivered_at: null, delivery_note: '', notes: str(b.notes, 4000),
       history: [{ at: t, by: 'admin', action: 'Added manually' }],
     };
@@ -209,7 +265,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       L({ not_started: 'Report moved back to not started', in_progress: 'Report preparation started', ready: 'Report marked ready to send', delivered: 'Report delivered to client' }[b.report_status]);
     }
     if (b.delivery_note !== undefined) next.delivery_note = str(b.delivery_note, 1000);
-    if (rec.package === 'consultation') {
+    if (rec.consult_status) {
       if (b.consult_status !== undefined && b.consult_status !== rec.consult_status) {
         if (!CONSULT.includes(b.consult_status)) return fail(400, 'Invalid consultation status');
         next.consult_status = b.consult_status;
@@ -338,7 +394,7 @@ const MAX_SETTINGS = 1_100_000, MAX_QR = 250_000;
 const OLD_GREETING = { en: 'Hello, I would like to ask about the Basirah assessment.', ar: 'السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.' };
 export const DEFAULT_GREETING = { en: 'Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}', ar: 'السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}' };
 const upGreet = (s) => (s && s.wa_greeting ? { ...s, wa_greeting: { en: s.wa_greeting.en === OLD_GREETING.en ? DEFAULT_GREETING.en : s.wa_greeting.en, ar: s.wa_greeting.ar === OLD_GREETING.ar ? DEFAULT_GREETING.ar : s.wa_greeting.ar } } : s);
-const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, review_name: 'choose', packages: null, info: null, review_questions: null, updated_at: null });
+const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, review_name: 'choose', packages: null, promo: null, info: null, review_questions: null, updated_at: null });
 
 /* Saudi style numbers (05xxxxxxxx, 5xxxxxxxx, +966..., 00966...) become plain international digits for wa.me links. */
 export function normPhone(v) {
@@ -392,20 +448,63 @@ function cleanSettings(b, prev) {
     }
     if (!out.questions.some((q) => !q.hidden)) return { error: 'Keep at least one question visible.' };
   }
+  const isoOrEmpty = (v) => (typeof v === 'string' && v && !isNaN(Date.parse(v)) ? new Date(v).toISOString() : '');
   if (b.packages === null || b.packages === undefined) out.packages = null;           // null = the two original packages built into the website
   else {
-    if (!Array.isArray(b.packages)) return { error: 'Invalid packages' };
-    out.packages = [];
-    for (const id of PKG_IDS) {
-      const x = b.packages.find((y) => y?.id === id) || {};
-      const price = Math.round(Number(x.price));
-      if (!Number.isFinite(price) || price < 1 || price > 100000) return { error: 'The price of “' + PACKAGES[id].name + '” must be a whole number between 1 and 100000.' };
-      const name = str(x.name, 80), name_ar = str(x.name_ar, 80);
-      if (!name || !name_ar) return { error: 'Write the name of package ' + (PKG_IDS.indexOf(id) + 1) + ' in both English and Arabic.' };
-      out.packages.push({ id, price, name, name_ar, desc: str(x.desc, 300), desc_ar: str(x.desc_ar, 300), hidden: x.hidden === true });
+    if (!Array.isArray(b.packages) || b.packages.length > PKG_MAX) return { error: 'You can have up to ' + PKG_MAX + ' packages.' };
+    out.packages = []; const seenP = new Set();
+    for (const [n, x] of b.packages.entries()) {
+      let id = typeof x?.id === 'string' && (PKG_IDS.includes(x.id) || /^p[0-9a-f]{6}$/.test(x.id)) ? x.id : 'p' + randomBytes(3).toString('hex');
+      while (seenP.has(id)) id = 'p' + randomBytes(3).toString('hex'); seenP.add(id);
+      const price = Math.round(Number(x?.price));
+      const label = str(x?.name, 80) || 'package ' + (n + 1);
+      if (!Number.isFinite(price) || price < 1 || price > 100000) return { error: 'The price of “' + label + '” must be a whole number between 1 and 100000.' };
+      const name = str(x?.name, 80), name_ar = str(x?.name_ar, 80);
+      if (!name || !name_ar) return { error: 'Write the name of “' + label + '” in both English and Arabic.' };
+      let sale_price = null;
+      if (x?.sale_price !== null && x?.sale_price !== undefined && x?.sale_price !== '') {
+        sale_price = Math.round(Number(x.sale_price));
+        if (!Number.isFinite(sale_price) || sale_price < 1 || sale_price >= price) return { error: 'The offer price of “' + label + '” must be a whole number lower than its normal price.' };
+      }
+      const features = (Array.isArray(x?.features) ? x.features : []).slice(0, 8).map((f) => ({ en: str(f?.en, 90), ar: str(f?.ar, 90) })).filter((f) => f.en || f.ar);
+      out.packages.push({
+        id, price, name, name_ar, desc: str(x?.desc, 300), desc_ar: str(x?.desc_ar, 300), hidden: x?.hidden === true,
+        features, badge: str(x?.badge, 24), badge_ar: str(x?.badge_ar, 24), featured: x?.featured === true,
+        consult: x?.consult === undefined ? id === 'consultation' : x.consult === true,
+        sale_price, sale_ends: sale_price ? isoOrEmpty(x?.sale_ends) : '', image: imgOf(x?.image),
+      });
     }
+    for (const id of PKG_IDS) if (!out.packages.some((x) => x.id === id)) return { error: 'The two original packages cannot be removed. Hide them instead.' };
     if (out.packages.every((x) => x.hidden)) return { error: 'Keep at least one package visible.' };
+    let seenF = false; for (const x of out.packages) { if (x.featured && (seenF || x.hidden)) x.featured = false; if (x.featured) seenF = true; }   // one highlighted package
   }
+  // marketing: announcement bar, price note and promo codes
+  const bp = b.promo && typeof b.promo === 'object' ? b.promo : {};
+  const bn = bp.banner && typeof bp.banner === 'object' ? bp.banner : {};
+  const pids = new Set((out.packages || defaultPkgs()).map((x) => x.id));
+  const codes = []; const seenC = new Set();
+  if (Array.isArray(bp.codes)) {
+    if (bp.codes.length > 40) return { error: 'You can have up to 40 promo codes.' };
+    for (const c of bp.codes) {
+      const code = normCode(c?.code);
+      if (code.length < 3) return { error: 'Every promo code needs at least 3 letters or numbers.' };
+      if (seenC.has(code)) return { error: 'The promo code ' + code + ' is listed twice.' };
+      seenC.add(code);
+      const type = c?.type === 'fixed' ? 'fixed' : 'percent', value = Math.round(Number(c?.value));
+      if (!Number.isFinite(value) || value < 1 || (type === 'percent' ? value > 90 : value > 100000)) return { error: 'The discount of ' + code + ' must be ' + (type === 'percent' ? 'between 1% and 90%.' : 'a whole number of riyals.') };
+      codes.push({
+        code, type, value, active: c?.active !== false, combine: c?.combine !== false,
+        packages: (Array.isArray(c?.packages) ? c.packages : []).filter((id) => pids.has(id)),
+        starts_at: isoOrEmpty(c?.starts_at), ends_at: isoOrEmpty(c?.ends_at),
+        max_uses: Math.max(0, Math.min(100000, Math.round(Number(c?.max_uses)) || 0)), note: str(c?.note, 100), image: imgOf(c?.image),
+      });
+    }
+  }
+  out.promo = {
+    banner: { on: bn.on === true, en: str(bn.en, 160), ar: str(bn.ar, 160), ends_at: isoOrEmpty(bn.ends_at), image: imgOf(bn.image) },
+    note_en: str(bp.note_en, 200), note_ar: str(bp.note_ar, 200), codes,
+  };
+  if (out.promo.banner.on && !out.promo.banner.en && !out.promo.banner.ar) return { error: 'Write the announcement text, or switch the announcement bar off.' };
   out.review_name = ['choose', 'first', 'full', 'anon'].includes(b.review_name) ? b.review_name : 'choose';   // who decides how a reviewer's name appears
   if (b.review_questions === null || b.review_questions === undefined) out.review_questions = null;      // null = the standard review questions
   else {
@@ -441,13 +540,23 @@ export const DEFAULT_RQ = [
   { id: 'improve', type: 'text', required: false, en: 'What could we do better?', ar: 'ما الذي يمكننا تحسينه؟' },
 ];
 const publicSettings = (s) => {
-  const { templates, updated_at, questions, review_questions, review_name, ...rest } = upGreet(s) || emptySettings();
-  return { ...rest, packages: rest.packages || null, info: rest.info || null, questions: Array.isArray(questions) ? questions.filter((q) => !q.hidden).map(({ id, en, ar, required }) => ({ id, en, ar, required })) : null };
+  const { templates, updated_at, questions, review_questions, review_name, promo, ...rest } = upGreet(s) || emptySettings();
+  const bn = promo?.banner, t = Date.now();
+  const live = bn && bn.on && (bn.en || bn.ar) && !(bn.ends_at && Date.parse(bn.ends_at) <= t);
+  return {
+    ...rest, packages: rest.packages || null, info: rest.info || null, now: new Date(t).toISOString(),
+    promo: promo ? { banner: live ? { en: bn.en, ar: bn.ar, ends_at: bn.ends_at, image: bn.image || '' } : null, note_en: promo.note_en, note_ar: promo.note_ar, has_codes: promo.codes.some((c) => c.active && !(c.ends_at && Date.parse(c.ends_at) <= t)) } : null,
+    questions: Array.isArray(questions) ? questions.filter((q) => !q.hidden).map(({ id, en, ar, required }) => ({ id, en, ar, required })) : null,
+  };
 };
 
 async function handleAdminSettings(req, store) {
   const cur = upGreet(await store.get('settings')) || emptySettings();
-  if (req.method === 'GET') return json({ settings: cur });
+  if (req.method === 'GET') {
+    const uses = {};
+    for (const c of cur.promo?.codes || []) uses[c.code] = await promoUsed(store, c.code);
+    return json({ settings: cur, promo_uses: uses });
+  }
   if (req.method !== 'PUT') return fail(405, 'Method not allowed');
   const raw = await req.text();
   if (raw.length > MAX_SETTINGS + 20_000) return fail(413, 'Settings are too large. Remove a QR code or use smaller pictures.');
@@ -694,13 +803,57 @@ async function handleAdminReviews(req, store, sid) {
   return json({ review: next });
 }
 
-const OGTAGS = (origin, title, desc) => `<meta property="og:image" content="${H(origin)}/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
+const OGTAGS = (origin, title, desc, img) => `<meta property="og:image" content="${H(origin)}${H(img || '/og.png')}">${img ? '' : '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'}<meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
 
 /* a small page that WhatsApp shows with the Basirah logo; people who tap it go to the website */
-export async function handleShare(req) {
-  const origin = new URL(req.url).origin;
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Basirah · بصيرة</title>${OGTAGS(origin, 'Basirah · بصيرة', 'A guided personality insight assessment. Know yourself with clarity.')}<meta http-equiv="refresh" content="0;url=/"></head><body><a href="/">Basirah</a><script>location.replace('/')</script></body></html>`;
-  return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300' } });
+/* ---------------- marketing pictures (packages, offers, promo codes) ---------------- */
+const IMG_RE = /^\/api\/img\/[A-Za-z0-9_-]{10,40}\.(jpg|png|webp)$/;
+const imgOf = (v) => (typeof v === 'string' && IMG_RE.test(v) ? v : '');
+const IMG_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+const sniffImg = (b) => (b[0] === 0xff && b[1] === 0xd8 ? 'image/jpeg' : b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) ? 'image/png' : b.subarray(0, 4).toString() === 'RIFF' && b.subarray(8, 12).toString() === 'WEBP' ? 'image/webp' : '');
+async function handleAdminImage(req, store) {
+  if (req.method !== 'POST') return fail(405, 'Method not allowed');
+  const buf = Buffer.from(await req.arrayBuffer());
+  if (!buf.length) return fail(400, 'The picture is empty');
+  if (buf.length > 1_500_000) return fail(413, 'The picture is too large. Choose a smaller one.');
+  const type = sniffImg(buf);
+  if (!type) return fail(415, 'Please use a JPG, PNG or WebP picture.');
+  const id = randomBytes(12).toString('base64url');
+  await store.setBin('img/' + id, buf);
+  await store.set('imgmeta/' + id, { type, size: buf.length, at: now() });
+  return json({ path: '/api/img/' + id + '.' + IMG_EXT[type] });
+}
+export async function handleImage(req, store) {
+  const nf = () => new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  if (!['GET', 'HEAD'].includes(req.method)) return fail(405, 'Method not allowed');
+  const m = /^\/api\/img\/([A-Za-z0-9_-]{10,40})\.(jpg|png|webp)$/.exec(new URL(req.url).pathname);
+  if (!m) return nf();
+  const meta = await store.get('imgmeta/' + m[1]);
+  const buf = meta && (await store.getBin('img/' + m[1]));
+  if (!buf) return nf();
+  return new Response(req.method === 'HEAD' ? null : buf, { status: 200, headers: { 'content-type': meta.type, 'content-length': String(buf.length), 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'none'; sandbox" } });
+}
+
+export async function handleShare(req, store) {
+  const u = new URL(req.url), origin = u.origin;
+  const clean = (v) => String(v || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 24);
+  const code = clean(u.searchParams.get('code')), pkg = clean(u.searchParams.get('pkg'));
+  const qs = new URLSearchParams(); if (code) qs.set('code', code); if (pkg) qs.set('pkg', pkg);
+  const ann = u.searchParams.get('ann') === '1';
+  const dest = ann ? '/#pkgs' : qs.toString() ? '/?' + qs.toString() : '/';
+  let title = 'Basirah · بصيرة', desc = 'A guided personality insight assessment. Know yourself with clarity.', image = '';
+  try {
+    const set = store ? await store.get('settings') : null;
+    const c = code && Array.isArray(set?.promo?.codes) ? set.promo.codes.find((x) => x.code === code.toUpperCase()) : null;
+    const p = pkg && Array.isArray(set?.packages) ? set.packages.find((x) => x.id === pkg) : null;
+    const bn = set?.promo?.banner;
+    if (ann && bn && (bn.en || bn.ar)) { title = '📣 ' + (bn.en || bn.ar).slice(0, 80); desc = 'Basirah · بصيرة. Tap to see the packages.'; image = bn.image || ''; }
+    else if (c) { title = '🎁 A gift from Basirah'; desc = 'A gift is waiting for you. Your promo code is applied automatically.'; image = c.image || ''; }
+    if (!image && p) { title = p.name + ' · Basirah'; desc = (saleOn(p) ? 'Now SAR ' + p.sale_price + ' instead of SAR ' + p.price + '. ' : 'SAR ' + p.price + '. ') + (p.desc || ''); image = p.image || ''; }
+    else if (p && !c) { title = p.name + ' · Basirah'; }
+  } catch { /* the plain Basirah preview is used */ }
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${H(title)}</title>${OGTAGS(origin, title, desc.slice(0, 200), imgOf(image))}<meta http-equiv="refresh" content="0;url=${H(dest)}"></head><body><a href="${H(dest)}">Basirah</a><script>location.replace(${JSON.stringify(dest).replace(/</g, '\\u003c')})</script></body></html>`;
+  return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=120' } });
 }
 
 export async function handleReview(req, store) {
