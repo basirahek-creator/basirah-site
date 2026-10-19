@@ -167,7 +167,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
     const ch = { whatsapp: 'WhatsApp', email: 'email', copy: 'copied to send elsewhere' }[b.channel];
     if (!ch) return fail(400, 'Unknown channel');
     const t = now(), what = str(b.what, 80);
-    const next = { ...rec, history: [...rec.history, { at: t, by: 'admin', action: 'Message to client (' + ch + ')' + (what ? ': ' + what : '') }], last_contacted_at: t, updated_at: t };
+    const next = { ...rec, history: [...rec.history, { at: t, by: 'admin', action: 'Message to client (' + ch + ')' + (what ? ': ' + what : '') }], last_contacted_at: t, updated_at: t, ...(b.kind === 'delay' ? { delay_notice_at: t, delay_notices: (rec.delay_notices || 0) + 1 } : {}) };
     await store.set(keyOf(id), next);
     return json({ submission: next });
   }
@@ -333,9 +333,11 @@ export async function handleTranslate(req, env, fetchImpl = fetch) {
 
 /* ---------------- settings: WhatsApp lines, payment methods, message wording ---------------- */
 const KINDS = ['stc', 'bank', 'apple', 'qr', 'link', 'other'];
-const TEMPLATE_KEYS = ['received', 'payment_issue', 'report', 'report_file', 'consult', 'consult_confirm', 'review'];
+const TEMPLATE_KEYS = ['received', 'payment_issue', 'delay', 'report', 'report_file', 'consult', 'consult_confirm', 'review'];
 const MAX_SETTINGS = 1_100_000, MAX_QR = 250_000;
-export const DEFAULT_GREETING = { en: 'Hello, I would like to ask about the Basirah assessment.', ar: 'السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.' };
+const OLD_GREETING = { en: 'Hello, I would like to ask about the Basirah assessment.', ar: 'السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.' };
+export const DEFAULT_GREETING = { en: 'Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}', ar: 'السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}' };
+const upGreet = (s) => (s && s.wa_greeting ? { ...s, wa_greeting: { en: s.wa_greeting.en === OLD_GREETING.en ? DEFAULT_GREETING.en : s.wa_greeting.en, ar: s.wa_greeting.ar === OLD_GREETING.ar ? DEFAULT_GREETING.ar : s.wa_greeting.ar } } : s);
 const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, review_name: 'choose', packages: null, info: null, review_questions: null, updated_at: null });
 
 /* Saudi style numbers (05xxxxxxxx, 5xxxxxxxx, +966..., 00966...) become plain international digits for wa.me links. */
@@ -354,7 +356,7 @@ function cleanSettings(b, prev) {
   const out = emptySettings();
   out.business_name = str(b.business_name, 60) || 'Basirah';
   out.show_default_qr = b.show_default_qr !== false;
-  out.wa_greeting = { en: str(b.wa_greeting?.en, 300) || DEFAULT_GREETING.en, ar: str(b.wa_greeting?.ar, 300) || DEFAULT_GREETING.ar };
+  out.wa_greeting = { en: str(b.wa_greeting?.en, 500) || DEFAULT_GREETING.en, ar: str(b.wa_greeting?.ar, 500) || DEFAULT_GREETING.ar };
   const wa = Array.isArray(b.whatsapp) ? b.whatsapp.slice(0, 6) : [];
   for (const w of wa) {
     const number = normPhone(w?.number);
@@ -439,12 +441,12 @@ export const DEFAULT_RQ = [
   { id: 'improve', type: 'text', required: false, en: 'What could we do better?', ar: 'ما الذي يمكننا تحسينه؟' },
 ];
 const publicSettings = (s) => {
-  const { templates, updated_at, questions, review_questions, review_name, ...rest } = s || emptySettings();
+  const { templates, updated_at, questions, review_questions, review_name, ...rest } = upGreet(s) || emptySettings();
   return { ...rest, packages: rest.packages || null, info: rest.info || null, questions: Array.isArray(questions) ? questions.filter((q) => !q.hidden).map(({ id, en, ar, required }) => ({ id, en, ar, required })) : null };
 };
 
 async function handleAdminSettings(req, store) {
-  const cur = (await store.get('settings')) || emptySettings();
+  const cur = upGreet(await store.get('settings')) || emptySettings();
   if (req.method === 'GET') return json({ settings: cur });
   if (req.method !== 'PUT') return fail(405, 'Method not allowed');
   const raw = await req.text();

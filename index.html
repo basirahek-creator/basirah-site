@@ -439,7 +439,7 @@ footer .adm{display:block;margin-top:10px;color:#9fb5b0;font-size:13px;text-deco
 .wafab{bottom:calc(var(--nb) + max(8px,env(safe-area-inset-bottom)))}
 footer{padding-bottom:calc(34px + var(--nb))}
 #ov{padding-bottom:calc(var(--nb) + 24px + env(safe-area-inset-bottom,0px))!important}
-.cchk{bottom:calc(var(--nb) + 4px)}
+.cchk{bottom:8px}.cchk::after{content:"";position:absolute;inset-inline:0;top:100%;height:120px;background:var(--card);pointer-events:none}
 /* ---- kind words from clients ---- */
 .voices{background:linear-gradient(180deg,var(--cream),var(--sage));position:relative;overflow:hidden;padding:72px 0 64px}
 .voices[hidden]{display:none}
@@ -461,6 +461,11 @@ html[lang=ar] .vc blockquote{font:500 19px/1.9 'Tajawal',sans-serif;font-style:n
 .vnav{display:flex;justify-content:center;gap:10px}.vnav button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--teal);font-size:20px;cursor:pointer}.vnav button:hover{border-color:var(--teal)}
 @media(hover:hover){.vc{transition:transform .25s,box-shadow .25s}.vc:hover{transform:translateY(-4px);box-shadow:var(--sh2)}}
 @media(prefers-reduced-motion:reduce){.vc{transition:none}}
+
+/* ---- phone number with a country code ---- */
+.phr{display:flex;gap:8px;align-items:stretch;direction:ltr}
+.phr .ccs{flex:0 1 46%;min-width:0;text-overflow:ellipsis;font:inherit;color:var(--teal);background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 10px}
+.phr input{flex:1 1 54%;min-width:0}
 </style>
 </head>
 <body>
@@ -804,7 +809,7 @@ rNewH:"Start over?",rNewP:"This permanently deletes the answers saved on this de
 lvH:"Leave the assessment?",lvP:"Your answers are saved on this device, so you can continue later from where you stopped.",
 lvW:"Your answers can’t be saved on this device. They will be lost if you close or refresh this page.",lvOk:"Leave for now",lvKeep:"Keep going",
 eRecOn:"Please stop the recording before continuing.",
-eP:"Please enter a valid phone number (7 to 15 digits).",
+eP:"Please enter a valid phone number for the country you chose, or type the full number starting with +.",ccL:"Country code",cpNat:"Mobile number",
 rcPrep:"Preparing your receipt…",rmv:"Remove",qrAlt:"Payment QR code",
 eSend2:"We couldn’t send your submission. Check your connection and try again. Your answers and receipt are still here.",
 eOff:"You appear to be offline. Reconnect, then press the button again. Nothing has been lost.",
@@ -827,7 +832,7 @@ rNewH:"البدء من جديد؟",rNewP:"سيؤدي هذا إلى حذف الإ
 lvH:"مغادرة التقييم؟",lvP:"إجاباتك محفوظة على هذا الجهاز، ويمكنك المتابعة لاحقًا من حيث توقفت.",
 lvW:"تعذّر حفظ إجاباتك على هذا الجهاز، وستضيع إذا أغلقت الصفحة أو حدّثتها.",lvOk:"غادر الآن",lvKeep:"تابع الإجابة",
 eRecOn:"يرجى إيقاف التسجيل قبل المتابعة.",
-eP:"يرجى إدخال رقم هاتف صحيح (من 7 إلى 15 رقمًا).",
+eP:"يرجى إدخال رقم جوال صحيح للدولة المختارة، أو اكتب الرقم كاملًا بادئًا بـ +.",ccL:"رمز الدولة",cpNat:"رقم الجوال",
 rcPrep:"جارٍ تجهيز الإيصال…",rmv:"إزالة",qrAlt:"رمز QR للدفع",
 eSend2:"تعذّر إرسال طلبك. تحقق من اتصالك وحاول مجددًا. إجاباتك وإيصالك ما زالت هنا.",
 eOff:"يبدو أنك غير متصل بالإنترنت. أعد الاتصال ثم اضغط الزر مرة أخرى. لم يضع أي شيء.",
@@ -836,13 +841,13 @@ whatNext:"ما الذي سيحدث بعد ذلك",nx1:"نتحقق من دفعت�
 });
 
 Object.assign(T.en,{
-waChat:"Chat on WhatsApp",waPick:"Who would you like to message?",waWord:"WhatsApp",waHello:"Hello, I would like to ask about the Basirah assessment.",
+waChat:"Chat on WhatsApp",waPick:"Who would you like to message?",waWord:"WhatsApp",waHello:"Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}",
 payH2:"Choose how to pay",payS2:"Pay {p} using the details below, then upload your receipt. Your assessment is only accepted after payment is secured.",
 pNum:"Number",pMob:"Mobile number",pIban:"IBAN",pBank:"Bank",pHold:"Account name",pLink:"Open payment page",cpy:"Copy",cpd:"Copied",qrTap:"Tap to enlarge",
 payHelp:"Need help paying?",payHelpA:"Ask on WhatsApp",doneWaH:"Questions? Message us on WhatsApp",doneWaP:"Mention your confirmation code and we will help you straight away.",doneMsg:"Message us on WhatsApp",doneConsult:"Book my consultation"
 });
 Object.assign(T.ar,{
-waChat:"تواصل عبر واتساب",waPick:"من تريد أن تراسل؟",waWord:"واتساب",waHello:"السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.",
+waChat:"تواصل عبر واتساب",waPick:"من تريد أن تراسل؟",waWord:"واتساب",waHello:"السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}",
 payH2:"اختر طريقة الدفع",payS2:"ادفع {p} باستخدام البيانات أدناه، ثم ارفع إيصال الدفع. لا يُقبل تقييمك إلا بعد تأكيد الدفع.",
 pNum:"الرقم",pMob:"رقم الجوال",pIban:"رقم الآيبان",pBank:"البنك",pHold:"اسم الحساب",pLink:"فتح صفحة الدفع",cpy:"نسخ",cpd:"تم النسخ",qrTap:"اضغط للتكبير",
 payHelp:"تحتاج مساعدة في الدفع؟",payHelpA:"اسألنا عبر واتساب",doneWaH:"لديك سؤال؟ راسلنا عبر واتساب",doneWaP:"اذكر رمز التأكيد وسنساعدك فوراً.",doneMsg:"راسلنا عبر واتساب",doneConsult:"احجز استشارتي"
@@ -931,6 +936,15 @@ snd.onclick=()=>{sound=!sound;snd.textContent=sound?t('mute'):t('music');if(soun
 rp.onclick=play;
 new IntersectionObserver(e=>{if(e[0].isIntersecting&&!window._p){window._p=1;play()}},{threshold:.4}).observe(document.querySelector('.stage'));
 
+/* Country calling codes: [id, code, English name, Arabic name]. Saudi Arabia first, then the rest A to Z. */
+const CCS=[["SA","966","Saudi Arabia","السعودية"],["AE","971","United Arab Emirates","الإمارات"],["BH","973","Bahrain","البحرين"],["KW","965","Kuwait","الكويت"],["OM","968","Oman","عُمان"],["QA","974","Qatar","قطر"],["PH","63","Philippines","الفلبين"],["EG","20","Egypt","مصر"],["IN","91","India","الهند"],["PK","92","Pakistan","باكستان"],["BD","880","Bangladesh","بنغلاديش"],["LK","94","Sri Lanka","سريلانكا"],["NP","977","Nepal","نيبال"],["ID","62","Indonesia","إندونيسيا"],["JO","962","Jordan","الأردن"],["LB","961","Lebanon","لبنان"],["SY","963","Syria","سوريا"],["IQ","964","Iraq","العراق"],["YE","967","Yemen","اليمن"],["PS","970","Palestine","فلسطين"],["SD","249","Sudan","السودان"],
+["AF","93","Afghanistan","أفغانستان"],["AL","355","Albania","ألبانيا"],["DZ","213","Algeria","الجزائر"],["AR","54","Argentina","الأرجنتين"],["AM","374","Armenia","أرمينيا"],["AU","61","Australia","أستراليا"],["AT","43","Austria","النمسا"],["AZ","994","Azerbaijan","أذربيجان"],["BE","32","Belgium","بلجيكا"],["BA","387","Bosnia and Herzegovina","البوسنة والهرسك"],["BR","55","Brazil","البرازيل"],["BG","359","Bulgaria","بلغاريا"],["KH","855","Cambodia","كمبوديا"],["CM","237","Cameroon","الكاميرون"],["CA","1","Canada","كندا"],["CL","56","Chile","تشيلي"],["CN","86","China","الصين"],["CO","57","Colombia","كولومبيا"],["HR","385","Croatia","كرواتيا"],["CY","357","Cyprus","قبرص"],["CZ","420","Czechia","التشيك"],["DK","45","Denmark","الدنمارك"],["DJ","253","Djibouti","جيبوتي"],["EC","593","Ecuador","الإكوادور"],["ET","251","Ethiopia","إثيوبيا"],["FI","358","Finland","فنلندا"],["FR","33","France","فرنسا"],["GE","995","Georgia","جورجيا"],["DE","49","Germany","ألمانيا"],["GH","233","Ghana","غانا"],["GR","30","Greece","اليونان"],["HK","852","Hong Kong","هونغ كونغ"],["HU","36","Hungary","المجر"],["IR","98","Iran","إيران"],["IE","353","Ireland","أيرلندا"],["IT","39","Italy","إيطاليا"],["JP","81","Japan","اليابان"],["KZ","7","Kazakhstan","كازاخستان"],["KE","254","Kenya","كينيا"],["KR","82","South Korea","كوريا الجنوبية"],["KG","996","Kyrgyzstan","قيرغيزستان"],["LY","218","Libya","ليبيا"],["MY","60","Malaysia","ماليزيا"],["MV","960","Maldives","المالديف"],["MR","222","Mauritania","موريتانيا"],["MX","52","Mexico","المكسيك"],["MA","212","Morocco","المغرب"],["MM","95","Myanmar","ميانمار"],["NL","31","Netherlands","هولندا"],["NZ","64","New Zealand","نيوزيلندا"],["NG","234","Nigeria","نيجيريا"],["NO","47","Norway","النرويج"],["PE","51","Peru","بيرو"],["PL","48","Poland","بولندا"],["PT","351","Portugal","البرتغال"],["RO","40","Romania","رومانيا"],["RU","7","Russia","روسيا"],["SN","221","Senegal","السنغال"],["RS","381","Serbia","صربيا"],["SG","65","Singapore","سنغافورة"],["SO","252","Somalia","الصومال"],["ZA","27","South Africa","جنوب أفريقيا"],["ES","34","Spain","إسبانيا"],["SE","46","Sweden","السويد"],["CH","41","Switzerland","سويسرا"],["TW","886","Taiwan","تايوان"],["TZ","255","Tanzania","تنزانيا"],["TH","66","Thailand","تايلاند"],["TN","216","Tunisia","تونس"],["TR","90","Türkiye","تركيا"],["UG","256","Uganda","أوغندا"],["UA","380","Ukraine","أوكرانيا"],["GB","44","United Kingdom","المملكة المتحدة"],["US","1","United States","الولايات المتحدة"],["UZ","998","Uzbekistan","أوزبكستان"],["VN","84","Vietnam","فيتنام"],["ZM","260","Zambia","زامبيا"],["ZW","263","Zimbabwe","زيمبابوي"]];
+/* split "+63 917 123 4567" into its country and the rest; numbers without a plus use the fallback country */
+function ccSplit(v,fb){
+  const raw=String(v||'').trim().replace(/^00/,'+');
+  if(raw[0]==='+'){const d=raw.replace(/\D/g,'');let best=null;for(const c of CCS){if(d.startsWith(c[1])&&(!best||c[1].length>best[1].length))best=c}if(best)return{cc:best[0],dial:best[1],nat:d.slice(best[1].length)}}
+  const c=CCS.find(x=>x[0]===fb)||CCS[0];return{cc:c[0],dial:c[1],nat:raw.replace(/\D/g,'')};
+}
 /* ---------- WhatsApp and ways to pay (the admin sets these in Settings; if none are set the original QR code is used) ---------- */
 let BS=null;
 const safeHref=u=>/^https?:\/\//i.test(u||'')?u:'';
@@ -942,7 +956,7 @@ const WAMSG={
   help:s=>lang==='ar'?'السلام عليكم، أحتاج مساعدة في الدفع لتقييمي ('+s+').':'Hello, I need help with my payment for assessment '+s+'.',
   done:s=>lang==='ar'?'السلام عليكم، أرسلت للتو تقييمي في بصيرة. رمز التأكيد الخاص بي هو '+s+'.':'Hello, I have just submitted my Basirah assessment. My confirmation code is '+s+'.',
   consult:s=>lang==='ar'?'السلام عليكم، أرغب في حجز موعد الاستشارة الخاصة بي. رمز التأكيد: '+s+'.':'Hello, I would like to book my consultation. My confirmation code is '+s+'.',
-  hello:()=>(BS&&BS.wa_greeting&&BS.wa_greeting[lang])||t('waHello')};
+  hello:()=>((BS&&BS.wa_greeting&&BS.wa_greeting[lang])||t('waHello')).replace(/\{site\}/g,location.origin+'/s')};
 const WAICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.1 8.4c-.5 0-1 .5-1 1.3 0 1.7 2.7 5 5.3 5.5.9.2 1.6-.4 1.7-1l.1-.5-1.7-.8-.8.7c-1.1-.4-2.2-1.5-2.6-2.6l.7-.8-.7-1.6z" fill="currentColor"/></svg>';
 
 /* round button that stays on every page; one number opens WhatsApp, several open a small list */
@@ -1077,6 +1091,11 @@ const upc=new Map();   // uploads that already succeeded, so a retry never uploa
 const mw=document.getElementById('mw');
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const ascii=v=>v.replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632).replace(/[۰-۹]/g,c=>c.charCodeAt(0)-1776);
+const isPh=()=>S.cm!=='email';
+const ccName=c=>lang==='ar'?c[3]:c[2];
+const cvVal=()=>{const i=document.getElementById('cv');if(!i)return S.cv;const v=i.value;if(!isPh()||!document.getElementById('ccsel'))return v;
+  const nat=ascii(v).trim();if(nat[0]==='+'||nat.startsWith('00')){const sp=ccSplit(nat);return '+'+sp.dial+' '+sp.nat}
+  const d=nat.replace(/\D/g,'').replace(/^0+/,'');return d?'+'+(CCS.find(c=>c[0]===S.cc)||CCS[0])[1]+' '+d:''};
 const validPhone=v=>/^\+?[\d\s().-]+$/.test(v)&&v.replace(/\D/g,'').length>=7&&v.replace(/\D/g,'').length<=15;
 const revoke=u=>{if(u)try{URL.revokeObjectURL(u)}catch(e){}};
 
@@ -1155,6 +1174,11 @@ function head(){
   `<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(p)}"><b style="width:${p}%"></b></div></div>`;
 }
 const rcHTML=()=>S.rc?`<div class="rcp">${S.rcThumb?`<img src="${S.rcThumb}" alt="">`:''}<span>✓ ${t('rcOk',{f:esc(S.rcName)})} · ${Math.max(1,Math.round(S.rc.size/1024))} KB</span><button type="button" class="t" id="rcx">${t('rmv')}</button></div>`:'';
+function phoneRow(){
+  const sp=ccSplit(S.cv,S.cc);if(String(S.cv||'').trim()[0]==='+')S.cc=sp.cc;else if(!S.cc)S.cc='SA';
+  const opts=CCS.map(c=>`<option value="${c[0]}" ${c[0]===S.cc?'selected':''}>+${c[1]} · ${esc(ccName(c))}</option>`).join('');
+  return `<div class="phr"><select id="ccsel" class="ccs" aria-label="${esc(t('ccL'))}" autocomplete="tel-country-code">${opts}</select><input id="cv" type="tel" inputmode="tel" autocomplete="tel-national" dir="ltr" style="text-align:start" placeholder="${t('cpNat')}" value="${esc(sp.nat)}"></div>`;
+}
 function draw(){
   let h=head();
   mw.classList.toggle('busy',S.busy);
@@ -1188,7 +1212,7 @@ function draw(){
     h+=`<h2 class="q" id="qh">${t('cH')}</h2><p class="sub" style="margin-bottom:18px">${t('cS')}</p>`+
     `<div class="fld"><label for="fn">${t('fnL')}</label><input id="fn" type="text" autocomplete="name" placeholder="${t('fnPh')}" value="${esc(S.fn)}"></div>`+
     o.map(x=>`<label class="opt${S.cm===x[0]?' a':''}"><input type="radio" name="cm" value="${x[0]}" ${S.cm===x[0]?'checked':''}>${t(x[1])}</label>`).join("")+
-    `<div class="fld" style="margin-top:18px"><label for="cv">${t(cur[3])}</label><input id="cv" type="${cur[2]}" autocomplete="${cur[4]}" dir="ltr" style="text-align:start" placeholder="${t(cur[3])}" value="${esc(S.cv)}"></div><div class="err" id="er" role="alert"></div><div class="nav"><button class="btn o" id="pv">${t('prev')}</button><button class="btn" id="nx">${t('cont')}</button></div>`;
+    `<div class="fld" style="margin-top:18px"><label for="cv">${t(cur[3])}</label>${S.cm==='email'?`<input id="cv" type="${cur[2]}" autocomplete="${cur[4]}" dir="ltr" style="text-align:start" placeholder="${t(cur[3])}" value="${esc(S.cv)}">`:phoneRow()}</div><div class="err" id="er" role="alert"></div><div class="nav"><button class="btn o" id="pv">${t('prev')}</button><button class="btn" id="nx">${t('cont')}</button></div>`;
   }else if(S.step==="pack"){
     h+=`<h2 class="q" id="qh">${t('pkgH')}</h2>`+PK.map(x=>`<label class="opt pko${S.pk===x.id?' a':''}"><input type="radio" name="pk" value="${x.id}" ${S.pk===x.id?'checked':''}><span class="ot"><strong>${t('n'+x.i)}</strong><span class="sub" style="font-size:15px">${t('k'+x.i)}</span></span><b class="pp">${t('cur',{p:x.p})}</b></label>`).join("")+
     `<div class="nav"><button class="btn o" id="pv">${t('prev')}</button><button class="btn" id="nx">${t('toPay')}</button></div>`;
@@ -1262,7 +1286,7 @@ function submit(){
 function sync(){
   const g=id=>document.getElementById(id);
   if(S.step==='q'&&g('ta'))S.ans[S.i].text=g('ta').value;
-  if(S.step==='contact'&&g('cv')){S.cv=g('cv').value;S.fn=g('fn').value}
+  if(S.step==='contact'&&g('cv')){S.cv=cvVal();S.fn=g('fn').value}
   if(S.step==='pay'&&g('rf'))S.ref=g('rf').value;
 }
 function wire(){
@@ -1293,7 +1317,7 @@ function wire(){
       const tick=()=>{const s2=Math.floor((Date.now()-t0)/1000),r=g('rs');if(r)r.textContent=t('rNow')+' '+Math.floor(s2/60)+':'+String(s2%60).padStart(2,'0')};tick();recTimer=setInterval(tick,500)}
     catch(e){er(t('eMic'),'rb')}
   };
-  mw.querySelectorAll('input[name=cm]').forEach(r=>r.onchange=()=>{S.cv=g('cv').value;S.fn=g('fn').value;S.cm=r.value;focusNext='input[name=cm]:checked';draw()});
+  mw.querySelectorAll('input[name=cm]').forEach(r=>r.onchange=()=>{const was=isPh();S.cv=cvVal();S.fn=g('fn').value;S.cm=r.value;if(was!==isPh())S.cv='';focusNext='input[name=cm]:checked';draw()});
   const showRc=()=>{const el=g('rcs');if(!el)return;el.innerHTML=rcHTML();const x=g('rcx');if(x)x.onclick=()=>{revoke(S.rcThumb);S.rc=null;S.rcName='';S.rcThumb='';g('rcf').value='';showRc();g('rcf').focus()}};
   showRc();
   if(g('rcf'))g('rcf').onchange=async e=>{
@@ -1313,7 +1337,7 @@ function wire(){
   mw.querySelectorAll('input[name=pk]').forEach(r=>r.onchange=()=>{S.pk=r.value;focusNext='input[name=pk]:checked';draw()});
   mw.oninput=e=>{
     const el=e.target;
-    if(el.id==='ta'){S.ans[S.i].text=el.value;if(S.ans[S.i].skip){S.ans[S.i].skip=false;const n=document.getElementById('skn');if(n)n.remove()}}else if(el.id==='fn')S.fn=el.value;else if(el.id==='cv')S.cv=el.value;else if(el.id==='rf')S.ref=el.value;else return;
+    if(el.id==='ta'){S.ans[S.i].text=el.value;if(S.ans[S.i].skip){S.ans[S.i].skip=false;const n=document.getElementById('skn');if(n)n.remove()}}else if(el.id==='fn')S.fn=el.value;else if(el.id==='cv')S.cv=cvVal();else if(el.id==='ccsel'){S.cc=el.value;S.cv=cvVal()}else if(el.id==='rf')S.ref=el.value;else return;
     el.removeAttribute('aria-invalid');queueSave();
   };
   mw.onkeydown=e=>{
@@ -1347,7 +1371,7 @@ function wire(){
       if(a.mode==='type'?!a.text.trim()&&!(a.skip&&!a.req):!a.audio&&!(a.skip&&!a.req))return er(t('eAns'),a.mode==='type'?'ta':'rb');
       if(S.fromReview||S.i===N-1){S.step='review';S.fromReview=false}else S.i++;
     }else if(S.step==='contact'){
-      S.fn=g('fn').value.trim();S.cv=g('cv').value.trim();
+      S.fn=g('fn').value.trim();S.cv=cvVal().trim();
       if(!S.fn)return er(t('eFn'),'fn');
       if(!S.cv)return er(t('eC'),'cv');
       if(S.cm==='email'){if(!/^\S+@\S+\.\S+$/.test(S.cv))return er(t('eE'),'cv')}

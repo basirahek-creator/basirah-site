@@ -228,7 +228,7 @@ details[open]>summary::after{content:"–"}
 .cfgw .panel{padding:20px 22px}
 .cfgw .panel>h2{padding:0 0 2px}
 .cfgw .panel>p.hint{padding:0 0 14px}
-.crow{display:grid;grid-template-columns:1fr 1fr 1.1fr auto;gap:10px;align-items:end;margin-bottom:12px}
+.crow{display:grid;grid-template-columns:1fr 1fr 2.2fr auto;gap:10px;align-items:end;margin-bottom:12px}
 @media(max-width:700px){.crow{grid-template-columns:1fr 1fr}.crow .fld.num2{grid-column:1/-1}}
 .pm{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px;background:var(--cream)}
 .pm .ph{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -295,6 +295,20 @@ details[open]>summary::after{content:"–"}
 .rva{margin:12px 0;display:grid;gap:8px}.rva div{font-size:14.5px}.rva span{color:var(--sub);display:block;font-size:13px}.rvf{background:var(--sage);border-radius:14px;padding:14px;margin-top:12px}
 .tabs{display:flex;gap:6px;margin:4px 0 16px}.tabs button{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:7px 16px;font-weight:700}.tabs button[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
 .on-site{background:var(--greenbg);color:var(--green)}
+
+.phr{display:flex;gap:8px;direction:ltr}.phr .ccs{flex:0 1 44%;min-width:0;text-overflow:ellipsis}.phr input{flex:1 1 56%;min-width:0}
+
+.al{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-radius:16px;padding:12px 16px;margin:0 0 16px;font-weight:700;border:1.5px solid}
+.al.late{background:var(--redbg);color:var(--red);border-color:var(--red)}.al.soon{background:var(--amberbg);color:var(--amber);border-color:var(--amber)}
+.al .ic{width:26px;height:26px;flex:none}.al .t{flex:1;min-width:200px}.al .t small{display:block;font-weight:500;opacity:.9}.al[hidden]{display:none}
+.al.late .ic{animation:ring 1.6s ease-in-out infinite;transform-origin:50% 0}@keyframes ring{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(9deg)}40%{transform:rotate(-6deg)}}
+@media(prefers-reduced-motion:reduce){.al.late .ic{animation:none}}
+.dq{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}.dq .cd{flex:1;min-width:150px;cursor:default}
+.dq .cd.late{border-color:var(--red)}.dq .cd.late .v{color:var(--red)}.dq .cd.soon{border-color:var(--amber)}.dq .cd.soon .v{color:var(--amber)}
+.rm{padding:14px 18px;margin:0 0 16px}.rm .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.rm select{width:auto}
+.pb{height:6px;border-radius:99px;background:var(--greybg);overflow:hidden;margin-top:6px;min-width:90px}.pb i{display:block;height:100%;background:var(--green);border-radius:99px}.pb.soon i{background:var(--amber)}.pb.late i{background:var(--red)}
+.nt{font-size:12.5px;color:var(--sub);display:block;margin-top:3px}
+.ra{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -324,7 +338,7 @@ const span=ms=>{const a=Math.abs(ms),h=Math.floor(a/HOUR),m=Math.floor(a%HOUR/6e
 const ago=iso=>span(Date.now()-Date.parse(iso));
 const ICON={
  home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
- chart:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 3L2 6M19 3l3 3"/>',chart:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
  out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>',
  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
  qs:'<path d="M9 9a3 3 0 115 2c-1 .8-2 1.2-2 3M12 18h.01"/><circle cx="12" cy="12" r="10"/>',
@@ -347,7 +361,7 @@ async function load(silent){
   if(st.loading)return;st.loading=true;if(!silent){st.error='';renderBody()}
   try{const j=await api('GET','/submissions');st.subs=j.submissions;st.loaded=true;st.error='';st.at=new Date();if(st.pendingOpen){const p=st.pendingOpen;st.pendingOpen=null;setTimeout(()=>openDrawer(p.id,p.tpl),0)}}
   catch(e){if(e.handled)return;st.error=e.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':e.message;if(!silent)st.loaded=st.loaded}
-  finally{st.loading=false;if(st.token){renderNav();renderBody();if(!st.cfg)loadCfg().then(()=>renderBody()).catch(()=>{})}}
+  finally{st.loading=false;if(st.token){renderNav();renderBody();checkAlarms();if(!st.cfg)loadCfg().then(()=>renderBody()).catch(()=>{})}}
 }
 
 /* ============ derived data ============ */
@@ -381,7 +395,7 @@ function renderNav(){
   $$('[data-v]',nav).forEach(b=>b.onclick=()=>go(b.dataset.v));
 }
 function go(v,f){st.view=v;if(v==='reviews')st.reviews=null;if(f)Object.assign(st,{q:'',fPay:'',fRep:'',fPkg:'',page:1},f);history.replaceState(null,'','#'+v);renderNav();renderBody();window.scrollTo(0,0)}
-function head(t,p,acts=''){return `<div class="hd"><div><h1>${t}</h1><p>${p}</p></div><div class="acts">${st.at?`<span class="upd">Updated ${st.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>`:''}${acts}<button class="ib" id="rf" aria-label="Refresh" title="Refresh">${st.loading?'<span class="sp"></span>':ic('refresh')}</button></div></div>`}
+function head(t,p,acts=''){return `<div class="hd"><div><h1>${t}</h1><p>${p}</p></div><div class="acts">${st.at?`<span class="upd">Updated ${st.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>`:''}${acts}<button class="ib" id="rf" aria-label="Refresh" title="Refresh">${st.loading?'<span class="sp"></span>':ic('refresh')}</button></div></div>${st.view==='delivery'?'':alarmHtml()}`}
 function bindHead(){const r=$('#rf');if(r)r.onclick=()=>load()}
 function errBanner(){return st.error?`<div class="banner" role="alert"><span>${esc(st.error)}</span><button class="btn sm o" id="retry">Try again</button></div>`:''}
 function bindErr(){const r=$('#retry');if(r)r.onclick=()=>load()}
@@ -472,18 +486,78 @@ function exportCsv(){
 
 /* ============ delivery queue ============ */
 const NEXT={not_started:['Start preparing','in_progress'],in_progress:['Mark ready','ready'],ready:['Mark delivered','delivered']};
+
+/* ---------- due dates: banner, tab badge, alerts and calendar reminders ---------- */
+const REMKEY='ba_rem',ALKEY='ba_al';
+const remPrefs=()=>{try{return{on:false,sound:true,lead:3,...JSON.parse(localStorage.getItem(REMKEY)||'{}')}}catch(e){return{on:false,sound:true,lead:3}}};
+const saveRem=o=>{try{localStorage.setItem(REMKEY,JSON.stringify(o))}catch(e){}};
+const dueState=s=>{const du=dueAt(s);if(du===null)return null;const left=du-Date.now();return left<0?'late':left<=remPrefs().lead*HOUR?'soon':'ok'};
+function alarmInfo(){const q=D().queue,late=q.filter(s=>dueState(s)==='late'),soon=q.filter(s=>dueState(s)==='soon');
+  const next=[...soon,...late].sort((a,b)=>dueAt(a)-dueAt(b))[0];return{late,soon,next,n:late.length+soon.length}}
+function alarmHtml(){
+  if(!st.loaded)return '<div class="al" id="alarm" hidden></div>';
+  const a=alarmInfo();if(!a.n)return '<div class="al" id="alarm" hidden></div>';
+  const cls=a.late.length?'late':'soon';
+  const parts=[a.late.length?a.late.length+' report'+(a.late.length===1?' is':'s are')+' overdue':'',a.soon.length?a.soon.length+' due within '+remPrefs().lead+' hour'+(remPrefs().lead===1?'':'s'):''].filter(Boolean).join(' · ');
+  const w=a.next;const wl=dueAt(w)-Date.now();
+  return `<div class="al ${cls}" id="alarm" role="alert">${ic('clock','ic')}<span class="t">${parts}<small>Most urgent: ${esc(w.full_name)} · ${wl<0?'overdue by '+span(-wl):'due in '+span(wl)}</small></span><button class="btn sm ${cls==='late'?'':'o'}" data-go-queue>Open delivery queue</button></div>`;
+}
+function updateAlarm(){
+  const a=alarmInfo();document.title=(a.n?'('+a.n+') ':'')+'Basirah Admin';
+  const el=$('#alarm');if(!el)return;const fresh=document.createElement('div');fresh.innerHTML=alarmHtml();el.replaceWith(fresh.firstElementChild);
+}
+function beep(){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.25,c.currentTime+.03);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.6);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.65);setTimeout(()=>c.close(),900)}catch(e){}}
+function checkAlarms(){
+  if(!st.token||!st.loaded)return;updateAlarm();
+  const pr=remPrefs();if(!pr.on)return;
+  let seen={};try{seen=JSON.parse(localStorage.getItem(ALKEY)||'{}')}catch(e){}
+  const live={};const fresh=[];
+  for(const s of D().queue){const k=dueState(s);if(!k||k==='ok')continue;live[s.id]=k;if(seen[s.id]!==k)fresh.push([s,k])}
+  if(fresh.length||Object.keys(seen).some(i=>!live[i])){try{localStorage.setItem(ALKEY,JSON.stringify(live))}catch(e){}}
+  if(!fresh.length)return;
+  const late=fresh.filter(x=>x[1]==='late'),n=fresh.length;
+  const title=late.length?(late.length===1?late[0][0].full_name+' is overdue':late.length+' reports are overdue'):(n===1?fresh[0][0].full_name+' is due soon':n+' reports are due soon');
+  const body='Open the delivery queue to send the report, or tell the client about a delay.';
+  toast('⏰ '+title,!!late.length);if(pr.sound)beep();
+  try{if('Notification' in window&&Notification.permission==='granted'&&document.hidden){const nt=new Notification(title,{body,icon:'/admin/icons/icon-192.png',tag:'basirah-due'});nt.onclick=()=>{window.focus();go('delivery');nt.close()}}}catch(e){}
+}
+setInterval(checkAlarms,30000);
+document.addEventListener('click',e=>{if(e.target.closest('[data-go-queue]'))go('delivery')});
+function icsFor(list){
+  const z=t=>new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');const esc2=x=>String(x).replace(/([,;\\])/g,'\\$1').replace(/\n/g,'\\n');
+  const ev=list.map(s=>{const du=dueAt(s);return ['BEGIN:VEVENT','UID:'+s.id+'@basirah','DTSTAMP:'+z(Date.now()),'DTSTART:'+z(du-30*60000),'DTEND:'+z(du),'SUMMARY:'+esc2('Send Basirah report: '+s.full_name),'DESCRIPTION:'+esc2(PK[s.package].name+' · '+s.contact_method+': '+s.contact+' · code '+s.id),
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2('Due soon: '+s.full_name),'TRIGGER:-PT3H','END:VALARM','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2('Due in 1 hour: '+s.full_name),'TRIGGER:-PT1H','END:VALARM','END:VEVENT'].join('\r\n')}).join('\r\n');
+  return 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Basirah//Delivery//EN\r\nCALSCALE:GREGORIAN\r\n'+ev+'\r\nEND:VCALENDAR\r\n';
+}
+function downloadIcs(list,name){const b=new Blob([icsFor(list)],{type:'text/calendar'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
 function vDelivery(m){
   if(!st.loaded&&!st.error){m.innerHTML=head('Delivery queue','Loading…')+loadingRows();return}
   if(!st.loaded){m.innerHTML=head('Delivery queue','')+errBanner();return}
-  const d=D(),q=[...d.queue].sort((a,b)=>dueAt(a)-dueAt(b));
-  m.innerHTML=head('Delivery queue','Verified clients still waiting for their report, most urgent first.')+errBanner()+(q.length?
-   `<div class="panel"><div class="tw"><table><thead><tr><th>Client</th><th>Package</th><th>Payment verified</th><th>Due</th><th>Report</th><th>Consultation</th><th><span class="vh">Action</span></th></tr></thead><tbody>${q.map(s=>{const du=dueAt(s),late=du<Date.now();return `
-   <tr data-open="${esc(s.id)}" tabindex="0"><td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2" dir="ltr">${esc(s.contact_method)} · ${esc(s.contact)}${s.has_report?' · report drafted':''}</span></td>
+  const d=D(),q=[...d.queue].sort((a,b)=>dueAt(a)-dueAt(b)),pr=remPrefs();
+  const late=q.filter(s=>dueState(s)==='late'),soon=q.filter(s=>dueState(s)==='soon'),ok=q.length-late.length-soon.length;
+  const row=s=>{const du=dueAt(s),left=du-Date.now(),k=dueState(s),pc=Math.max(0,Math.min(100,100-left/DAY*100));
+    const sent=s.delay_notice_at?`<span class="nt">Delay notice sent ${ago(s.delay_notice_at)} ago</span>`:'';
+    return `<tr data-open="${esc(s.id)}" tabindex="0"><td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2" dir="ltr">${esc(s.contact_method)} · ${esc(s.contact)}${s.has_report?' · report drafted':''}</span></td>
    <td data-l="Package">${esc(PK[s.package].name)}</td><td data-l="Verified">${fmtD(s.verified_at)}</td>
-   <td data-l="Due"><b class="r ${late?'late':du-Date.now()<4*HOUR?'soon':''}">${late?'Overdue '+span(Date.now()-du):'In '+span(du-Date.now())}</b></td>
+   <td data-l="Due"><b class="r ${k==='late'?'late':k==='soon'?'soon':''}">${left<0?'Overdue '+span(-left):'In '+span(left)}</b><div class="pb ${k==='ok'?'':k}" aria-hidden="true"><i style="width:${pc}%"></i></div>${sent}</td>
    <td data-l="Report">${badge(REPL,s.report_status)}</td><td data-l="Consultation">${s.consult_status?esc(CONL[s.consult_status]):'—'}</td>
-   <td><button class="btn sm ${s.report_status==='ready'?'':'o'}" data-next="${esc(s.id)}">${NEXT[s.report_status][0]}</button></td></tr>`}).join('')}</tbody></table></div></div>`
+   <td><div class="ra"><button class="btn sm ${s.report_status==='ready'?'':'o'}" data-next="${esc(s.id)}">${NEXT[s.report_status][0]}</button>${k!=='ok'?`<button class="btn sm ${k==='late'&&!s.delay_notice_at?'':'o'}" data-delay="${esc(s.id)}">${s.delay_notice_at?'Send another notice':'Notify of delay'}</button>`:''}<button class="ib" data-ics="${esc(s.id)}" aria-label="Add a calendar reminder for ${esc(s.full_name)}" title="Add a reminder to your phone calendar">${ic('clock')}</button></div></td></tr>`};
+  m.innerHTML=head('Delivery queue','Verified clients still waiting for their report, most urgent first.')+alarmHtml()+errBanner()+(q.length?
+   `<div class="dq"><div class="cd ${late.length?'late':''}"><span class="k">Overdue</span><span class="v">${late.length}</span><span class="s">${late.length?'Tell these clients about the delay':'Nothing overdue'}</span></div><div class="cd ${soon.length?'soon':''}"><span class="k">Due within ${pr.lead} hour${pr.lead===1?'':'s'}</span><span class="v">${soon.length}</span><span class="s">Finish these next</span></div><div class="cd"><span class="k">On track</span><span class="v">${ok}</span><span class="s">More than ${pr.lead} hours left</span></div></div>
+   <section class="panel rm"><div class="row"><label class="chk" style="margin:0"><input type="checkbox" id="remon" ${pr.on?'checked':''}><span><b>Alert me</b> when a report is nearly due or overdue</span></label>
+    <span class="seg"><label style="margin-inline-end:6px" for="remlead">Warn me</label><select id="remlead">${[1,2,3,6].map(h=>`<option value="${h}" ${pr.lead===h?'selected':''}>${h} hour${h===1?'':'s'} before</option>`).join('')}</select></span>
+    <label class="chk" style="margin:0"><input type="checkbox" id="remsnd" ${pr.sound?'checked':''}><span>Play a soft sound</span></label>
+    <button class="btn sm o" id="icsall">Add all to my calendar</button></div>
+    <p class="hint" style="margin-top:8px">Alerts work while Basirah Admin is open on your phone or computer (a pinned tab or the phone app is fine). For an alarm that rings even when the app is closed, use the clock button on a client, or <b>Add all to my calendar</b>, and your phone calendar will remind you 3 hours and 1 hour before each deadline.</p></section>
+   <div class="panel"><div class="tw"><table><thead><tr><th>Client</th><th>Package</th><th>Payment verified</th><th>Due</th><th>Report</th><th>Consultation</th><th><span class="vh">Action</span></th></tr></thead><tbody>${q.map(row).join('')}</tbody></table></div></div>`
    :`<div class="panel empty">${ic('send')}<h3>All caught up</h3><p>No verified clients are waiting for a report. New ones appear here once you verify their payment.</p><button class="btn o" id="topay">Review payments</button></div>`);
+  const rp=()=>({...remPrefs()});
+  const ro=$('#remon');if(ro)ro.onchange=async()=>{const o=rp();o.on=ro.checked;if(o.on&&'Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}saveRem(o);try{localStorage.removeItem(ALKEY)}catch(e){}toast(o.on?(('Notification' in window&&Notification.permission==='denied')?'Alerts are on inside the app. Allow notifications in your browser to also get pop-ups.':'Alerts are on'):'Alerts are off');if(o.on&&o.sound)beep()};
+  const rl=$('#remlead');if(rl)rl.onchange=()=>{const o=rp();o.lead=+rl.value;saveRem(o);try{localStorage.removeItem(ALKEY)}catch(e){}renderBody()};
+  const rs=$('#remsnd');if(rs)rs.onchange=()=>{const o=rp();o.sound=rs.checked;saveRem(o);if(o.sound)beep()};
+  const ia=$('#icsall');if(ia)ia.onclick=e=>{e.stopPropagation();downloadIcs(q,'basirah-deadlines.ics');toast('Open the downloaded file to add every deadline to your calendar')};
+  $$('[data-ics]',m).forEach(b=>b.onclick=e=>{e.stopPropagation();const s=st.subs.find(x=>x.id===b.dataset.ics);downloadIcs([s],'basirah-'+s.id+'.ics');toast('Open the downloaded file to add the reminder to your calendar')});
+  $$('[data-delay]',m).forEach(b=>b.onclick=e=>{e.stopPropagation();openDrawer(b.dataset.delay,'delay')});
   $$('tbody tr',m).forEach(tr=>{tr.onclick=()=>openDrawer(tr.dataset.open);tr.onkeydown=e=>{if(e.target===tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openDrawer(tr.dataset.open)}}});
   $$('[data-next]',m).forEach(b=>b.onclick=async e=>{e.stopPropagation();const s=st.subs.find(x=>x.id===b.dataset.next),[lbl,to]=NEXT[s.report_status];
     if(to==='delivered'&&!await confirmBox({title:'Mark as delivered?',body:`Only do this once the report has been sent to ${s.full_name} (${s.contact_method}: ${s.contact}).`,ok:'Yes, it was sent'}))return;
@@ -841,14 +915,27 @@ function summaryView(s){
 function toLocalInput(iso){const d=new Date(iso),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
 
 /* ============ settings + messages to clients ============ */
+/* Country calling codes: [id, code, English name, Arabic name]. Saudi Arabia first, then the rest A to Z. */
+const CCS=[["SA","966","Saudi Arabia","السعودية"],["AE","971","United Arab Emirates","الإمارات"],["BH","973","Bahrain","البحرين"],["KW","965","Kuwait","الكويت"],["OM","968","Oman","عُمان"],["QA","974","Qatar","قطر"],["PH","63","Philippines","الفلبين"],["EG","20","Egypt","مصر"],["IN","91","India","الهند"],["PK","92","Pakistan","باكستان"],["BD","880","Bangladesh","بنغلاديش"],["LK","94","Sri Lanka","سريلانكا"],["NP","977","Nepal","نيبال"],["ID","62","Indonesia","إندونيسيا"],["JO","962","Jordan","الأردن"],["LB","961","Lebanon","لبنان"],["SY","963","Syria","سوريا"],["IQ","964","Iraq","العراق"],["YE","967","Yemen","اليمن"],["PS","970","Palestine","فلسطين"],["SD","249","Sudan","السودان"],
+["AF","93","Afghanistan","أفغانستان"],["AL","355","Albania","ألبانيا"],["DZ","213","Algeria","الجزائر"],["AR","54","Argentina","الأرجنتين"],["AM","374","Armenia","أرمينيا"],["AU","61","Australia","أستراليا"],["AT","43","Austria","النمسا"],["AZ","994","Azerbaijan","أذربيجان"],["BE","32","Belgium","بلجيكا"],["BA","387","Bosnia and Herzegovina","البوسنة والهرسك"],["BR","55","Brazil","البرازيل"],["BG","359","Bulgaria","بلغاريا"],["KH","855","Cambodia","كمبوديا"],["CM","237","Cameroon","الكاميرون"],["CA","1","Canada","كندا"],["CL","56","Chile","تشيلي"],["CN","86","China","الصين"],["CO","57","Colombia","كولومبيا"],["HR","385","Croatia","كرواتيا"],["CY","357","Cyprus","قبرص"],["CZ","420","Czechia","التشيك"],["DK","45","Denmark","الدنمارك"],["DJ","253","Djibouti","جيبوتي"],["EC","593","Ecuador","الإكوادور"],["ET","251","Ethiopia","إثيوبيا"],["FI","358","Finland","فنلندا"],["FR","33","France","فرنسا"],["GE","995","Georgia","جورجيا"],["DE","49","Germany","ألمانيا"],["GH","233","Ghana","غانا"],["GR","30","Greece","اليونان"],["HK","852","Hong Kong","هونغ كونغ"],["HU","36","Hungary","المجر"],["IR","98","Iran","إيران"],["IE","353","Ireland","أيرلندا"],["IT","39","Italy","إيطاليا"],["JP","81","Japan","اليابان"],["KZ","7","Kazakhstan","كازاخستان"],["KE","254","Kenya","كينيا"],["KR","82","South Korea","كوريا الجنوبية"],["KG","996","Kyrgyzstan","قيرغيزستان"],["LY","218","Libya","ليبيا"],["MY","60","Malaysia","ماليزيا"],["MV","960","Maldives","المالديف"],["MR","222","Mauritania","موريتانيا"],["MX","52","Mexico","المكسيك"],["MA","212","Morocco","المغرب"],["MM","95","Myanmar","ميانمار"],["NL","31","Netherlands","هولندا"],["NZ","64","New Zealand","نيوزيلندا"],["NG","234","Nigeria","نيجيريا"],["NO","47","Norway","النرويج"],["PE","51","Peru","بيرو"],["PL","48","Poland","بولندا"],["PT","351","Portugal","البرتغال"],["RO","40","Romania","رومانيا"],["RU","7","Russia","روسيا"],["SN","221","Senegal","السنغال"],["RS","381","Serbia","صربيا"],["SG","65","Singapore","سنغافورة"],["SO","252","Somalia","الصومال"],["ZA","27","South Africa","جنوب أفريقيا"],["ES","34","Spain","إسبانيا"],["SE","46","Sweden","السويد"],["CH","41","Switzerland","سويسرا"],["TW","886","Taiwan","تايوان"],["TZ","255","Tanzania","تنزانيا"],["TH","66","Thailand","تايلاند"],["TN","216","Tunisia","تونس"],["TR","90","Türkiye","تركيا"],["UG","256","Uganda","أوغندا"],["UA","380","Ukraine","أوكرانيا"],["GB","44","United Kingdom","المملكة المتحدة"],["US","1","United States","الولايات المتحدة"],["UZ","998","Uzbekistan","أوزبكستان"],["VN","84","Vietnam","فيتنام"],["ZM","260","Zambia","زامبيا"],["ZW","263","Zimbabwe","زيمبابوي"]];
+/* split "+63 917 123 4567" into its country and the rest; numbers without a plus use the fallback country */
+function ccSplit(v,fb){
+  const raw=String(v||'').trim().replace(/^00/,'+');
+  if(raw[0]==='+'){const d=raw.replace(/\D/g,'');let best=null;for(const c of CCS){if(d.startsWith(c[1])&&(!best||c[1].length>best[1].length))best=c}if(best)return{cc:best[0],dial:best[1],nat:d.slice(best[1].length)}}
+  const c=CCS.find(x=>x[0]===fb)||CCS[0];return{cc:c[0],dial:c[1],nat:raw.replace(/\D/g,'')};
+}
+
+const ccSel=(forId,val)=>{const sp=ccSplit(val&&/^\s*(\+|00)/.test(val)?val:'');const has=!!(val&&/^\s*(\+|00)/.test(val));return `<select class="ccs" data-ccfor="${forId}" aria-label="Country code">${CCS.map(c=>`<option value="${c[0]}" ${(has?c[0]===sp.cc:c[0]==='SA')?'selected':''}>+${c[1]} · ${esc(c[2])}</option>`).join('')}</select>`};
 const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(raw.startsWith('00'))d=d.slice(2);else if(/^05\d{8}$/.test(d))d='966'+d.slice(1);else if(/^5\d{8}$/.test(d))d='966'+d;return d.length>=8&&d.length<=15?d:''};
-const showPh=d=>d?'+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4'):'';
+const showPh=d=>{if(!d)return '';if(/^966\d{9}$/.test(d))return '+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4');const sp=ccSplit('+'+d);return '+'+sp.dial+' '+sp.nat};
 const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {business} 🌿\nبصيرة… لترى نفسك بوضوح.';
 const DEF_TPL={
  received:{en:'Peace be upon you, {name} 🌿\nYour journey with {business} has begun. We have received your assessment ({code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
   ar:'السلام عليكم يا {name} 🌿\nبدأت رحلتك مع {business}. وصلنا تقييمك ({code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
  payment_issue:{en:'Hello {name} 🌿\nWe are almost there. We could not yet match the payment for your assessment ({code}).\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 🤍\n\n{site}'+SIGEN,
   ar:'مرحباً {name} 🌿\nنوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك ({code}).\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 🤍\n\n{site}'+SIGAR},
+ delay:{en:'Dear {name} 🌿\nWe are truly sorry. Your {business} insight ({code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 🤍\n\n{site}'+SIGEN,
+  ar:'عزيزي {name} 🌿\nنعتذر منك من القلب. تأخّرت بصيرتك من {business} ({code}) عن الموعد الذي وعدناك به، ونقدّر وقتك وثقتك كثيراً.\n\nنمنح تقريرك العناية التي يستحقها، وسيصلك {newdue}. شكراً لصبرك وتفهّمك. وإن كان لديك أمر عاجل فراسلنا هنا ونحن بجانبك مباشرة 🤍\n\n{site}'+SIGAR},
  report:{en:'{name}, your insight is ready ✨\nA mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
   ar:'{name}، بصيرتك جاهزة ✨\nمرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
  report_file:{en:'{name}, your insight is ready ✨\nYour {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
@@ -859,7 +946,7 @@ const DEF_TPL={
   ar:'{name}، تم تأكيد استشارتك ✨\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
  review:{en:'{name}, we hope your insight brought you clarity 🌟\nYour honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 🤍'+SIGEN,
   ar:'{name}، نأمل أن بصيرتك قد منحتك وضوحاً 🌟\nكلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 🤍'+SIGAR}};
-const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time',review:'Ask for a review'};
+const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',delay:'Report delay (apology)',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time',review:'Ask for a review'};
 const KIND_PRESETS={stc:['STC Pay','STC Pay'],bank:['Bank transfer (IBAN)','تحويل بنكي (IBAN)'],apple:['Apple Pay','Apple Pay'],qr:['QR code','رمز QR'],link:['Pay online','الدفع عبر الإنترنت'],other:['Other','أخرى']};
 const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR code',link:'Payment link',other:'Other'};
 
@@ -873,9 +960,14 @@ async function loadCfg(force){
   return st.cfg;
 }
 const tplEffective=(key,lang)=>((st.cfg&&st.cfg.templates&&st.cfg.templates[key]&&st.cfg.templates[key][lang])||DEF_TPL[key][lang]);
+st.delayH=st.delayH||12;
+function newDue(lang){const t=new Date(Date.now()+st.delayH*HOUR);const day=new Date(t);day.setHours(0,0,0,0);const today=new Date();today.setHours(0,0,0,0);const diff=Math.round((day-today)/DAY);
+  const tm=t.toLocaleTimeString(lang==='ar'?'ar-SA':'en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  const dd=diff<=0?(lang==='ar'?'اليوم':'today'):diff===1?(lang==='ar'?'غداً':'tomorrow'):t.toLocaleDateString(lang==='ar'?'ar-SA':'en-GB',{weekday:'long',day:'numeric',month:'long'});
+  return lang==='ar'?'بإذن الله '+dd+' قبل الساعة '+tm:'by '+dd+' at '+tm}
 function tplVars(s,lang){
   const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
-  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d};
+  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d,newdue:newDue(lang)};
 }
 const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
 const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='review'&&!s.review_link?'The review link could not be created. Try again.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
@@ -886,21 +978,22 @@ function mstate(s){
   return st.mc;
 }
 function composer(s){
-  const m=mstate(s),keys=['received','payment_issue','report','report_file','review',...(s.package==='consultation'?['consult','consult_confirm']:[])];
+  const m=mstate(s),keys=['received','payment_issue','delay','report','report_file','review',...(s.package==='consultation'?['consult','consult_confirm']:[])];
   const blocked=m.tpl?tplBlocked(m.tpl,s):'',isEmail=s.contact_method==='Email'&&/@/.test(s.contact),B=st.busy?'disabled':'';
   const hasPh=!!normPh(m.phone);
   return `<section class="sec" id="msc"><h3>Message the client</h3>${s.delivered_at&&!s.review_at&&!s.review_requested_at?`<div class="note" style="margin:0 0 10px">✨ The report has been delivered. This is the right moment to ask for a review. <button type="button" class="chip" style="padding:2px 12px" data-do="tpl" data-v="review">Ask for a review</button></div>`:''}${s.review_at?`<p class="hint" style="margin-bottom:8px">⭐ Review received ${fmtD(s.review_at)}. <button type="button" class="chip" style="padding:2px 12px" data-go-reviews>See it</button></p>`:s.review_requested_at?`<p class="hint" style="margin-bottom:8px">Review link created ${fmtD(s.review_requested_at)}. No review yet.</p>`:''}
    <div class="chips" role="group" aria-label="Message type">${keys.map(k=>`<button type="button" class="chip" data-do="tpl" data-v="${k}" aria-pressed="${m.tpl===k}">${TPL_NAMES[k]}</button>`).join('')}<button type="button" class="chip" data-do="tpl" data-v="custom" aria-pressed="${m.tpl==='custom'}">Write my own</button></div>
    <div class="mtop"><span class="hint">Language of the message</span><span class="seg" role="group" aria-label="Message language"><button type="button" data-do="lang" data-v="en" aria-pressed="${m.lang==='en'}">English</button><button type="button" data-do="lang" data-v="ar" aria-pressed="${m.lang==='ar'}">العربية</button></span></div>
+   ${m.tpl==='delay'?`<div class="fld" style="margin:10px 0 0"><label for="dlh">New delivery time promised to the client</label><select id="dlh">${[[3,'Within 3 hours'],[6,'Within 6 hours'],[12,'Within 12 hours'],[24,'Within 24 hours'],[48,'Within 48 hours']].map(([h,l])=>`<option value="${h}" ${st.delayH===h?'selected':''}>${l}</option>`).join('')}</select><span class="ph2">Choose a time you can really keep. The message is updated for you.</span></div>`:''}
    <textarea id="mt" dir="auto" aria-label="Message" placeholder="Choose a message type above, or write your own here.">${esc(m.text)}</textarea>
    ${m.tpl==='report_file'&&!blocked?`<div class="note" style="background:var(--sage);color:var(--txt)" role="status"><b>To attach the PDF:</b> 1. <button type="button" class="chip" style="padding:2px 12px" data-do="dlpdf">Download the PDF</button> 2. Press <b>Open WhatsApp</b> 3. In the chat, tap the paperclip and choose the file.</div>`:''}
    ${blocked?`<div class="note" role="status">${esc(blocked)}${m.tpl==='report'?` <a href="${studioUrl(s)}" target="_blank" rel="noopener" style="color:inherit;font-weight:700">Open the studio</a>`:''}</div>`:''}
-   <div class="fld" style="margin-top:10px"><label for="mph">WhatsApp number</label><input id="mph" type="text" inputmode="tel" dir="ltr" value="${esc(m.phone)}" placeholder="e.g. 0551234567"><span class="ph2" id="mphn">${s.contact_method==='Email'&&!m.phone?'This client chose email. Add a number only if they gave you one.':hasPh?'Will open WhatsApp chat with '+showPh(normPh(m.phone)):m.phone?'This number does not look right.':''}</span></div>
+   <div class="fld" style="margin-top:10px"><label for="mph">WhatsApp number</label><div class="phr">${ccSel('mph',m.phone)}<input id="mph" type="text" inputmode="tel" dir="ltr" value="${esc(m.phone)}" placeholder="+63 917 123 4567"></div><span class="ph2" id="mphn">${s.contact_method==='Email'&&!m.phone?'This client chose email. Add a number only if they gave you one.':hasPh?'Will open WhatsApp chat with '+showPh(normPh(m.phone)):m.phone?'This number does not look right.':''}</span></div>
    <div class="row" style="margin-top:10px"><button class="btn" data-do="wa" ${B} ${!m.text.trim()||!hasPh||blocked?'disabled':''}>Open WhatsApp</button>${isEmail?`<button class="btn o" data-do="mail" ${B} ${!m.text.trim()||blocked?'disabled':''}>Email</button>`:''}<button class="btn o" data-do="copy" ${!m.text.trim()?'disabled':''}>Copy message</button></div>
    <p class="hint" style="margin-top:8px">WhatsApp opens with the message ready. Check it, then press send there.</p></section>`;
 }
 async function logContact(s,channel){
-  try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/contact',{channel,what:st.mc&&st.mc.tpl&&st.mc.tpl!=='custom'?TPL_NAMES[st.mc.tpl]:'Own message'});patchLocal(j.submission);drawer()}catch(e){if(!e.handled)toast('Opened, but the note could not be saved in the activity list.',true)}
+  try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/contact',{channel,kind:st.mc&&st.mc.tpl==='delay'?'delay':'',what:st.mc&&st.mc.tpl&&st.mc.tpl!=='custom'?TPL_NAMES[st.mc.tpl]:'Own message'});patchLocal(j.submission);drawer()}catch(e){if(!e.handled)toast('Opened, but the note could not be saved in the activity list.',true)}
 }
 async function ensureRv(s){if(s.review_link)return;try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/review-link');s.review_link=j.review_link;s.review_requested_at=j.review_link.requested_at;patchLocal(j.submission);if(st.detail&&st.detail.id===s.id){st.detail.review_link=j.review_link;st.detail.review_requested_at=j.review_link.requested_at}}catch(e){if(!e.handled)toast(e.message,true)}}
 async function drawerAction(e){
@@ -923,6 +1016,7 @@ async function drawerAction(e){
 document.addEventListener('click',e=>{if(e.target.closest('[data-go-reviews]')){st.openId=null;st.detail=null;if(typeof closeDrawer==='function')closeDrawer();go('reviews')}});
 function drawerInput(e){
   const s=st.detail;if(!s||s.error)return;const m=mstate(s);
+  if(e.target.id==='dlh'){st.delayH=+e.target.value;if(m.tpl==='delay'){m.text=tplFill('delay',m.lang,s);const t=$('#mt');if(t)t.value=m.text}return}
   if(e.target.id==='mt'){m.text=e.target.value;const dis=!m.text.trim();$$('#msc [data-do=wa],#msc [data-do=mail],#msc [data-do=copy]').forEach(x=>{if(x.dataset.do==='copy')x.disabled=dis;else if(x.dataset.do==='wa')x.disabled=dis||!normPh(m.phone)||!!(m.tpl&&tplBlocked(m.tpl,s));else x.disabled=dis||!!(m.tpl&&tplBlocked(m.tpl,s))})}
   if(e.target.id==='mph'){m.phone=e.target.value;const ph=normPh(m.phone),n=$('#mphn');if(n)n.textContent=ph?'Will open WhatsApp chat with '+showPh(ph):m.phone?'This number does not look right.':'';const w=$('#msc [data-do=wa]');if(w)w.disabled=!ph||!m.text.trim()||!!(m.tpl&&tplBlocked(m.tpl,s))}
 }
@@ -938,7 +1032,7 @@ function vSettings(m){
   const d=st.cfgDraft;m.dataset.cv='settings';
   const waRows=d.whatsapp.map((w,i)=>`<div class="crow" data-i="${i}"><div class="fld"><label for="wl${i}">Name (English)</label><input id="wl${i}" type="text" data-k="whatsapp.${i}.label" value="${esc(w.label)}" maxlength="40" placeholder="e.g. Consultations"></div>
     <div class="fld"><label for="wa${i}">Name (Arabic)</label><input id="wa${i}" type="text" dir="rtl" data-k="whatsapp.${i}.label_ar" value="${esc(w.label_ar)}" maxlength="40" placeholder="مثال: الاستشارات"></div>
-    <div class="fld num2"><label for="wn${i}">Number</label><input id="wn${i}" type="text" inputmode="tel" dir="ltr" data-k="whatsapp.${i}.number" value="${esc(w.number&&/^966/.test(w.number)?'+'+w.number:w.number)}" placeholder="0551234567"><span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
+    <div class="fld num2"><label for="wn${i}">Number</label><div class="phr">${ccSel('wn'+i,w.number?'+'+String(w.number).replace(/^\+/,''):'')}<input id="wn${i}" type="text" inputmode="tel" dir="ltr" data-k="whatsapp.${i}.number" value="${esc(w.number?(/^\d+$/.test(w.number)?'+'+w.number:w.number):'')}" placeholder="+966 55 123 4567"></div><span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
     <div class="row" style="padding-bottom:20px"><a class="btn sm o" data-test="${i}" href="#" rel="noopener">Test</a><button class="ib" data-rm="whatsapp.${i}" aria-label="Remove this number" title="Remove">${ic('x')}</button></div></div>`).join('');
   const qrHtml=(p,i)=>`<div class="qrs">${p.qr.map((q,j)=>`<div class="qrc"><div class="im"><img src="${esc(q.src)}" alt="QR code ${j+1}"><button data-rm="payments.${i}.qr.${j}" aria-label="Remove this QR code">×</button></div><input type="text" data-k="payments.${i}.qr.${j}.caption" value="${esc(q.caption)}" maxlength="60" placeholder="Caption (optional)" aria-label="Caption"></div>`).join('')}${p.qr.length<4?`<button class="qadd" data-qr="${i}">+ Add a QR code<br><span style="font-weight:400;font-size:12.5px">PNG or JPG</span></button>`:''}</div>`;
   const pmCards=d.payments.map((p,i)=>{
@@ -962,7 +1056,7 @@ function vSettings(m){
    <section class="panel"><h2>WhatsApp numbers</h2><p class="hint">Clients can message you on WhatsApp from the website, and from the confirmation screen after they submit. Add one number or several (for example one for consultations and one for support). Normal WhatsApp and WhatsApp Business numbers both work.</p>
     ${waRows||'<p class="hint" style="margin-bottom:12px">No numbers yet. The WhatsApp button stays hidden on the website until you add one.</p>'}
     ${d.whatsapp.length<6?'<button class="btn sm o" id="addwa">+ Add a WhatsApp number</button>':''}
-    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><div class="fld"><label for="wge">First message clients send (English)</label><textarea id="wge" style="min-height:70px" data-k="wa_greeting.en" maxlength="300">${esc(d.wa_greeting.en)}</textarea></div><div class="fld"><label for="wga">First message clients send (Arabic)</label><textarea id="wga" dir="rtl" style="min-height:70px" data-k="wa_greeting.ar" maxlength="300">${esc(d.wa_greeting.ar)}</textarea></div></div></section>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><div class="fld"><label for="wge">First message clients send (English)</label><textarea id="wge" style="min-height:130px" data-k="wa_greeting.en" maxlength="500">${esc(d.wa_greeting.en)}</textarea></div><div class="fld"><label for="wga">First message clients send (Arabic)</label><textarea id="wga" dir="rtl" style="min-height:130px" data-k="wa_greeting.ar" maxlength="500">${esc(d.wa_greeting.ar)}</textarea></div></div></section>
    <section class="panel"><h2>Ways to pay</h2><p class="hint">Clients see these on the payment step and choose one. Add as many as you like: STC Pay, bank transfer, Apple Pay or any payment link, and several QR codes.</p>
     <label class="chk"><input type="checkbox" data-k="show_default_qr" ${d.show_default_qr?'checked':''}><span>Also show the original QR code that is already on the website<span class="hint" style="display:block;font-weight:400">Untick this when your new methods replace it.</span></span></label>
     ${pmCards||'<p class="hint" style="margin-bottom:12px">No extra methods yet. Clients see the original QR code.</p>'}
@@ -995,6 +1089,12 @@ function vSettings(m){
     if(b.id==='csave')saveCfg(b);
   };
 }
+
+/* country code pickers: choosing a country writes its code at the start of the number; typing a code picks the country */
+document.addEventListener('change',e=>{const sel=e.target.closest&&e.target.closest('.ccs[data-ccfor]');if(!sel)return;const inp=document.getElementById(sel.dataset.ccfor);if(!inp)return;
+  const c=CCS.find(x=>x[0]===sel.value)||CCS[0],cur=inp.value.trim(),sp=/^(\+|00)/.test(cur)?ccSplit(cur):{nat:cur.replace(/\D/g,'')};
+  inp.value='+'+c[1]+' '+String(sp.nat||'').replace(/^0+/,'');inp.dispatchEvent(new Event('input',{bubbles:true}));inp.focus()});
+document.addEventListener('input',e=>{const inp=e.target;if(!inp.id||!/^(mph|wn\d+)$/.test(inp.id))return;const sel=document.querySelector('.ccs[data-ccfor="'+inp.id+'"]');if(sel&&/^\s*(\+|00)/.test(inp.value)){const sp=ccSplit(inp.value);if(sel.value!==sp.cc&&CCS.find(c=>c[0]===sel.value)[1]!==sp.dial)sel.value=sp.cc}});
 const redrawCfg=()=>(st.view==='questions'?vQuestions:st.view==='packages'?vPackages:st.view==='reviews'?vReviews:vSettings)($('#main'));
 async function saveCfg(btn){
   const d=clone(st.cfgDraft);
