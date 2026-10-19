@@ -7,6 +7,12 @@ export const PACKAGES = {
   profile: { name: 'Full Personality Profile', price: 200 },
   consultation: { name: 'Full Analysis + 1-to-1 Consultation', price: 400 },
 };
+export const PKG_IDS = ['profile', 'consultation'];
+const priceFor = async (store, pkg) => {
+  const set = await store.get('settings');
+  const p = Array.isArray(set?.packages) ? set.packages.find((x) => x.id === pkg) : null;
+  return p ? p.price : PACKAGES[pkg].price;
+};
 export const PAYMENT = ['pending', 'verified', 'rejected'];
 export const REPORT = ['not_started', 'in_progress', 'ready', 'delivered'];
 export const CONSULT = ['not_scheduled', 'scheduled', 'completed'];
@@ -42,7 +48,7 @@ export async function handleSubmit(req, store) {
   const t = now();
   const rec = {
     id, source: 'site', created_at: t, updated_at: t,
-    full_name: name, package: pkg, price_sar: PACKAGES[pkg].price,
+    full_name: name, package: pkg, price_sar: await priceFor(store, pkg),
     contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
     payment_reference: str(b.payment_reference, 200), payment_receipt: str(b.payment_receipt, 2000), payment_method: str(b.payment_method, 80),
     language: b.language === 'ar' ? 'ar' : 'en', answers,
@@ -108,6 +114,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   if (parts[0] === 'docs') return handleDocs(req, store, parts[1]);
   if (parts[0] === 'translate') return handleTranslate(req, env);
   if (parts[0] === 'settings') return handleAdminSettings(req, store);
+  if (parts[0] === 'reviews') return handleAdminReviews(req, store, parts[1]);
   if (parts[0] !== 'submissions') return fail(404, 'Not found');
   const id = parts[1];
 
@@ -127,7 +134,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
     const t = now(), when = b.created_at && !isNaN(Date.parse(b.created_at)) ? new Date(b.created_at).toISOString() : t;
     const nid = 'BSR-M' + randomBytes(3).toString('hex').toUpperCase().slice(0, 5);
     const rec = {
-      id: nid, source: 'manual', created_at: when, updated_at: t, full_name: name, package: pkg, price_sar: PACKAGES[pkg].price,
+      id: nid, source: 'manual', created_at: when, updated_at: t, full_name: name, package: pkg, price_sar: await priceFor(store, pkg),
       contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
       payment_reference: str(b.payment_reference, 200), payment_receipt: str(b.payment_receipt, 2000), language: 'en', answers: [], consent_at: null, consent_language: 'en',
       payment_status: 'pending', report_status: 'not_started', consult_status: pkg === 'consultation' ? 'not_scheduled' : null, consult_at: null,
@@ -142,6 +149,19 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   if (!rec) return fail(404, 'Submission not found');
 
   if (parts[2] === 'pdf') return handlePdf(req, store, rec);
+  if (parts[2] === 'review-link' && m === 'POST') {        // a private link where this client can leave a review
+    let meta = await store.get('rvmeta/' + id);
+    const t = now();
+    if (!meta) {
+      let token; do { token = randomBytes(8).toString('base64url'); } while (await store.get('rvtok/' + token));
+      meta = { token, sid: id, requested_at: t };
+      await store.set('rvtok/' + token, { sid: id }); await store.set('rvmeta/' + id, meta);
+      const next = { ...rec, review_requested_at: t, updated_at: t, history: [...rec.history, { at: t, by: 'admin', action: 'Review link created' }] };
+      await store.set(keyOf(id), next);
+      return json({ review_link: { token: meta.token, path: '/v/' + meta.token, requested_at: t }, submission: next });
+    }
+    return json({ review_link: { token: meta.token, path: '/v/' + meta.token, requested_at: meta.requested_at }, submission: rec });
+  }
   if (parts[2] === 'contact' && m === 'POST') {            // a message to the client was started: keep a note in the history
     let b = {}; try { b = await req.json(); } catch {}
     const ch = { whatsapp: 'WhatsApp', email: 'email', copy: 'copied to send elsewhere' }[b.channel];
@@ -155,11 +175,14 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   if (m === 'GET') {
     const d = await store.get('doc/r-' + id);
     const pm = await store.get('pdfmeta/' + id);
-    return json({ submission: rec, report_link: d ? { id: d.id, title: d.title || '', updatedAt: d.updatedAt || 0 } : null, pdf_link: pm ? pdfLink(pm) : null });
+    const rm = await store.get('rvmeta/' + id);
+    return json({ submission: rec, report_link: d ? { id: d.id, title: d.title || '', updatedAt: d.updatedAt || 0 } : null, pdf_link: pm ? pdfLink(pm) : null, review_link: rm ? { token: rm.token, path: '/v/' + rm.token, requested_at: rm.requested_at } : null });
   }
 
   if (m === 'DELETE') {
+    await dropFiles(store, rec);                       // the client's voice answers and receipt go too
     await store.delete(keyOf(id)); await store.delete('doc/r-' + id); await dropPdf(store, id);
+    await dropReview(store, id);
     return json({ ok: true });
   }
 
@@ -238,23 +261,70 @@ async function handleDocs(req, store, id) {
 }
 
 /* Optional machine translation for the studio. Needs ANTHROPIC_API_KEY on the server; without it the studio falls back to paste-in translation. */
+/* Free fallback: no key and no cost. Uses the public MyMemory service (about 5,000 characters a day without an account). Plain text only, so bold and italic are lost. */
+function chunkText(t, max = 420) {
+  const parts = t.match(/[^.!?؟۔\n]+[.!?؟۔]*\s*|\n+/g) || [t], out = [];
+  let cur = '';
+  for (const p of parts) {
+    if ((cur + p).length > max && cur) { out.push(cur); cur = ''; }
+    if (p.length > max) { for (let i = 0; i < p.length; i += max) out.push(p.slice(i, i + max)); } else cur += p;
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+async function freeTranslate(texts, to, fetchImpl) {
+  const pair = to === 'ar' ? 'en|ar' : 'ar|en';
+  const one = async (chunk) => {
+    if (!chunk.trim() || !/[\p{L}]/u.test(chunk)) return chunk;
+    const r = await fetchImpl('https://api.mymemory.translated.net/get?langpair=' + encodeURIComponent(pair) + '&q=' + encodeURIComponent(chunk));
+    const j = await r.json().catch(() => null);
+    const out = j?.responseData?.translatedText;
+    if (!r.ok || !out || (j.responseStatus && Number(j.responseStatus) !== 200) || /MYMEMORY WARNING/i.test(out)) {
+      const e = new Error(/MYMEMORY WARNING|ALL AVAILABLE FREE/i.test(String(out)) || r.status === 429 ? 'quota' : 'failed'); e.status = r.status; throw e;
+    }
+    return out;
+  };
+  const result = [];
+  for (const t of texts) {
+    const chunks = chunkText(String(t));
+    const done = new Array(chunks.length);
+    let next = 0;
+    await Promise.all(Array.from({ length: Math.min(4, chunks.length) }, async () => { while (next < chunks.length) { const i = next++; done[i] = await one(chunks[i]); } }));
+    result.push(done.join(''));
+  }
+  return result;
+}
+
 export async function handleTranslate(req, env, fetchImpl = fetch) {
   if (req.method === 'GET') return json({ enabled: !!env.ANTHROPIC_API_KEY });
   if (req.method !== 'POST') return fail(405, 'Method not allowed');
-  if (!env.ANTHROPIC_API_KEY) return fail(503, 'Automatic translation is not set up on the server', { code: 'capability_disabled' });
   let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
+  if (Array.isArray(b.texts)) {                                       // the free route: a list of plain texts and the language to translate into
+    if (b.texts.length > 60 || b.texts.some((x) => typeof x !== 'string') || b.texts.join('').length > 12_000) return fail(400, 'The text is empty or too long', { code: 'prompt_too_large' });
+    try { return json({ result: await freeTranslate(b.texts, b.to === 'ar' ? 'ar' : 'en', fetchImpl), engine: 'free' }); }
+    catch (e) {
+      if (e.message === 'quota') return fail(429, 'The free translator has reached its limit for today', { code: 'rate_limited', detail: 'The free translator is full for today. Try again tomorrow, or use the paste option.' });
+      return fail(502, 'The free translator did not answer', { code: 'failed', detail: 'The free translator did not answer. Try again in a minute.' });
+    }
+  }
+  if (!env.ANTHROPIC_API_KEY) return fail(503, 'Automatic translation is not set up on the server', { code: 'capability_disabled' });
   const prompt = typeof b.prompt === 'string' ? b.prompt : '';
   if (!prompt || prompt.length > 30_000) return fail(400, 'The text is empty or too long', { code: 'prompt_too_large' });
   let r;
   try {
-    r = await fetchImpl('https://api.anthropic.com/v1/messages', {
+    // Netlify can supply its own key and address for Claude (its AI gateway), so use the address it gives when there is one
+    r = await fetchImpl((env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com').replace(/\/+$/, '') + '/v1/messages', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({ model: env.TRANSLATE_MODEL || 'claude-sonnet-5-5', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
     });
-  } catch { return fail(502, 'Could not reach the translation service'); }
+  } catch (e) { return fail(502, 'Could not reach the translation service', { code: 'failed', detail: String(e?.message || e).slice(0, 160) }); }
   if (r.status === 429) return fail(429, 'Too many requests', { code: 'rate_limited' });
-  if (!r.ok) return fail(502, 'The translation service returned an error', { code: 'failed' });
+  if (!r.ok) {
+    let why = ''; try { const j = await r.json(); why = (j?.error?.type ? j.error.type + ': ' : '') + (j?.error?.message || ''); } catch {}
+    console.error('translate failed', r.status, why);
+    return fail(502, 'The translation service returned an error', { code: 'failed', detail: ('HTTP ' + r.status + (why ? ' - ' + why : '')).slice(0, 220) });   // shown to the signed-in admin only
+  }
   const data = await r.json();
   const text = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
   let result; try { result = JSON.parse(text); } catch { return fail(502, 'The translation could not be read', { code: 'invalid_json' }); }
@@ -263,10 +333,10 @@ export async function handleTranslate(req, env, fetchImpl = fetch) {
 
 /* ---------------- settings: WhatsApp lines, payment methods, message wording ---------------- */
 const KINDS = ['stc', 'bank', 'apple', 'qr', 'link', 'other'];
-const TEMPLATE_KEYS = ['received', 'payment_issue', 'report', 'report_file', 'consult', 'consult_confirm'];
+const TEMPLATE_KEYS = ['received', 'payment_issue', 'report', 'report_file', 'consult', 'consult_confirm', 'review'];
 const MAX_SETTINGS = 1_100_000, MAX_QR = 250_000;
 export const DEFAULT_GREETING = { en: 'Hello, I would like to ask about the Basirah assessment.', ar: 'السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.' };
-const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, updated_at: null });
+const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, review_name: 'choose', packages: null, info: null, review_questions: null, updated_at: null });
 
 /* Saudi style numbers (05xxxxxxxx, 5xxxxxxxx, +966..., 00966...) become plain international digits for wa.me links. */
 export function normPhone(v) {
@@ -320,6 +390,38 @@ function cleanSettings(b, prev) {
     }
     if (!out.questions.some((q) => !q.hidden)) return { error: 'Keep at least one question visible.' };
   }
+  if (b.packages === null || b.packages === undefined) out.packages = null;           // null = the two original packages built into the website
+  else {
+    if (!Array.isArray(b.packages)) return { error: 'Invalid packages' };
+    out.packages = [];
+    for (const id of PKG_IDS) {
+      const x = b.packages.find((y) => y?.id === id) || {};
+      const price = Math.round(Number(x.price));
+      if (!Number.isFinite(price) || price < 1 || price > 100000) return { error: 'The price of “' + PACKAGES[id].name + '” must be a whole number between 1 and 100000.' };
+      const name = str(x.name, 80), name_ar = str(x.name_ar, 80);
+      if (!name || !name_ar) return { error: 'Write the name of package ' + (PKG_IDS.indexOf(id) + 1) + ' in both English and Arabic.' };
+      out.packages.push({ id, price, name, name_ar, desc: str(x.desc, 300), desc_ar: str(x.desc_ar, 300), hidden: x.hidden === true });
+    }
+    if (out.packages.every((x) => x.hidden)) return { error: 'Keep at least one package visible.' };
+  }
+  out.review_name = ['choose', 'first', 'full', 'anon'].includes(b.review_name) ? b.review_name : 'choose';   // who decides how a reviewer's name appears
+  if (b.review_questions === null || b.review_questions === undefined) out.review_questions = null;      // null = the standard review questions
+  else {
+    if (!Array.isArray(b.review_questions) || b.review_questions.length > 20) return { error: 'You can have up to 20 review questions.' };
+    const seen = new Set(); out.review_questions = [];
+    for (const [i, q] of b.review_questions.entries()) {
+      const en = str(q?.en, 300), ar = str(q?.ar, 300);
+      if (!en && !ar) return { error: 'Review question ' + (i + 1) + ' is empty. Write it, or delete it.' };
+      let id = tid(q.id); while (seen.has(id)) id = randomBytes(4).toString('hex'); seen.add(id);
+      out.review_questions.push({ id, en, ar, type: RQ_TYPES.includes(q.type) ? q.type : 'text', required: q.required === true, hidden: q.hidden === true });
+    }
+    if (!out.review_questions.some((q) => !q.hidden)) return { error: 'Keep at least one review question visible.' };
+  }
+  if (b.info === null || b.info === undefined) out.info = null;
+  else {
+    const i = b.info, v = (k) => str(i?.[k], 80);
+    out.info = { duration_en: v('duration_en'), duration_ar: v('duration_ar'), delivery_en: v('delivery_en'), delivery_ar: v('delivery_ar') };
+  }
   for (const k of TEMPLATE_KEYS) {
     const en = str(b.templates?.[k]?.en, 1000), ar = str(b.templates?.[k]?.ar, 1000);
     if (en || ar) out.templates[k] = { en, ar };
@@ -328,9 +430,17 @@ function cleanSettings(b, prev) {
   if (JSON.stringify(out).length > MAX_SETTINGS) return { error: 'Settings are too large. Remove a QR code or use smaller pictures.' };
   return { settings: out };
 }
+export const RQ_TYPES = ['stars', 'scale', 'text'];
+export const DEFAULT_RQ = [
+  { id: 'overall', type: 'stars', required: true, en: 'How was your overall experience with Basirah?', ar: 'كيف كانت تجربتك العامة مع بصيرة؟' },
+  { id: 'accuracy', type: 'stars', required: true, en: 'How well did your personality profile describe you?', ar: 'إلى أي مدى وصف ملفك الشخصي حقيقتك؟' },
+  { id: 'recommend', type: 'scale', required: true, en: 'How likely are you to recommend Basirah to a friend or colleague? (0 = not likely, 10 = very likely)', ar: 'ما مدى احتمال أن توصي ببصيرة لصديق أو زميل؟ (0 = غير محتمل، 10 = محتمل جداً)' },
+  { id: 'valued', type: 'text', required: false, en: 'What did you value most?', ar: 'ما أكثر ما أعجبك؟' },
+  { id: 'improve', type: 'text', required: false, en: 'What could we do better?', ar: 'ما الذي يمكننا تحسينه؟' },
+];
 const publicSettings = (s) => {
-  const { templates, updated_at, questions, ...rest } = s || emptySettings();
-  return { ...rest, questions: Array.isArray(questions) ? questions.filter((q) => !q.hidden).map(({ id, en, ar, required }) => ({ id, en, ar, required })) : null };
+  const { templates, updated_at, questions, review_questions, review_name, ...rest } = s || emptySettings();
+  return { ...rest, packages: rest.packages || null, info: rest.info || null, questions: Array.isArray(questions) ? questions.filter((q) => !q.hidden).map(({ id, en, ar, required }) => ({ id, en, ar, required })) : null };
 };
 
 async function handleAdminSettings(req, store) {
@@ -350,7 +460,8 @@ async function handleAdminSettings(req, store) {
 /* Public: the website reads the WhatsApp lines and payment methods from here. */
 export async function handleSettings(req, store) {
   if (req.method !== 'GET') return fail(405, 'Method not allowed');
-  const res = json(publicSettings(await store.get('settings')));
+  const tm = await store.get('testimonials');
+  const res = json({ ...publicSettings(await store.get('settings')), testimonials: Array.isArray(tm?.list) ? tm.list : [] });
   res.headers.set('cache-control', 'public, max-age=30');
   return res;
 }
@@ -399,7 +510,7 @@ async function handlePdf(req, store, rec) {
    Unknown links all look the same. */
 const BOT = /whatsapp|facebookexternalhit|bot\b|crawler|spider|preview|slack|telegram|twitterbot|linkedin|skype/i;
 const H = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-function reportPage(meta, settings, token) {
+function reportPage(meta, settings, token, origin = '') {
   const lines = (settings?.whatsapp || []), name = meta.name || '';
   const kb = meta.size > 1048576 ? (meta.size / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(meta.size / 1024)) + ' KB';
   const sid = meta.sid || '';
@@ -410,7 +521,7 @@ function reportPage(meta, settings, token) {
   const waBtns = lines.map((l) => `<a class="b o" target="_blank" rel="noopener" data-l="en" href="${H(wa(l) + encodeURIComponent(msgEn))}">${H(lines.length > 1 ? 'WhatsApp · ' + l.label : 'Message us on WhatsApp')}</a><a class="b o" target="_blank" rel="noopener" data-l="ar" href="${H(wa(l) + encodeURIComponent(msgAr))}">${H(lines.length > 1 ? 'واتساب · ' + (l.label_ar || l.label) : 'راسلنا عبر واتساب')}</a>`).join('');
   return `<!doctype html><html lang="${meta.lang === 'ar' ? 'ar' : 'en'}" dir="${meta.lang === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
 <title>Basirah · ${meta.lang === 'ar' ? 'تقريرك' : 'Your report'}</title>
-<meta property="og:title" content="${meta.lang === 'ar' ? 'تقريرك من بصيرة جاهز' : 'Your Basirah report is ready'}"><meta property="og:description" content="${meta.lang === 'ar' ? 'اضغط لفتح تقريرك وتحميله بصيغة PDF.' : 'Tap to open and download your report as a PDF.'}">
+<meta property="og:image" content="${H(origin)}/og.png"><meta property="og:type" content="website"><meta property="og:title" content="${meta.lang === 'ar' ? 'تقريرك من بصيرة جاهز' : 'Your Basirah report is ready'}"><meta property="og:description" content="${meta.lang === 'ar' ? 'اضغط لفتح تقريرك وتحميله بصيغة PDF.' : 'Tap to open and download your report as a PDF.'}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FEFAF3;--card:#fff;--teal:#0B4F4C;--sub:#587571;--gold:#B8914A;--line:#DCD3C0;--sage:#E4EDE7}
@@ -459,7 +570,7 @@ export async function handleReport(req, store) {
   const base = { 'cache-control': 'private, no-store', 'x-robots-tag': 'noindex, nofollow', 'referrer-policy': 'no-referrer' };
   if (!action) {
     await touch('open');
-    const html = reportPage(meta, await store.get('settings'), token);
+    const html = reportPage(meta, await store.get('settings'), token, new URL(req.url).origin);
     return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { ...base, 'content-type': 'text/html; charset=utf-8', 'content-security-policy': "default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" } });
   }
   const buf = await store.getBin('pdf/' + token);
@@ -469,6 +580,45 @@ export async function handleReport(req, store) {
 }
 
 /* ---------------- stores ---------------- */
+/* ---------------- files clients attach: voice answers and payment receipts ---------------- */
+const FILE_TYPES = /^(audio\/[a-z0-9.+-]+|video\/webm|image\/(jpeg|png|webp|gif|heic|heif)|application\/pdf)$/;
+const MAX_FILE = 5 * 1024 * 1024;           // Netlify functions accept about 6 MB per request
+const EXT = { 'audio/webm': 'webm', 'audio/mp4': 'm4a', 'audio/mpeg': 'mp3', 'audio/ogg': 'ogg', 'audio/wav': 'wav', 'image/jpeg': 'jpg', 'image/png': 'png', 'application/pdf': 'pdf' };
+export async function handleUpload(req, store) {
+  if (req.method !== 'POST') return fail(405, 'Method not allowed');
+  const type = (req.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (!FILE_TYPES.test(type)) return fail(415, 'This kind of file is not accepted');
+  const buf = Buffer.from(await req.arrayBuffer());
+  if (!buf.length) return fail(400, 'The file is empty');
+  if (buf.length > MAX_FILE) return fail(413, 'The file is too large (limit 5 MB)');
+  let id; do { id = randomBytes(12).toString('base64url'); } while (await store.get('uplmeta/' + id));
+  await store.setBin('upl/' + id, buf);
+  await store.set('uplmeta/' + id, { type, size: buf.length, at: new Date().toISOString() });
+  const origin = new URL(req.url).origin;
+  return json({ url: origin + '/api/file/' + id + (EXT[type] ? '.' + EXT[type] : '') });
+}
+export async function handleFile(req, store) {
+  const nf = () => new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } });
+  if (!['GET', 'HEAD'].includes(req.method)) return fail(405, 'Method not allowed');
+  const m = /^\/api\/file\/([A-Za-z0-9_-]{10,40})(?:\.[a-z0-9]{2,4})?$/.exec(new URL(req.url).pathname);
+  if (!m) return nf();
+  const meta = await store.get('uplmeta/' + m[1]);
+  const buf = meta && (await store.getBin('upl/' + m[1]));
+  if (!buf) return nf();
+  const h = { 'content-type': meta.type, 'accept-ranges': 'bytes', 'cache-control': 'private, max-age=86400', 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'content-security-policy': "default-src 'none'; sandbox" };
+  const rg = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get('range') || '');          // Safari needs range requests to play audio
+  if (rg && (rg[1] || rg[2])) {
+    let a = rg[1] === '' ? Math.max(0, buf.length - +rg[2]) : +rg[1], b = rg[1] === '' || rg[2] === '' ? buf.length - 1 : Math.min(+rg[2], buf.length - 1);
+    if (a > b || a >= buf.length) return new Response(null, { status: 416, headers: { ...h, 'content-range': 'bytes */' + buf.length } });
+    return new Response(req.method === 'HEAD' ? null : buf.subarray(a, b + 1), { status: 206, headers: { ...h, 'content-range': `bytes ${a}-${b}/${buf.length}`, 'content-length': String(b - a + 1) } });
+  }
+  return new Response(req.method === 'HEAD' ? null : buf, { status: 200, headers: { ...h, 'content-length': String(buf.length) } });
+}
+async function dropFiles(store, rec) {
+  const ids = new Set([...JSON.stringify(rec || {}).matchAll(/\/api\/file\/([A-Za-z0-9_-]{10,40})/g)].map((x) => x[1]));
+  for (const id of ids) { await store.delete('upl/' + id); await store.delete('uplmeta/' + id); }
+}
+
 export function memoryStore(seed = {}) {
   const m = new Map(Object.entries(seed));
   return {
@@ -490,4 +640,164 @@ export function netlifyStore(getStore) {
     async getBin(k) { const v = await ns.get(k, { type: 'arrayBuffer' }); return v ? Buffer.from(v) : null; },
     setBin: (k, buf) => ns.set(k, new Uint8Array(buf).buffer),
   };
+}
+
+
+/* ---------------- reviews: private link per client, results in the dashboard, chosen ones shown on the website ---------------- */
+const stripHidden = (l) => (Array.isArray(l) && l.length ? l : DEFAULT_RQ).filter((q) => !q.hidden);
+async function dropReview(store, id) {
+  const m = await store.get('rvmeta/' + id);
+  if (m) { await store.delete('rvtok/' + m.token); await store.delete('rvmeta/' + id); }
+  const had = await store.get('review/' + id);
+  if (had) { await store.delete('review/' + id); await rebuildTestimonials(store); }
+}
+async function rebuildTestimonials(store) {
+  const recs = (await Promise.all((await store.list('review/')).map((k) => store.get(k)))).filter(Boolean);
+  const list = recs.filter((r) => r.featured && r.share).sort((a, b) => (a.featured_at || '').localeCompare(b.featured_at || ''))
+    .map((r) => ({ id: r.sid, quote: r.quote, quote_ar: r.quote_ar || '', name: r.display_name, stars: r.stars || 0 }));
+  await store.set('testimonials', { list });
+}
+const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || '';
+const avgOf = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
+
+async function handleAdminReviews(req, store, sid) {
+  const m = req.method;
+  if (!sid && m === 'GET') {
+    const recs = (await Promise.all((await store.list('review/')).map((k) => store.get(k)))).filter(Boolean);
+    recs.sort((a, b) => b.created_at.localeCompare(a.created_at));
+    const sent = (await store.list('rvmeta/')).length;
+    return json({ reviews: recs, requested: sent });
+  }
+  const rv = sid && (await store.get('review/' + sid));
+  if (!rv) return fail(404, 'Review not found');
+  if (m === 'DELETE') { await store.delete('review/' + sid); await rebuildTestimonials(store); return json({ ok: true }); }
+  if (m !== 'PUT') return fail(405, 'Method not allowed');
+  let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
+  const next = { ...rv };
+  if (b.quote !== undefined) next.quote = str(b.quote, 600);
+  if (b.quote_ar !== undefined) next.quote_ar = str(b.quote_ar, 600);
+  if (b.display_name !== undefined) next.display_name = str(b.display_name, 60);
+  if (b.stars !== undefined) next.stars = Math.max(0, Math.min(5, Math.round(Number(b.stars) || 0)));
+  if (b.featured !== undefined) {
+    if (b.featured === true) {
+      if (!rv.share) return fail(409, 'This client did not agree to have their words shown on the website.');
+      if (!(next.quote || next.quote_ar)) return fail(400, 'Choose or write the words to show first.');
+      if (!next.display_name) return fail(400, 'Write the name to show, for example “Sara”.');
+      next.featured = true; next.featured_at = rv.featured_at || now();
+    } else { next.featured = false; }
+  } else if (next.featured && !(next.quote || next.quote_ar)) return fail(400, 'A shown review needs words. Remove it from the website first.');
+  next.updated_at = now();
+  await store.set('review/' + sid, next);
+  await rebuildTestimonials(store);
+  return json({ review: next });
+}
+
+const OGTAGS = (origin, title, desc) => `<meta property="og:image" content="${H(origin)}/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
+
+/* a small page that WhatsApp shows with the Basirah logo; people who tap it go to the website */
+export async function handleShare(req) {
+  const origin = new URL(req.url).origin;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Basirah · بصيرة</title>${OGTAGS(origin, 'Basirah · بصيرة', 'A guided personality insight assessment. Know yourself with clarity.')}<meta http-equiv="refresh" content="0;url=/"></head><body><a href="/">Basirah</a><script>location.replace('/')</script></body></html>`;
+  return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300' } });
+}
+
+export async function handleReview(req, store) {
+  const segs = new URL(req.url).pathname.split('/').filter(Boolean);       // ['v', token]
+  const token = segs[1] || '';
+  const origin = new URL(req.url).origin;
+  const hdr = { 'cache-control': 'private, no-store', 'x-robots-tag': 'noindex, nofollow', 'referrer-policy': 'no-referrer' };
+  const nf = () => new Response('This link is not available.', { status: 404, headers: { ...hdr, 'content-type': 'text/plain; charset=utf-8' } });
+  if (!/^[A-Za-z0-9_-]{10,40}$/.test(token) || segs.length !== 2) return nf();
+  const ptr = await store.get('rvtok/' + token);
+  const rec = ptr && (await store.get(keyOf(ptr.sid)));
+  if (!rec) return nf();
+  const settings = await store.get('settings');
+  const qs = stripHidden(settings?.review_questions);
+  const done = await store.get('review/' + rec.id);
+
+  if (req.method === 'POST') {
+    if (done) return fail(409, 'Your review was already sent. Thank you!');
+    let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
+    const ans = [];
+    for (const q of qs) {
+      const raw = b.answers?.[q.id];
+      let v;
+      if (q.type === 'stars') { v = Math.round(Number(raw)); if (!(v >= 1 && v <= 5)) v = null; }
+      else if (q.type === 'scale') { v = raw === '' || raw == null ? null : Math.round(Number(raw)); if (!(v >= 0 && v <= 10)) v = null; }
+      else v = str(raw, 1500) || null;
+      if (v === null && q.required) return fail(400, 'Please answer: ' + (q.en || q.ar), { missing: q.id });
+      if (v !== null) ans.push({ id: q.id, type: q.type, en: q.en, ar: q.ar, value: v });
+    }
+    if (!ans.length) return fail(400, 'Please answer at least one question.');
+    const nameMode = ['first', 'full', 'anon'].includes(settings?.review_name) ? settings.review_name : 'choose';
+    const share = b.share === true, disp = nameMode !== 'choose' ? nameMode : ['first', 'full', 'anon'].includes(b.display) ? b.display : 'first';
+    const lang = b.lang === 'ar' ? 'ar' : 'en';
+    const stars = ans.find((a) => a.type === 'stars')?.value || 0;
+    const texts = ans.filter((a) => a.type === 'text');
+    const t = now();
+    const name = disp === 'full' ? rec.full_name : disp === 'first' ? firstName(rec.full_name) : (lang === 'ar' ? 'عميل بصيرة' : 'A Basirah client');
+    const review = { sid: rec.id, created_at: t, updated_at: t, lang, full_name: rec.full_name, package: rec.package, answers: ans, share, display: disp, display_name: name, stars,
+      quote: texts[0] && lang !== 'ar' ? texts[0].value : '', quote_ar: texts[0] && lang === 'ar' ? texts[0].value : '', featured: false };
+    await store.set('review/' + rec.id, review);
+    await store.set(keyOf(rec.id), { ...rec, review_at: t, updated_at: t, history: [...rec.history, { at: t, by: 'client', action: 'Review received' }] });
+    return json({ ok: true }, 201);
+  }
+  if (!['GET', 'HEAD'].includes(req.method)) return fail(405, 'Method not allowed');
+  const ar0 = (done?.lang || rec.language) === 'ar';
+  const both = (en, ar) => `<span data-l="en">${en}</span><span data-l="ar">${ar}</span>`;
+  const qHtml = qs.map((q, i) => {
+    const lab = `<div class="ql"><span data-l="en">${H(q.en || q.ar)}</span><span data-l="ar">${H(q.ar || q.en)}</span>${q.required ? '' : both(' <i>(optional)</i>', ' <i>(اختياري)</i>')}</div>`;
+    let inp;
+    if (q.type === 'stars') inp = `<div class="st" role="radiogroup" data-q="${H(q.id)}" data-t="stars">${[1, 2, 3, 4, 5].map((n) => `<button type="button" role="radio" aria-checked="false" aria-label="${n}" data-v="${n}">★</button>`).join('')}</div>`;
+    else if (q.type === 'scale') inp = `<div class="sc" role="radiogroup" data-q="${H(q.id)}" data-t="scale">${Array.from({ length: 11 }, (_, n) => `<button type="button" role="radio" aria-checked="false" data-v="${n}">${n}</button>`).join('')}</div>`;
+    else inp = `<textarea data-q="${H(q.id)}" data-t="text" rows="3" maxlength="1500"></textarea>`;
+    return `<div class="qb" data-req="${q.required ? 1 : 0}">${lab}${inp}</div>`;
+  }).join('');
+  const first = firstName(rec.full_name);
+  const nameMode0 = ['first', 'full', 'anon'].includes(settings?.review_name) ? settings.review_name : 'choose';
+  const title = ar0 ? 'رأيك يهمنا' : 'Your voice matters';
+  const html = `<!doctype html><html lang="${ar0 ? 'ar' : 'en'}" dir="${ar0 ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Basirah · ${ar0 ? 'تقييمك' : 'Your review'}</title>${OGTAGS(origin, ar0 ? 'شاركنا رأيك في بصيرة' : 'Share your Basirah experience', ar0 ? 'دقيقتان فقط، ورأيك يصنع فرقاً.' : 'It takes two minutes, and it means a lot.')}
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FEFAF3;--card:#fff;--teal:#0B4F4C;--sub:#587571;--gold:#B8914A;--line:#DCD3C0;--sage:#E4EDE7;--red:#b24a3a}
+@media(prefers-color-scheme:dark){:root{--cream:#121a19;--card:#1b2624;--teal:#7fc4bb;--sub:#a3bab6;--gold:#d3ac66;--line:#33403d;--sage:#26332f;--red:#ef9582}}
+*{box-sizing:border-box;margin:0}body{background:var(--cream);color:var(--teal);font:17px/1.6 'Tajawal',system-ui,sans-serif;min-height:100vh;padding:24px 16px 48px}
+body{padding-bottom:96px}main{width:100%;max-width:560px;margin:0 auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{font:600 30px 'Cormorant Garamond',Georgia,serif;display:flex;align-items:center;gap:10px}.brand img{width:38px;height:38px;border-radius:10px}
+.lg button{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:5px 14px;font:700 14px 'Tajawal',sans-serif;cursor:pointer}.lg button[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px 24px;box-shadow:0 2px 6px rgba(11,79,76,.08),0 24px 48px -24px rgba(11,79,76,.3)}
+h1{font:600 36px/1.15 'Cormorant Garamond',Georgia,serif;margin-bottom:6px}[dir=rtl] h1{font-family:'Tajawal',sans-serif;font-weight:700;font-size:30px;line-height:1.4}
+.lead{color:var(--sub);margin-bottom:22px}.qb{margin:22px 0}.ql{font-weight:700;margin-bottom:8px}.ql i{font-weight:400;color:var(--sub);font-style:normal;font-size:14px}
+.st{display:flex;gap:6px;direction:ltr;justify-content:flex-start}[dir=rtl] .st{justify-content:flex-end}.st button{font-size:40px;line-height:1;background:none;border:0;color:var(--line);cursor:pointer;padding:2px}.st button.on{color:var(--gold)}
+.sc{display:flex;flex-wrap:wrap;gap:6px;direction:ltr}.sc button{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--teal);font:700 16px 'Tajawal',sans-serif;cursor:pointer}.sc button.on{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+textarea,select{width:100%;background:var(--cream);color:var(--teal);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font:inherit}
+.sh{margin-top:26px;padding:18px;border-radius:16px;background:var(--sage)}.sh label{display:flex;gap:10px;align-items:flex-start;font-weight:700}.sh input[type=checkbox]{width:22px;height:22px;margin-top:3px;accent-color:var(--teal)}.sh .dn{margin-top:12px;display:none}.sh.on .dn{display:block}.sh small{display:block;color:var(--sub);font-weight:400;margin-top:2px}
+.b{display:flex;align-items:center;justify-content:center;width:100%;background:var(--teal);color:var(--cream);border:1.5px solid var(--teal);border-radius:99px;padding:15px 24px;font:700 18px 'Tajawal',sans-serif;cursor:pointer;margin-top:24px}.b:disabled{opacity:.6}
+.err{color:var(--red);font-weight:700;margin-top:12px;min-height:1.4em}.thx{text-align:center;padding:20px 4px}.thx .big{font:600 44px 'Cormorant Garamond',Georgia,serif;margin-bottom:8px}[dir=rtl] .thx .big{font-family:'Tajawal',sans-serif;font-weight:700;font-size:34px}.thx .sp{font-size:44px;color:var(--gold);margin-bottom:10px}
+[data-l]{display:none}html[lang=en] [data-l=en],html[lang=ar] [data-l=ar]{display:inline}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+</style></head><body><main>
+<div class="top"><span class="brand"><img src="/icons/icon-192.png" alt="">Basirah</span><span class="lg" role="group" aria-label="Language"><button type="button" data-set="en" aria-pressed="${!ar0}">English</button> <button type="button" data-set="ar" aria-pressed="${ar0}">العربية</button></span></div>
+<div class="card" id="card">${done ? `<div class="thx"><div class="sp">✦</div><div class="big">${both('Thank you', 'شكراً لك')}</div><p class="lead">${both('Your review was already received. We are grateful for your time.', 'وصلنا تقييمك مسبقاً. نقدّر وقتك وثقتك.')}</p></div>` : `<div id="fm">
+<h1>${both('Your voice matters' + (first ? ', ' + H(first) : ''), 'رأيك يهمنا' + (first ? '، ' + H(first) : ''))}</h1>
+<p class="lead">${both('You have seen your insight. Tell us how it felt. It takes about two minutes.', 'اطّلعت على بصيرتك، فشاركنا كيف كان شعورك. يستغرق الأمر دقيقتين تقريباً.')}</p>
+${qHtml}
+<div class="sh" id="sh"><label><input type="checkbox" id="share"><span>${both('You may share my words on the Basirah website', 'يمكنكم عرض كلماتي في موقع بصيرة')}<small>${both('Optional. We never show your full report or contact details.', 'اختياري. لن نعرض تقريرك الكامل ولا بيانات التواصل أبداً.')}</small></span></label>
+${nameMode0 === 'choose' ? `<div class="dn"><div class="ql" style="margin-top:4px">${both('How should your name appear?', 'كيف يظهر اسمك؟')}</div><select id="disp"><option value="first">${H(first || 'First name')}</option><option value="full">${H(rec.full_name)}</option><option value="anon">${ar0 ? 'عميل بصيرة' : 'A Basirah client'}</option></select></div></div>` : `<div class="dn"><p class="ql" style="margin-top:4px;font-weight:400">${nameMode0 === 'anon' ? both('Your name will not be shown.', 'لن يظهر اسمك.') : nameMode0 === 'full' ? both('Your full name will be shown.', 'سيظهر اسمك الكامل.') : both('Only your first name will be shown.', 'سيظهر اسمك الأول فقط.')}</p></div>`}
+<button class="b" id="go" type="button">${both('Send my review', 'إرسال تقييمي')}</button><p class="err" id="er" role="alert"></p></div>
+<div class="thx" id="ty" hidden><div class="sp">✦</div><div class="big">${both('Thank you', 'شكراً لك')}</div><p class="lead">${both('Your words help others begin their own journey of self-knowledge.', 'كلماتك تساعد غيرك على بدء رحلته في معرفة نفسه.')}</p></div>`}</div></main>
+<script>
+(function(){var L=document.documentElement,lang=L.lang;function set(l){lang=l;L.lang=l;L.dir=l==='ar'?'rtl':'ltr';document.querySelectorAll('[data-set]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.set===l)})}
+document.querySelectorAll('[data-set]').forEach(function(b){b.onclick=function(){set(b.dataset.set)}});
+var fm=document.getElementById('fm');if(!fm)return;var val={};
+document.querySelectorAll('.st,.sc').forEach(function(g){g.onclick=function(e){var b=e.target.closest('button');if(!b)return;var v=+b.dataset.v;val[g.dataset.q]=v;g.querySelectorAll('button').forEach(function(x){var on=g.dataset.t==='stars'?+x.dataset.v<=v:+x.dataset.v===v;x.classList.toggle('on',on);x.setAttribute('aria-checked',+x.dataset.v===v)})}});
+var sh=document.getElementById('sh');document.getElementById('share').onchange=function(){sh.classList.toggle('on',this.checked)};
+var T={en:{need:'Please answer the questions marked above.',fail:'We could not send your review. Check your connection and try again.'},ar:{need:'يرجى الإجابة عن الأسئلة المطلوبة.',fail:'تعذّر إرسال تقييمك. تحقق من اتصالك وحاول مجدداً.'}};
+document.getElementById('go').onclick=function(){var er=document.getElementById('er'),btn=this;er.textContent='';var a={},miss=false;
+document.querySelectorAll('.qb').forEach(function(q){var el=q.querySelector('[data-q]'),id=el.dataset.q,v=el.dataset.t==='text'?el.value.trim():val[id];if(v===undefined||v===''){if(q.dataset.req==='1')miss=true}else a[id]=v});
+if(miss){er.textContent=T[lang].need;return}
+btn.disabled=true;fetch(location.pathname,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({answers:a,share:document.getElementById('share').checked,display:(document.getElementById('disp')||{value:'first'}).value,lang:lang})})
+.then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})}).then(function(x){if(x.ok||x.j.error&&/already/i.test(x.j.error)){fm.hidden=true;document.getElementById('ty').hidden=false;window.scrollTo(0,0)}else{btn.disabled=false;er.textContent=x.j.error||T[lang].fail}}).catch(function(){btn.disabled=false;er.textContent=T[lang].fail})}})();
+</script></body></html>`;
+  return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { ...hdr, 'content-type': 'text/html; charset=utf-8', 'content-security-policy': "default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" } });
 }

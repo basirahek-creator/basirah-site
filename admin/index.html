@@ -273,11 +273,28 @@ details[open]>summary::after{content:"–"}
 @media(max-width:860px){.side{padding-top:calc(8px + env(safe-area-inset-top,0px));padding-inline:max(12px,env(safe-area-inset-left,0px))}}
 @media(min-width:861px){.side{height:100dvh}}
 .savebar{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
-.main{padding-bottom:env(safe-area-inset-bottom,0px)}
-#dw{padding-bottom:env(safe-area-inset-bottom,0px)}
-#toasts{bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.main{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+/* Netlify's own badge floats at the bottom of the screen; keep our content and buttons clear of it */
+.main{padding-bottom:calc(130px + env(safe-area-inset-bottom,0px))}.savebar{bottom:64px;border-radius:16px 16px 0 0}
+#dw{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+#toasts{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 .lk{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;background:var(--cream)}
 .lk>div:first-child{min-width:0;display:flex;flex-direction:column;gap:2px}.lk span{font-size:14px;color:var(--sub)}.lk code{font-size:14px;word-break:break-all;color:var(--teal)}
+
+.rng{display:flex;gap:6px;flex-wrap:wrap}.rng button{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}.rng button[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:6px 0 18px}.kp .cd{cursor:default}.kp .v{font-size:28px;font-weight:700;font-family:'Cormorant Garamond',serif;line-height:1.2;white-space:nowrap}
+.dl{font-size:13px;font-weight:700}.dl.up{color:var(--green)}.dl.dn{color:var(--red)}.dl.fl{color:var(--sub)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:150px;border-bottom:1.5px solid var(--line);padding:0 2px;margin-top:10px;position:relative}
+.bars i{flex:1;min-width:2px;background:var(--teal2);border-radius:3px 3px 0 0;min-height:2px;opacity:.9}.bars i.z{background:var(--line);min-height:2px}.bars.g i{background:var(--gold)}
+.bx{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:4px}.bm{font-size:12.5px;color:var(--sub)}
+.ins2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}@media(max-width:1000px){.ins2{grid-template-columns:1fr}}
+.ins2 .panel,.insp{padding:18px 20px}.hb{display:grid;grid-template-columns:minmax(90px,1.2fr) 2fr auto;gap:10px;align-items:center;font-size:14px;margin:9px 0}.hb .tr{height:10px;background:var(--greybg);border-radius:99px;overflow:hidden}.hb .tr i{display:block;height:100%;background:var(--teal2);border-radius:99px}.hb b{white-space:nowrap}
+.fn{display:flex;gap:10px;flex-wrap:wrap}.fn div{flex:1;min-width:110px;background:var(--sage);border-radius:14px;padding:12px 14px}.fn b{display:block;font-size:24px;font-family:'Cormorant Garamond',serif}.fn span{font-size:13px;color:var(--sub)}
+
+.rv{padding:18px 20px;margin-bottom:14px}.rvh{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;align-items:baseline}.rvh b{font-size:18px}.stars{color:var(--gold);letter-spacing:2px;font-size:18px;white-space:nowrap}.stars s{text-decoration:none;color:var(--line)}
+.rva{margin:12px 0;display:grid;gap:8px}.rva div{font-size:14.5px}.rva span{color:var(--sub);display:block;font-size:13px}.rvf{background:var(--sage);border-radius:14px;padding:14px;margin-top:12px}
+.tabs{display:flex;gap:6px;margin:4px 0 16px}.tabs button{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:7px 16px;font-weight:700}.tabs button[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+.on-site{background:var(--greenbg);color:var(--green)}
 </style>
 </head>
 <body>
@@ -287,6 +304,8 @@ details[open]>summary::after{content:"–"}
 /* ============ helpers ============ */
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PKDEF=[{id:'profile',price:200,name:'Full Personality Profile',name_ar:'الملف الشخصي الكامل',desc:'The complete assessment and your full personality profile report, with personalized practical recommendations.',desc_ar:'التقييم الكامل وتقرير ملفك الشخصي الكامل، مع توصيات عملية مخصّصة.',hidden:false},{id:'consultation',price:400,name:'Full Analysis + 1-to-1 Consultation',name_ar:'التحليل الكامل + استشارة فردية',desc:'The full analysis report plus a private one-to-one consultation call to discuss your results and next steps.',desc_ar:'تقرير التحليل الكامل مع استشارة فردية خاصة عبر مكالمة لمناقشة نتائجك وخطواتك التالية.',hidden:false}];
+const INFODEF={duration_en:'15–20 minutes',duration_ar:'من 15 إلى 20 دقيقة',delivery_en:'within 24 hours',delivery_ar:'خلال 24 ساعة'};
 const PK={profile:{name:'Full Personality Profile',price:200},consultation:{name:'Full Analysis + 1-to-1 Consultation',price:400}};
 const PAYL={pending:['Awaiting check','amber'],verified:['Verified','green'],rejected:['Rejected','red']};
 const REPL={not_started:['Not started','grey'],in_progress:['In preparation','blue'],ready:['Ready to send','gold'],delivered:['Delivered','green']};
@@ -305,7 +324,7 @@ const span=ms=>{const a=Math.abs(ms),h=Math.floor(a/HOUR),m=Math.floor(a%HOUR/6e
 const ago=iso=>span(Date.now()-Date.parse(iso));
 const ICON={
  home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
- send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ chart:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
  out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>',
  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
  qs:'<path d="M9 9a3 3 0 115 2c-1 .8-2 1.2-2 3M12 18h.01"/><circle cx="12" cy="12" r="10"/>',
@@ -328,7 +347,7 @@ async function load(silent){
   if(st.loading)return;st.loading=true;if(!silent){st.error='';renderBody()}
   try{const j=await api('GET','/submissions');st.subs=j.submissions;st.loaded=true;st.error='';st.at=new Date();if(st.pendingOpen){const p=st.pendingOpen;st.pendingOpen=null;setTimeout(()=>openDrawer(p.id,p.tpl),0)}}
   catch(e){if(e.handled)return;st.error=e.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':e.message;if(!silent)st.loaded=st.loaded}
-  finally{st.loading=false;if(st.token){renderNav();renderBody()}}
+  finally{st.loading=false;if(st.token){renderNav();renderBody();if(!st.cfg)loadCfg().then(()=>renderBody()).catch(()=>{})}}
 }
 
 /* ============ derived data ============ */
@@ -354,22 +373,22 @@ function render(){
   app.innerHTML=`<div class="shell"><aside class="side"><div class="brand">Basirah<small>ADMIN</small></div><nav id="nav" aria-label="Sections"></nav><a class="nv" href="/admin/studio.html" style="text-decoration:none">${ic('doc')}<span>Feedback studio</span></a><button class="nv out" id="so">${ic('out')}<span>Sign out</span></button></aside><main class="main" id="main"></main></div>`;
   $('#so').onclick=()=>signOut();renderNav();renderBody();
 }
-const VIEWS=[['overview','Overview','home'],['submissions','Submissions','list'],['delivery','Delivery queue','send'],['packages','Packages','box'],['questions','Questions','qs'],['settings','Settings','gear']];
+const VIEWS=[['overview','Overview','home'],['insights','Growth & revenue','chart'],['submissions','Submissions','list'],['delivery','Delivery queue','send'],['packages','Packages','box'],['reviews','Reviews','star'],['questions','Questions','qs'],['settings','Settings','gear']];
 function renderNav(){
   const nav=$('#nav');if(!nav)return;const d=D();
   const ct={submissions:d.pend.length,delivery:d.queue.length};
   nav.innerHTML=VIEWS.map(([k,l,i])=>`<button class="nv" data-v="${k}" ${st.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${ct[k]?`<span class="ct${k==='delivery'&&d.over.length?' red':''}" title="${k==='submissions'?'Payments awaiting check':'Reports still to deliver'}">${ct[k]}</span>`:''}</button>`).join('');
   $$('[data-v]',nav).forEach(b=>b.onclick=()=>go(b.dataset.v));
 }
-function go(v,f){st.view=v;if(f)Object.assign(st,{q:'',fPay:'',fRep:'',fPkg:'',page:1},f);history.replaceState(null,'','#'+v);renderNav();renderBody();window.scrollTo(0,0)}
+function go(v,f){st.view=v;if(v==='reviews')st.reviews=null;if(f)Object.assign(st,{q:'',fPay:'',fRep:'',fPkg:'',page:1},f);history.replaceState(null,'','#'+v);renderNav();renderBody();window.scrollTo(0,0)}
 function head(t,p,acts=''){return `<div class="hd"><div><h1>${t}</h1><p>${p}</p></div><div class="acts">${st.at?`<span class="upd">Updated ${st.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>`:''}${acts}<button class="ib" id="rf" aria-label="Refresh" title="Refresh">${st.loading?'<span class="sp"></span>':ic('refresh')}</button></div></div>`}
 function bindHead(){const r=$('#rf');if(r)r.onclick=()=>load()}
 function errBanner(){return st.error?`<div class="banner" role="alert"><span>${esc(st.error)}</span><button class="btn sm o" id="retry">Try again</button></div>`:''}
 function bindErr(){const r=$('#retry');if(r)r.onclick=()=>load()}
 function renderBody(){
   const m=$('#main');if(!m)return;
-  if((st.view==='settings'||st.view==='questions')&&$('.cfgw',m)){bindHead();return}   // never redraw the form while someone is typing in it
-  ({overview:vOverview,submissions:vSubs,delivery:vDelivery,packages:vPackages,questions:vQuestions,settings:vSettings}[st.view]||vOverview)(m);
+  if($('.cfgw',m)&&m.dataset.cv===st.view){bindHead();return}   // never redraw the form while someone is typing in it
+  ({overview:vOverview,submissions:vSubs,delivery:vDelivery,packages:vPackages,reviews:vReviews,insights:vInsights,questions:vQuestions,settings:vSettings}[st.view]||vOverview)(m);
   bindHead();bindErr();
 }
 const emptyAll=()=>`<div class="panel empty">${ic('inbox')}<h3>No submissions yet</h3><p>New assessments appear here automatically as soon as a client submits one on the website. If you have earlier submissions in your email, you can add them by hand.</p><button class="btn" data-add>Add a submission</button></div>`;
@@ -473,6 +492,149 @@ function vDelivery(m){
 }
 
 /* ============ packages ============ */
+
+/* ---------- Growth & revenue ---------- */
+st.range=st.range||30;
+function vInsights(m){
+  if(!st.loaded&&!st.error){m.innerHTML=head('Growth & revenue','Loading…')+loadingRows();return}
+  if(!st.loaded){m.innerHTML=head('Growth & revenue','')+errBanner();return}
+  const all=st.subs,now=Date.now(),R=st.range,T=x=>Date.parse(x);
+  const first=all.length?Math.min(...all.map(x=>T(x.created_at))):now;
+  const start=R?now-R*DAY:first,prev0=R?start-R*DAY:null;
+  const inR=(iso,a,b)=>{if(!iso)return false;const t=T(iso);return t>=a&&t<b};
+  const calc=(a,b)=>{const sub=all.filter(x=>inR(x.created_at,a,b)),ver=all.filter(x=>x.payment_status==='verified'&&inR(x.verified_at,a,b)),del=all.filter(x=>x.delivered_at&&inR(x.delivered_at,a,b)&&x.verified_at);
+    const rev=ver.reduce((t,x)=>t+x.price_sar,0),conv=sub.length?sub.filter(x=>x.payment_status==='verified').length/sub.length:0,
+    lead=del.length?del.reduce((t,x)=>t+T(x.delivered_at)-T(x.verified_at),0)/del.length:null,ont=del.length?del.filter(x=>T(x.delivered_at)-T(x.verified_at)<=DAY).length/del.length:null;
+    return{sub,ver,del,rev,conv,lead,ont,aov:ver.length?rev/ver.length:0}};
+  const c=calc(start,now+1),p=R?calc(prev0,start):null;
+  const delta=(a,b,inv)=>{if(!p)return '';if(!b)return a?'<span class="dl up">New</span>':'<span class="dl fl">No change</span>';const r=Math.round((a-b)/b*100);if(!r)return '<span class="dl fl">No change</span>';const good=inv?r<0:r>0;return `<span class="dl ${good?'up':'dn'}">${r>0?'▲':'▼'} ${Math.abs(r)}%</span> <span class="bm">vs previous ${R} days</span>`};
+  const k=(t,v,s)=>`<div class="cd"><span class="k">${t}</span><span class="v">${v}</span><span class="s">${s||'&nbsp;'}</span></div>`;
+  const pct=x=>Math.round(x*100)+'%';
+  /* time buckets */
+  const monthly=!R&&(now-first)>150*DAY,step=(R&&R<=31)||(!R&&(now-first)<=31*DAY)?DAY:7*DAY;
+  let bk=[];
+  if(monthly){let d=new Date(first);d=new Date(d.getFullYear(),d.getMonth(),1);while(d.getTime()<=now){const n=new Date(d.getFullYear(),d.getMonth()+1,1);bk.push({a:d.getTime(),b:n.getTime(),l:d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})});d=n}}
+  else{const e=new Date();e.setHours(23,59,59,999);const end=e.getTime()+1;let n=Math.max(1,Math.ceil((end-start)/step));n=Math.min(n,60);for(let i=n-1;i>=0;i--){const b=end-i*step,a=b-step;bk.push({a,b,l:new Date(a+(step>DAY?0:0)).toLocaleDateString('en-GB',{day:'numeric',month:'short'})})}}
+  const series=bk.map(b=>({l:b.l,rev:all.filter(x=>x.payment_status==='verified'&&inR(x.verified_at,b.a,b.b)).reduce((t,x)=>t+x.price_sar,0),n:all.filter(x=>inR(x.created_at,b.a,b.b)).length}));
+  const chart=(key,cls,fmt,label)=>{const mx=Math.max(1,...series.map(x=>x[key])),tot=series.reduce((t,x)=>t+x[key],0);
+    return `<div class="bars ${cls}" role="img" aria-label="${label}: ${series.map(x=>x.l+' '+fmt(x[key])).join(', ')}">${series.map(x=>`<i class="${x[key]?'':'z'}" style="height:${Math.max(x[key]?4:0,x[key]/mx*100)}%" title="${esc(x.l)}: ${esc(fmt(x[key]))}"></i>`).join('')}</div>
+    <div class="bx"><span>${esc(series[0].l)}</span><span>${series.length>2?esc(series[Math.floor(series.length/2)].l):''}</span><span>${esc(series.at(-1).l)}</span></div><div class="bm" style="margin-top:6px">Highest ${step===DAY?'day':monthly?'month':'week'}: ${esc(fmt(mx===1&&!tot?0:mx))}</div>`};
+  /* breakdowns (everything in the chosen period) */
+  const grp=(list,fn)=>{const o={};list.forEach(x=>{const k=fn(x)||'Not recorded';o[k]=(o[k]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])};
+  const hb=(rows,tot)=>rows.length?rows.map(([n,v])=>`<div class="hb"><span>${esc(n)}</span><span class="tr"><i style="width:${tot?Math.round(v/tot*100):0}%"></i></span><b>${v} · ${tot?Math.round(v/tot*100):0}%</b></div>`).join(''):'<p class="hint">Nothing in this period yet.</p>';
+  const S=c.sub,rejected=S.filter(x=>x.payment_status==='rejected').length,pend=S.filter(x=>x.payment_status==='pending').length;
+  const byPkg=Object.keys(PK).map(id=>{const s2=S.filter(x=>x.package===id),v2=c.ver.filter(x=>x.package===id);return[PK[id].name,s2.length,v2.length,v2.reduce((t,x)=>t+x.price_sar,0)]});
+  const contacts={};all.forEach(x=>{const k=(x.contact||'').toLowerCase().replace(/\s+/g,'');if(k)contacts[k]=(contacts[k]||0)+1});
+  const clients=Object.keys(contacts).length,repeat=Object.values(contacts).filter(v=>v>1).length;
+  const allVer=all.filter(x=>x.payment_status==='verified'),allRev=allVer.reduce((t,x)=>t+x.price_sar,0);
+  const rangeBtn=[[7,'7 days'],[30,'30 days'],[90,'90 days'],[0,'All time']].map(([v,l])=>`<button data-rng="${v}" aria-pressed="${R===v}">${l}</button>`).join('');
+  m.innerHTML=head('Growth & revenue','How the business is doing: money, new clients and delivery speed')+errBanner()+
+  `<div class="rng" role="group" aria-label="Time period">${rangeBtn}</div>
+  <div class="kp">
+   ${k('Verified revenue',money(c.rev),delta(c.rev,p&&p.rev))}
+   ${k('New assessments',c.sub.length,delta(c.sub.length,p&&p.sub.length))}
+   ${k('Paid clients',c.ver.length,delta(c.ver.length,p&&p.ver.length))}
+   ${k('Average order',c.ver.length?money(Math.round(c.aov)):'—',delta(c.aov,p&&p.aov))}
+   ${k('Payment check rate',c.sub.length?pct(c.conv):'—','Share of new assessments with a verified payment')}
+   ${k('Average delivery time',c.lead===null?'—':span(c.lead),p?delta(c.lead||0,p.lead||0,true):'')}
+   ${k('Delivered within 24 hours',c.ont===null?'—':pct(c.ont),c.del.length+' report'+(c.del.length===1?'':'s')+' delivered')}
+  </div>
+  <div class="ins2">
+   <section class="panel"><h2>Revenue over time</h2><p class="hint">Money from verified payments, by the day each payment was verified.</p>${chart('rev','g',money,'Revenue')}</section>
+   <section class="panel"><h2>New assessments over time</h2><p class="hint">How many people submitted an assessment.</p>${chart('n','',x=>x+' assessment'+(x===1?'':'s'),'New assessments')}</section>
+  </div>
+  <div class="ins2">
+   <section class="panel"><h2>From submission to delivery</h2><p class="hint">Assessments received in this period.</p>
+    <div class="fn"><div><b>${S.length}</b><span>Submitted</span></div><div><b>${S.filter(x=>x.payment_status==='verified').length}</b><span>Payment verified</span></div><div><b>${S.filter(x=>x.report_status==='delivered').length}</b><span>Report delivered</span></div></div>
+    <p class="hint" style="margin-top:12px">${pend} waiting for a payment check${rejected?`, ${rejected} rejected`:''}.</p></section>
+   <section class="panel"><h2>By package</h2><p class="hint">This period.</p>
+    <table><thead><tr><th>Package</th><th class="num">Submitted</th><th class="num">Paid</th><th class="num">Revenue</th></tr></thead><tbody>${byPkg.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${money(r[3])}</td></tr>`).join('')}</tbody></table></section>
+  </div>
+  <div class="ins2">
+   <section class="panel"><h2>How clients pay</h2>${hb(grp(c.ver,x=>x.payment_method),c.ver.length)}</section>
+   <section class="panel"><h2>How clients want their report</h2>${hb(grp(S,x=>x.contact_method),S.length)}</section>
+  </div>
+  <div class="ins2">
+   <section class="panel"><h2>Language</h2>${hb(grp(S,x=>x.language==='ar'?'Arabic':'English'),S.length)}</section>
+   <section class="panel"><h2>All time</h2><dl class="kv"><dt>Verified revenue</dt><dd>${money(allRev)}</dd><dt>Assessments received</dt><dd>${all.length}</dd><dt>Different clients</dt><dd>${clients}</dd><dt>Clients who came back</dt><dd>${repeat}</dd><dt>First assessment</dt><dd>${all.length?fmtD(new Date(first).toISOString()):'—'}</dd></dl></section>
+  </div>`;
+  bindHead();bindErr();
+  $$('[data-rng]',m).forEach(b=>b.onclick=()=>{st.range=+b.dataset.rng;vInsights(m)});
+}
+
+/* ---------- Reviews: what clients said, and what appears on the website ---------- */
+const RQDEF=[{id:'overall',type:'stars',required:true,en:'How was your overall experience with Basirah?',ar:'كيف كانت تجربتك العامة مع بصيرة؟'},{id:'accuracy',type:'stars',required:true,en:'How well did your personality profile describe you?',ar:'إلى أي مدى وصف ملفك الشخصي حقيقتك؟'},{id:'recommend',type:'scale',required:true,en:'How likely are you to recommend Basirah to a friend or colleague? (0 = not likely, 10 = very likely)',ar:'ما مدى احتمال أن توصي ببصيرة لصديق أو زميل؟ (0 = غير محتمل، 10 = محتمل جداً)'},{id:'valued',type:'text',required:false,en:'What did you value most?',ar:'ما أكثر ما أعجبك؟'},{id:'improve',type:'text',required:false,en:'What could we do better?',ar:'ما الذي يمكننا تحسينه؟'}];
+const stars5=n=>`<span class="stars" aria-label="${n} out of 5">${'★'.repeat(n)}<s>${'★'.repeat(5-n)}</s></span>`;
+st.rvTab=st.rvTab||'responses';st.reviews=null;
+async function loadReviews(){try{const j=await api('GET','/reviews');st.reviews=j.reviews;st.rvRequested=j.requested}catch(e){if(e.handled)throw e;st.reviews=st.reviews||[]}}
+function vReviews(m){
+  m.innerHTML=head('Reviews','What clients say, and what appears on your website')+`<div class="tabs" role="group" aria-label="Reviews"><button data-rt="responses" aria-pressed="${st.rvTab==='responses'}">Client reviews</button><button data-rt="questions" aria-pressed="${st.rvTab==='questions'}">Review questions</button></div><div id="rvb"></div>`;
+  bindHead();$$('[data-rt]',m).forEach(b=>b.onclick=()=>{st.rvTab=b.dataset.rt;vReviews($('#main'))});
+  const box=$('#rvb',m);
+  if(st.rvTab==='questions'){
+    if(!st.cfgDraft){box.innerHTML='<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div></div>';loadCfg().then(()=>{if(st.view==='reviews')vReviews($('#main'))}).catch(()=>{});return}
+    return rvQuestions(m,box)}
+  if(st.reviews===null){box.innerHTML=loadingRows();loadReviews().then(()=>{if(st.view==='reviews')vReviews($('#main'))}).catch(()=>{});return}
+  m.dataset.cv='reviews';
+  const R=st.reviews,n=R.length,avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+  const stv=R.map(r=>r.stars).filter(Boolean),scl=R.flatMap(r=>r.answers.filter(a=>a.type==='scale').map(a=>a.value));
+  const prom=scl.filter(v=>v>=9).length,det=scl.filter(v=>v<=6).length,nps=scl.length?Math.round((prom-det)/scl.length*100):null;
+  const shown=R.filter(r=>r.featured).length,req=st.rvRequested||0;
+  const card=(k,v,sub)=>`<div class="cd"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${sub||'&nbsp;'}</span></div>`;
+  const dist=[5,4,3,2,1].map(x=>{const c=stv.filter(v=>v===x).length;return `<div class="hb"><span>${x} ★</span><span class="tr"><i style="width:${stv.length?Math.round(c/stv.length*100):0}%"></i></span><b>${c}</b></div>`}).join('');
+  const perQ={};R.forEach(r=>r.answers.forEach(a=>{if(a.type!=='text'){(perQ[a.id]=perQ[a.id]||{q:a.en||a.ar,t:a.type,v:[]}).v.push(a.value)}}));
+  const pq=Object.values(perQ).map(x=>`<tr><td>${esc(x.q)}</td><td class="num">${(+avg(x.v).toFixed(1))}${x.t==='stars'?' / 5':' / 10'}</td><td class="num">${x.v.length}</td></tr>`).join('');
+  const cardR=r=>{const txt=r.answers.filter(a=>a.type==='text'),canShow=r.share;
+    return `<section class="panel rv" data-sid="${esc(r.sid)}"><div class="rvh"><div><b>${esc(r.full_name)}</b> <span class="bd ${r.share?'green':'grey'}">${r.share?'Agreed to be shown':'Private'}</span>${r.featured?' <span class="bd on-site">On website</span>':''}<div class="hint">${fmtD(r.created_at)} · ${esc((PK[r.package]||{}).name||'')} · wrote in ${r.lang==='ar'?'Arabic':'English'}</div></div>${r.stars?stars5(r.stars):''}</div>
+     <div class="rva">${r.answers.map(a=>`<div><span>${esc(a.en||a.ar)}</span>${a.type==='stars'?stars5(a.value):a.type==='scale'?`<b>${a.value} / 10</b>`:esc(a.value)}</div>`).join('')}</div>
+     ${canShow?`<div class="rvf"><b>What shows on your website</b>
+       ${txt.length?`<div class="fld" style="margin-top:8px"><label for="pk_${esc(r.sid)}">Use this answer</label><select id="pk_${esc(r.sid)}" data-pick>${'<option value="">Choose…</option>'+txt.map((a,i)=>`<option value="${i}">${esc((a.en||a.ar).slice(0,60))}</option>`).join('')}</select></div>`:''}
+       <div class="fld"><label>Words (shown in English)</label><textarea data-f="quote" rows="3" maxlength="600">${esc(r.quote||'')}</textarea></div>
+       <div class="fld"><label>Words in Arabic (optional)</label><textarea data-f="quote_ar" dir="rtl" rows="3" maxlength="600">${esc(r.quote_ar||'')}</textarea></div>
+       <div class="g2"><div class="fld"><label>Name shown</label><input data-f="display_name" value="${esc(r.display_name||'')}" maxlength="60"></div><div class="fld"><label>Stars shown</label><select data-f="stars">${[5,4,3,2,1,0].map(v=>`<option value="${v}" ${v===(r.stars||0)?'selected':''}>${v?v+' stars':'No stars'}</option>`).join('')}</select></div></div>
+       <div class="row"><button class="btn sm" data-sv="${esc(r.sid)}">Save words</button><button class="btn sm ${r.featured?'o':''}" data-ft="${esc(r.sid)}">${r.featured?'Remove from website':'Show on website'}</button></div></div>`:'<p class="hint">This client did not agree to be shown, so this review stays private.</p>'}
+     <div class="row" style="margin-top:12px"><button class="btn sm o" data-open="${esc(r.sid)}">Open client</button><button class="btn sm o" data-rd="${esc(r.sid)}">Delete review</button></div></section>`};
+  box.innerHTML=`<div class="cfgw"><div class="kp">${card('Reviews received',n,req?`${req} link${req===1?'':'s'} created · ${Math.round(n/req*100)}% replied`:'Create links from a client')}${card('Average rating',stv.length?(+avg(stv).toFixed(1))+' / 5':'—',stv.length?stars5(Math.round(avg(stv))):'')}${card('Would recommend',nps===null?'—':(nps>0?'+':'')+nps,'Score from −100 to +100. Above 50 is excellent')}${card('Shown on website',shown,'Only reviews you choose')}</div>
+   ${n?`<div class="ins2"><section class="panel"><h2>Ratings</h2>${dist}</section><section class="panel"><h2>Average by question</h2><table><thead><tr><th>Question</th><th class="num">Average</th><th class="num">Answers</th></tr></thead><tbody>${pq}</tbody></table></section></div>
+   <h2 style="margin:6px 0 12px;font-size:22px">All reviews</h2>${R.map(cardR).join('')}`:`<section class="panel" style="padding:24px"><h2>No reviews yet</h2><p class="hint">After you send a client their report, open their record, choose <b>Ask for a review</b> and send the message. Their answers appear here, and you decide which words appear on your website.</p></section>`}</div>`;
+  const find=sid=>R.find(x=>x.sid===sid);
+  const save=async(sid,extra={})=>{const root=box.querySelector(`[data-sid="${CSS.escape(sid)}"]`),body={...extra};root.querySelectorAll('[data-f]').forEach(el=>body[el.dataset.f]=el.dataset.f==='stars'?+el.value:el.value);
+    try{const j=await api('PUT','/reviews/'+encodeURIComponent(sid),body);Object.assign(find(sid),j.review);toast(extra.featured===true?'Now shown on your website':extra.featured===false?'Removed from your website':'Saved');vReviews($('#main'))}catch(e){if(!e.handled)toast(e.message,true)}};
+  box.onchange=e=>{const t=e.target;if(t.dataset.pick===undefined)return;const root=t.closest('[data-sid]'),r=find(root.dataset.sid),txt=r.answers.filter(a=>a.type==='text'),a=txt[+t.value];if(!a)return;const f=r.lang==='ar'?'quote_ar':'quote';root.querySelector(`[data-f="${f}"]`).value=a.value};
+  box.onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.sv)return save(b.dataset.sv);
+    if(b.dataset.ft){const r=find(b.dataset.ft);return save(b.dataset.ft,{featured:!r.featured})}
+    if(b.dataset.rd){if(!await confirmBox({title:'Delete this review?',body:'It is removed from your records and from your website.',ok:'Delete',danger:true}))return;try{await api('DELETE','/reviews/'+encodeURIComponent(b.dataset.rd));st.reviews=st.reviews.filter(x=>x.sid!==b.dataset.rd);toast('Review deleted');vReviews($('#main'))}catch(err){if(!err.handled)toast(err.message,true)}return}
+    if(b.dataset.open)openDrawer(b.dataset.open)};
+}
+function rvQuestions(m,box){
+  m.dataset.cv='reviews';
+  const d=st.cfgDraft,custom=!!d.review_questions,list=d.review_questions||RQDEF.map(q=>({...q,hidden:false}));
+  const own=()=>{const c=st.cfgDraft;if(!c.review_questions)c.review_questions=RQDEF.map(q=>({...q,hidden:false}));return c.review_questions};
+  const TY={stars:'Star rating (1 to 5)',scale:'Score from 0 to 10',text:'Written answer'};
+  const rows=list.map((q,i)=>`<div class="qrow${q.hidden?' off':''}" data-ri="${i}"><div class="qn"><b>${i+1}</b></div>
+    <div class="qt"><div class="fld"><label for="re${i}">English</label><textarea id="re${i}" data-rf="en" rows="2" maxlength="300">${esc(q.en)}</textarea></div><div class="fld"><label for="ra${i}">Arabic</label><textarea id="ra${i}" dir="rtl" data-rf="ar" rows="2" maxlength="300">${esc(q.ar)}</textarea></div></div>
+    <div class="qo"><div class="fld"><label for="rt${i}">Kind of answer</label><select id="rt${i}" data-rf="type">${Object.entries(TY).map(([k,v])=>`<option value="${k}" ${q.type===k?'selected':''}>${v}</option>`).join('')}</select></div>
+     <div class="fld"><label for="rr${i}">Answer</label><select id="rr${i}" data-rf="required"><option value="0" ${q.required?'':'selected'}>Optional</option><option value="1" ${q.required?'selected':''}>Required</option></select></div>
+     <div class="qb"><button class="ib" data-rmv="${i}:-1" aria-label="Move up" ${i===0?'disabled':''}>↑</button><button class="ib" data-rmv="${i}:1" aria-label="Move down" ${i===list.length-1?'disabled':''}>↓</button><button class="btn sm o" data-rhide="${i}">${q.hidden?'Show':'Hide'}</button><button class="ib" data-rdel="${i}" aria-label="Delete question ${i+1}">${ic('x')}</button></div></div></div>`).join('');
+  box.innerHTML=`<div class="cfgw qwrap"><div class="panel"><h2>Questions clients answer when they review</h2>
+   <p class="hint">${custom?'You are using your own list.':'You are using the standard review questions.'} Change the wording, the order, and the kind of answer. Hide a question to keep it without asking it. After a client answers they can also agree to have their words shown on your website.</p>
+   <div class="fld" style="max-width:420px;margin:14px 0"><label for="rvname">How the reviewer's name appears on your website</label><select id="rvname"><option value="choose" ${(d.review_name||'choose')==='choose'?'selected':''}>The client chooses (first name, full name or anonymous)</option><option value="first" ${d.review_name==='first'?'selected':''}>Always first name only</option><option value="full" ${d.review_name==='full'?'selected':''}>Always full name</option><option value="anon" ${d.review_name==='anon'?'selected':''}>Always anonymous</option></select></div>
+   <div class="qlist">${rows}</div>
+   <div class="addrow" style="margin-top:14px"><button class="btn o" id="radd">+ Add a question</button><button class="btn sm o" id="rreset" ${custom?'':'disabled'}>Go back to the standard questions</button></div></div></div>
+   <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`;
+  const re=()=>vReviews($('#main'));
+  box.oninput=e=>{const t=e.target,r=t.closest('[data-ri]');if(!r||!t.dataset.rf||['type','required'].includes(t.dataset.rf))return;own()[+r.dataset.ri][t.dataset.rf]=t.value;markDirty()};
+  box.onchange=e=>{const t=e.target;if(t.id==='rvname'){st.cfgDraft.review_name=t.value;markDirty();return}const r=t.closest('[data-ri]');if(!r||!['type','required'].includes(t.dataset.rf))return;const q=own()[+r.dataset.ri];if(t.dataset.rf==='required')q.required=t.value==='1';else q.type=t.value;markDirty();re()};
+  box.onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.rmv){const[i,dir]=b.dataset.rmv.split(':').map(Number),a=own(),j=i+dir;if(j<0||j>=a.length)return;const[x]=a.splice(i,1);a.splice(j,0,x);markDirty();re();return}
+    if(b.dataset.rhide!==undefined){const q=own()[+b.dataset.rhide];if(!q.hidden&&own().filter(x=>!x.hidden).length<2)return toast('Keep at least one question visible.',true);q.hidden=!q.hidden;markDirty();re();return}
+    if(b.dataset.rdel!==undefined){const i=+b.dataset.rdel,a=own();if(!a[i].hidden&&a.filter(x=>!x.hidden).length<2)return toast('Keep at least one question visible.',true);if(!await confirmBox({title:'Delete question '+(i+1)+'?',body:'Answers clients already gave stay in their reviews.',ok:'Delete'}))return;a.splice(i,1);markDirty();re();return}
+    if(b.id==='radd'){own().push({id:uid(),type:'text',en:'',ar:'',required:false,hidden:false});markDirty();re();return}
+    if(b.id==='rreset'){if(!await confirmBox({title:'Go back to the standard questions?',body:'Your own wording and order are replaced when you save.',ok:'Go back'}))return;st.cfgDraft.review_questions=null;markDirty();re();return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;re();return}
+    if(b.id==='csave')saveCfg(b)};
+}
 function vPackages(m){
   if(!st.loaded&&!st.error){m.innerHTML=head('Packages','Loading…')+loadingRows();return}
   if(!st.loaded){m.innerHTML=head('Packages','')+errBanner();return}
@@ -481,12 +643,40 @@ function vPackages(m){
     avg=del.length?del.reduce((a,x)=>a+Date.parse(x.delivered_at)-Date.parse(x.verified_at),0)/del.length:null;
     return `<section class="panel"><h2>${esc(p.name)}</h2><div class="pr">${money(p.price)}</div><dl class="kv">
      <dt>Submissions</dt><dd>${s.length}</dd><dt>Awaiting payment check</dt><dd>${s.filter(x=>x.payment_status==='pending').length}</dd>
-     <dt>Verified payments</dt><dd>${ver.length}</dd><dt>Verified revenue</dt><dd>${money(ver.length*p.price)}</dd>
+     <dt>Verified payments</dt><dd>${ver.length}</dd><dt>Verified revenue</dt><dd>${money(ver.reduce((a,x)=>a+x.price_sar,0))}</dd>
      <dt>Reports delivered</dt><dd>${del.length}</dd><dt>Average time to deliver</dt><dd>${avg===null?'—':span(avg)}</dd>
      ${k==='consultation'?`<dt>Consultations scheduled</dt><dd>${ver.filter(x=>x.consult_status==='scheduled').length}</dd><dt>Consultations completed</dt><dd>${ver.filter(x=>x.consult_status==='completed').length}</dd>`:''}</dl>
      <div class="row" style="margin-top:16px"><button class="btn sm o" data-pkg="${k}">View submissions</button></div></section>`}).join('')}</div>
-   <p class="hint" style="margin-top:18px;max-width:640px">Package names and prices are set on the public website, and the server applies the same prices to every submission so the figures here always match what clients were charged.</p>`;
+   <div id="pked"></div>`;
   $$('[data-pkg]',m).forEach(b=>b.onclick=()=>go('submissions',{fPkg:b.dataset.pkg}));
+  if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='packages')vPackages($('#main'))}).catch(()=>{});return}
+  pkEditor(m);
+}
+function pkEditor(m){
+  m.dataset.cv='packages';const d=st.cfgDraft,list=d.packages||PKDEF.map(x=>({...x})),inf={...INFODEF,...(d.info||{})};
+  const own=()=>{const c=st.cfgDraft;if(!c.packages)c.packages=PKDEF.map(x=>({...x}));return c.packages};
+  const info=()=>{const c=st.cfgDraft;if(!c.info)c.info={...INFODEF};return c.info};
+  const f=(id,lab,k,v,o={})=>`<div class="fld"><label for="${id}">${lab}</label>${o.area?`<textarea id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" rows="2" maxlength="300">${esc(v)}</textarea>`:`<input id="${id}" ${o.rtl?'dir="rtl" ':''}data-k="${k}" value="${esc(v)}" maxlength="80" ${o.num?'type="number" inputmode="numeric" min="1" max="100000"':''}>`}</div>`;
+  const cards=list.map((p,i)=>`<section class="panel"><h2>Package ${i+1}${i===1?' (includes the consultation call)':''}</h2>
+    <div class="g2">${f('pk'+i+'n','Name (English)','packages.'+i+'.name',p.name)}${f('pk'+i+'na','Name (Arabic)','packages.'+i+'.name_ar',p.name_ar,{rtl:1})}</div>
+    <div class="g2">${f('pk'+i+'d','Description (English)','packages.'+i+'.desc',p.desc,{area:1})}${f('pk'+i+'da','Description (Arabic)','packages.'+i+'.desc_ar',p.desc_ar,{area:1,rtl:1})}</div>
+    <div class="g2">${f('pk'+i+'p','Price (SAR)','packages.'+i+'.price',p.price,{num:1})}<label class="chk" style="align-self:end"><input type="checkbox" data-pkshow="${i}" ${p.hidden?'':'checked'}><span>Show this package on the website</span></label></div></section>`).join('');
+  $('#pked',m).innerHTML=`<div class="cfgw"><div class="panel"><h2>Edit what clients see</h2>
+    <p class="hint">Change prices, names and wording here. The website keeps the same look. Changes apply after you save. The server charges the saved price, and clients who already paid keep the price they were charged.</p>
+    <div class="note" style="margin-top:0">The FAQ price lines on the website update by themselves. If you hide a package, hide it here and check the FAQ wording.</div></div>
+    <div class="pk">${cards}</div>
+    <section class="panel"><h2>Times shown to clients</h2><div class="g2">${f('ifdu','Assessment length (English)','info.duration_en',inf.duration_en)}${f('ifdua','Assessment length (Arabic)','info.duration_ar',inf.duration_ar,{rtl:1})}</div>
+    <div class="g2">${f('ifde','Report delivery (English)','info.delivery_en',inf.delivery_en)}${f('ifdea','Report delivery (Arabic)','info.delivery_ar',inf.delivery_ar,{rtl:1})}</div>
+    <div class="row"><button class="btn sm o" id="pkreset" ${d.packages||d.info?'':'disabled'}>Go back to the original packages</button></div></section></div>
+    <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`;
+  m.oninput=e=>{const t=e.target,k=t.dataset&&t.dataset.k;if(!k)return;const[a,i,f2]=k.split('.');if(a==='packages')own()[+i][f2]=t.value;else if(a==='info')info()[i]=t.value;markDirty()};
+  m.onchange=e=>{const t=e.target;if(t.dataset&&t.dataset.pkshow!==undefined){const a=own(),i=+t.dataset.pkshow;if(t.checked===false&&a.filter(x=>!x.hidden).length<2){t.checked=true;return toast('Keep at least one package visible.',true)}a[i].hidden=!t.checked;markDirty()}};
+  m.onclick=async e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.id==='pkreset'){if(!await confirmBox({title:'Go back to the original packages?',body:'Your prices, names and wording are replaced by the original ones when you save.',ok:'Go back'}))return;st.cfgDraft.packages=null;st.cfgDraft.info=null;markDirty();vPackages($('#main'));return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;vPackages($('#main'));return}
+    if(b.id==='csave')saveCfg(b);
+  };
 }
 
 /* ============ dialogs ============ */
@@ -529,7 +719,8 @@ function addDialog(){
 /* ============ detail drawer ============ */
 async function openDrawer(id,tpl){
   st.openId=id;st.detail=null;st.focused=false;drawer();
-  try{const [j]=await Promise.all([api('GET','/submissions/'+encodeURIComponent(id)),loadCfg().catch(e=>{if(e.handled)throw e})]);if(st.openId!==id)return;st.detail=j.submission;st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;
+  try{const [j]=await Promise.all([api('GET','/submissions/'+encodeURIComponent(id)),loadCfg().catch(e=>{if(e.handled)throw e})]);if(st.openId!==id)return;st.detail=j.submission;st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;st.detail.review_link=j.review_link;
+    if(tpl==='review')await ensureRv(st.detail);
     if(tpl&&DEF_TPL[tpl]){const m=mstate(st.detail);m.tpl=tpl;m.text=tplFill(tpl,m.lang,st.detail)}
     drawer();if(tpl)setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}
   catch(e){if(e.handled)return;if(st.openId===id){st.detail={error:e.message};drawer()}}
@@ -652,38 +843,42 @@ function toLocalInput(iso){const d=new Date(iso),p=n=>String(n).padStart(2,'0');
 /* ============ settings + messages to clients ============ */
 const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(raw.startsWith('00'))d=d.slice(2);else if(/^05\d{8}$/.test(d))d='966'+d.slice(1);else if(/^5\d{8}$/.test(d))d='966'+d;return d.length>=8&&d.length<=15?d:''};
 const showPh=d=>d?'+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4'):'';
+const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {business} 🌿\nبصيرة… لترى نفسك بوضوح.';
 const DEF_TPL={
- received:{en:'Hello {name}, this is {business}. We received your assessment ({code}) and are checking your payment. Your results follow within 24 hours of confirmation.',
-  ar:'مرحباً {name}، معكم {business}. استلمنا تقييمك ({code}) ونراجع الدفع الآن. ستصلك نتائجك خلال 24 ساعة من تأكيد الدفع.'},
- payment_issue:{en:'Hello {name}, this is {business}. We could not confirm the payment for your assessment ({code}). Could you please send a clear copy of your receipt or the transfer reference? Thank you.',
-  ar:'مرحباً {name}، معكم {business}. لم نتمكن من تأكيد الدفع الخاص بتقييمك ({code}). نرجو إرسال صورة واضحة من الإيصال أو رقم العملية. شكراً لك.'},
- report:{en:'Hello {name}, your {business} feedback report is ready. You can open and save it here:\n{link}\n\nIf you would like to talk it through, just reply to this message.',
-  ar:'مرحباً {name}، تقريرك من {business} جاهز. يمكنك فتحه وحفظه من هذا الرابط:\n{link}\n\nإن رغبت في مناقشته، يسعدنا الرد على هذه الرسالة.'},
- report_file:{en:'Hello {name}, your {business} feedback report is attached to this message as a PDF. If you would like to talk it through, just reply here.',
-  ar:'مرحباً {name}، تقريرك من {business} مرفق مع هذه الرسالة بصيغة PDF. إن رغبت في مناقشته، يسعدنا الرد هنا.'},
- consult:{en:'Hello {name}, thank you for choosing the consultation with your assessment ({code}). Please tell us which days and times suit you this week and we will confirm a time.',
-  ar:'مرحباً {name}، شكراً لاختيارك الاستشارة مع تقييمك ({code}). نرجو إخبارنا بالأيام والأوقات المناسبة لك هذا الأسبوع لنؤكد لك الموعد.'},
- consult_confirm:{en:'Hello {name}, your consultation is confirmed for {date}. If the time no longer suits you, please reply here and we will find another.',
-  ar:'مرحباً {name}، تم تأكيد موعد استشارتك في {date}. إن لم يعد الموعد مناسباً، يرجى الرد هنا وسنجد وقتاً آخر.'}};
-const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time'};
+ received:{en:'Peace be upon you, {name} 🌿\nYour journey with {business} has begun. We have received your assessment ({code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
+  ar:'السلام عليكم يا {name} 🌿\nبدأت رحلتك مع {business}. وصلنا تقييمك ({code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
+ payment_issue:{en:'Hello {name} 🌿\nWe are almost there. We could not yet match the payment for your assessment ({code}).\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 🤍\n\n{site}'+SIGEN,
+  ar:'مرحباً {name} 🌿\nنوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك ({code}).\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 🤍\n\n{site}'+SIGAR},
+ report:{en:'{name}, your insight is ready ✨\nA mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
+  ar:'{name}، بصيرتك جاهزة ✨\nمرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
+ report_file:{en:'{name}, your insight is ready ✨\nYour {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
+  ar:'{name}، بصيرتك جاهزة ✨\nتقريرك من {business} مرفق بصيغة PDF. اقرأه على مهل، صفحة بعد صفحة، وراسلنا متى شئت لنتحدث عنه معاً 🌿\n\n{site}'+SIGAR},
+ consult:{en:'Hello {name} 🌿\nThank you for choosing a one-to-one conversation with your assessment ({code}). It is where the insight becomes a plan.\n\nWhich days and times suit you this week? We will confirm a time that works for you ✨\n\n{site}'+SIGEN,
+  ar:'مرحباً {name} 🌿\nشكراً لاختيارك جلسة فردية مع تقييمك ({code}). هناك تتحول البصيرة إلى خطة.\n\nما الأيام والأوقات المناسبة لك هذا الأسبوع؟ سنؤكد لك موعداً يناسبك ✨\n\n{site}'+SIGAR},
+ consult_confirm:{en:'{name}, your consultation is confirmed ✨\n📅 {date}\n\nCome as you are, with any questions on your mind. If the time no longer suits you, reply here and we will find another 🌿\n\n{site}'+SIGEN,
+  ar:'{name}، تم تأكيد استشارتك ✨\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
+ review:{en:'{name}, we hope your insight brought you clarity 🌟\nYour honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 🤍'+SIGEN,
+  ar:'{name}، نأمل أن بصيرتك قد منحتك وضوحاً 🌟\nكلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 🤍'+SIGAR}};
+const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time',review:'Ask for a review'};
 const KIND_PRESETS={stc:['STC Pay','STC Pay'],bank:['Bank transfer (IBAN)','تحويل بنكي (IBAN)'],apple:['Apple Pay','Apple Pay'],qr:['QR code','رمز QR'],link:['Pay online','الدفع عبر الإنترنت'],other:['Other','أخرى']};
 const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR code',link:'Payment link',other:'Other'};
 
 st.cfg=null;st.cfgDraft=null;st.cfgDirty=false;st.tk='report';st.mc=null;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const uid=()=>'n'+Math.random().toString(36).slice(2,8);
+function applyPk(c){for(const d of PKDEF){const x=c&&Array.isArray(c.packages)&&c.packages.find(y=>y.id===d.id);PK[d.id].name=(x&&x.name)||d.name;PK[d.id].price=x?x.price:d.price}}
 async function loadCfg(force){
   if(st.cfg&&!force)return st.cfg;
-  try{const j=await api('GET','/settings');st.cfg=j.settings;if(!st.cfgDirty)st.cfgDraft=clone(st.cfg)}catch(e){if(e.handled)throw e}
+  try{const j=await api('GET','/settings');st.cfg=j.settings;applyPk(st.cfg);if(!st.cfgDirty)st.cfgDraft=clone(st.cfg)}catch(e){if(e.handled)throw e}
   return st.cfg;
 }
 const tplEffective=(key,lang)=>((st.cfg&&st.cfg.templates&&st.cfg.templates[key]&&st.cfg.templates[key][lang])||DEF_TPL[key][lang]);
 function tplVars(s,lang){
   const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
-  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',date:d};
+  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d};
 }
 const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
-const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
+const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='review'&&!s.review_link?'The review link could not be created. Try again.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
 
 /* ---- message composer in the client drawer ---- */
 function mstate(s){
@@ -691,10 +886,10 @@ function mstate(s){
   return st.mc;
 }
 function composer(s){
-  const m=mstate(s),keys=['received','payment_issue','report','report_file',...(s.package==='consultation'?['consult','consult_confirm']:[])];
+  const m=mstate(s),keys=['received','payment_issue','report','report_file','review',...(s.package==='consultation'?['consult','consult_confirm']:[])];
   const blocked=m.tpl?tplBlocked(m.tpl,s):'',isEmail=s.contact_method==='Email'&&/@/.test(s.contact),B=st.busy?'disabled':'';
   const hasPh=!!normPh(m.phone);
-  return `<section class="sec" id="msc"><h3>Message the client</h3>
+  return `<section class="sec" id="msc"><h3>Message the client</h3>${s.delivered_at&&!s.review_at&&!s.review_requested_at?`<div class="note" style="margin:0 0 10px">✨ The report has been delivered. This is the right moment to ask for a review. <button type="button" class="chip" style="padding:2px 12px" data-do="tpl" data-v="review">Ask for a review</button></div>`:''}${s.review_at?`<p class="hint" style="margin-bottom:8px">⭐ Review received ${fmtD(s.review_at)}. <button type="button" class="chip" style="padding:2px 12px" data-go-reviews>See it</button></p>`:s.review_requested_at?`<p class="hint" style="margin-bottom:8px">Review link created ${fmtD(s.review_requested_at)}. No review yet.</p>`:''}
    <div class="chips" role="group" aria-label="Message type">${keys.map(k=>`<button type="button" class="chip" data-do="tpl" data-v="${k}" aria-pressed="${m.tpl===k}">${TPL_NAMES[k]}</button>`).join('')}<button type="button" class="chip" data-do="tpl" data-v="custom" aria-pressed="${m.tpl==='custom'}">Write my own</button></div>
    <div class="mtop"><span class="hint">Language of the message</span><span class="seg" role="group" aria-label="Message language"><button type="button" data-do="lang" data-v="en" aria-pressed="${m.lang==='en'}">English</button><button type="button" data-do="lang" data-v="ar" aria-pressed="${m.lang==='ar'}">العربية</button></span></div>
    <textarea id="mt" dir="auto" aria-label="Message" placeholder="Choose a message type above, or write your own here.">${esc(m.text)}</textarea>
@@ -707,10 +902,11 @@ function composer(s){
 async function logContact(s,channel){
   try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/contact',{channel,what:st.mc&&st.mc.tpl&&st.mc.tpl!=='custom'?TPL_NAMES[st.mc.tpl]:'Own message'});patchLocal(j.submission);drawer()}catch(e){if(!e.handled)toast('Opened, but the note could not be saved in the activity list.',true)}
 }
+async function ensureRv(s){if(s.review_link)return;try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/review-link');s.review_link=j.review_link;s.review_requested_at=j.review_link.requested_at;patchLocal(j.submission);if(st.detail&&st.detail.id===s.id){st.detail.review_link=j.review_link;st.detail.review_requested_at=j.review_link.requested_at}}catch(e){if(!e.handled)toast(e.message,true)}}
 async function drawerAction(e){
   const b=e.target.closest('[data-do]');if(!b||!st.detail||st.detail.error)return;
   const s=st.detail,m=mstate(s),a=b.dataset.do;
-  if(a==='tpl'){m.tpl=b.dataset.v;m.text=m.tpl==='custom'?m.text:tplFill(m.tpl,m.lang,s);if(m.tpl==='custom'&&!m.text)m.text='';drawer();$('#mt')?.focus({preventScroll:true})}
+  if(a==='tpl'){if(b.dataset.v==='review')await ensureRv(s);m.tpl=b.dataset.v;m.text=m.tpl==='custom'?m.text:tplFill(m.tpl,m.lang,s);if(m.tpl==='custom'&&!m.text)m.text='';drawer();$('#mt')?.focus({preventScroll:true})}
   else if(a==='lang'){m.lang=b.dataset.v;if(m.tpl&&m.tpl!=='custom')m.text=tplFill(m.tpl,m.lang,s);drawer()}
   else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(m.text),'_blank','noopener');logContact(s,'whatsapp')}
   else if(a==='mail'){window.open('mailto:'+encodeURIComponent(s.contact).replace('%40','@')+'?subject='+encodeURIComponent(((st.cfg&&st.cfg.business_name)||'Basirah')+(m.lang==='ar'?' – تقييمك':' – your assessment'))+'&body='+encodeURIComponent(m.text),'_self');logContact(s,'email')}
@@ -724,6 +920,7 @@ async function drawerAction(e){
   else if(a==='stoppdf'){if(!await confirmBox({title:'Stop sharing this report?',body:'The private link will stop working straight away. You can create a new one from the studio later.',ok:'Stop sharing',danger:true}))return;
     try{const j=await api('DELETE','/submissions/'+encodeURIComponent(s.id)+'/pdf');patchLocal(j.submission);st.detail.pdf_link=null;if(m.tpl==='report'){m.tpl='';m.text=''}drawer();toast('Link switched off')}catch(err){if(!err.handled)toast(err.message,true)}}
 }
+document.addEventListener('click',e=>{if(e.target.closest('[data-go-reviews]')){st.openId=null;st.detail=null;if(typeof closeDrawer==='function')closeDrawer();go('reviews')}});
 function drawerInput(e){
   const s=st.detail;if(!s||s.error)return;const m=mstate(s);
   if(e.target.id==='mt'){m.text=e.target.value;const dis=!m.text.trim();$$('#msc [data-do=wa],#msc [data-do=mail],#msc [data-do=copy]').forEach(x=>{if(x.dataset.do==='copy')x.disabled=dis;else if(x.dataset.do==='wa')x.disabled=dis||!normPh(m.phone)||!!(m.tpl&&tplBlocked(m.tpl,s));else x.disabled=dis||!!(m.tpl&&tplBlocked(m.tpl,s))})}
@@ -738,7 +935,7 @@ function vSettings(m){
   m.innerHTML=head('Settings','WhatsApp numbers, ways to pay and the wording of your messages')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
   bindHead();
   if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='settings')vSettings($('#main'))}).catch(()=>{});return}
-  const d=st.cfgDraft;
+  const d=st.cfgDraft;m.dataset.cv='settings';
   const waRows=d.whatsapp.map((w,i)=>`<div class="crow" data-i="${i}"><div class="fld"><label for="wl${i}">Name (English)</label><input id="wl${i}" type="text" data-k="whatsapp.${i}.label" value="${esc(w.label)}" maxlength="40" placeholder="e.g. Consultations"></div>
     <div class="fld"><label for="wa${i}">Name (Arabic)</label><input id="wa${i}" type="text" dir="rtl" data-k="whatsapp.${i}.label_ar" value="${esc(w.label_ar)}" maxlength="40" placeholder="مثال: الاستشارات"></div>
     <div class="fld num2"><label for="wn${i}">Number</label><input id="wn${i}" type="text" inputmode="tel" dir="ltr" data-k="whatsapp.${i}.number" value="${esc(w.number&&/^966/.test(w.number)?'+'+w.number:w.number)}" placeholder="0551234567"><span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
@@ -798,15 +995,19 @@ function vSettings(m){
     if(b.id==='csave')saveCfg(b);
   };
 }
-const redrawCfg=()=>(st.view==='questions'?vQuestions:vSettings)($('#main'));
+const redrawCfg=()=>(st.view==='questions'?vQuestions:st.view==='packages'?vPackages:st.view==='reviews'?vReviews:vSettings)($('#main'));
 async function saveCfg(btn){
   const d=clone(st.cfgDraft);
   for(const k of Object.keys(d.templates)){for(const l of['en','ar']){if(d.templates[k][l]===DEF_TPL[k][l])d.templates[k][l]=''}if(!d.templates[k].en&&!d.templates[k].ar)delete d.templates[k]}
   if(d.questions&&sameAsOrig(d.questions))d.questions=null;
+  if(d.packages&&JSON.stringify(d.packages.map(x=>({...x,price:+x.price})))===JSON.stringify(PKDEF))d.packages=null;
+  if(d.info&&Object.keys(INFODEF).every(k=>(d.info[k]||'')===INFODEF[k]||!d.info[k]))d.info=null;
+  if(d.review_questions&&JSON.stringify(d.review_questions.map(({id,type,required,hidden,en,ar})=>({id,type,required:!!required,hidden:!!hidden,en,ar})))===JSON.stringify(RQDEF.map(q=>({...q,hidden:false}))))d.review_questions=null;
+  if(d.packages)d.packages=d.packages.map(x=>({...x,price:Math.round(+x.price)}));
   btn.disabled=true;btn.innerHTML='<span class="sp"></span> Saving…';
-  try{const j=await api('PUT','/settings',{...d,updated_at:st.cfg.updated_at});st.cfg=j.settings;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;toast(st.view==='questions'?'Questions saved':'Settings saved');redrawCfg()}
+  try{const j=await api('PUT','/settings',{...d,updated_at:st.cfg.updated_at});st.cfg=j.settings;applyPk(st.cfg);st.cfgDraft=clone(st.cfg);st.cfgDirty=false;toast(st.view==='questions'?'Questions saved':st.view==='packages'?'Packages saved':st.view==='reviews'?'Review questions saved':'Settings saved');redrawCfg()}
   catch(e){if(e.handled)return;btn.disabled=false;btn.textContent='Save changes';
-    if(e.status===409&&e.body?.settings){st.cfg=e.body.settings;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;redrawCfg()}
+    if(e.status===409&&e.body?.settings){st.cfg=e.body.settings;applyPk(st.cfg);st.cfgDraft=clone(st.cfg);st.cfgDirty=false;redrawCfg()}
     toast(e.message==='Failed to fetch'?'Can’t reach the server. Nothing was saved.':e.message,true)}
 }
 /* a QR picture is shrunk in the browser so it stays small and sharp */
@@ -837,7 +1038,7 @@ function vQuestions(m){
   m.innerHTML=head('Questions','Change the order and wording, and decide which answers are required')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
   bindHead();
   if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='questions')vQuestions($('#main'))}).catch(()=>{});return}
-  const d=st.cfgDraft,custom=!!d.questions,list=d.questions||origList();
+  const d=st.cfgDraft,custom=!!d.questions,list=d.questions||origList();m.dataset.cv='questions';
   const own=()=>{const c=st.cfgDraft;if(!c.questions)c.questions=origList();return c.questions};   // always the current draft, never a stale copy
   const vis=list.filter(q=>!q.hidden).length,req=list.filter(q=>!q.hidden&&q.required).length;
   const rows=list.map((q,i)=>`<div class="qrow${q.hidden?' off':''}" data-qi="${i}" draggable="false">

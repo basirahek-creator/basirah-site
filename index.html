@@ -433,6 +433,34 @@ footer .adm{display:block;margin-top:10px;color:#9fb5b0;font-size:13px;text-deco
 @media(prefers-reduced-motion:reduce){.wab,.wab .wal,.wafab.open .wam{transition:none;animation:none}}
 
 .req{display:inline-block;margin:-4px 0 14px;font-size:14px;font-weight:700;color:var(--amber,#8a5a00);background:var(--goldbg,#fbf1d6);border-radius:99px;padding:3px 12px}
+
+/* ---- keep everything clear of Netlify's own badge, which floats at the bottom-right ---- */
+:root{--nb:68px}
+.wafab{bottom:calc(var(--nb) + max(8px,env(safe-area-inset-bottom)))}
+footer{padding-bottom:calc(34px + var(--nb))}
+#ov{padding-bottom:calc(var(--nb) + 24px + env(safe-area-inset-bottom,0px))!important}
+.cchk{bottom:calc(var(--nb) + 4px)}
+/* ---- kind words from clients ---- */
+.voices{background:linear-gradient(180deg,var(--cream),var(--sage));position:relative;overflow:hidden;padding:72px 0 64px}
+.voices[hidden]{display:none}
+.voices .vh{text-align:center;max-width:620px;margin:0 auto 34px;padding:0 20px}
+.voices .vh h2{margin-bottom:8px}.voices .vh p{color:var(--sub)}
+.voices .vh:after{content:"";display:block;width:64px;height:2px;background:var(--gold);margin:18px auto 0;border-radius:2px}
+.vtrack{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px max(20px,calc((100% - 1180px)/2)) 26px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.vtrack::-webkit-scrollbar{display:none}
+.vc{flex:0 0 min(86vw,380px);scroll-snap-align:center;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:34px 28px 26px;position:relative;box-shadow:var(--sh1);display:flex;flex-direction:column;margin-inline:auto}
+.vtrack:has(.vc:nth-child(-n+3):last-child) .vc{margin-inline:0}
+.vtrack:has(.vc:nth-child(-n+3):last-child){justify-content:center}
+.vc:before{content:"“";position:absolute;top:6px;inset-inline-start:22px;font:600 96px/1 'Cormorant Garamond',serif;color:var(--gold);opacity:.35}
+.vc .vs{color:var(--gold);letter-spacing:3px;font-size:18px;margin-bottom:14px;position:relative}
+.vc blockquote{font:italic 500 22px/1.55 'Cormorant Garamond',Georgia,serif;color:var(--teal);flex:1;margin:0 0 22px;position:relative;overflow-wrap:anywhere}
+html[lang=ar] .vc blockquote{font:500 19px/1.9 'Tajawal',sans-serif;font-style:normal}
+.vc .vw{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.vc .vm{width:44px;height:44px;border-radius:50%;background:var(--teal);color:var(--cream);display:grid;place-items:center;font:600 20px 'Cormorant Garamond',serif;flex:none}
+.vc .vn{font-weight:700;color:var(--teal);line-height:1.2}.vc .vn small{display:block;font-weight:500;color:var(--sub);font-size:13px;margin-top:2px}
+.vnav{display:flex;justify-content:center;gap:10px}.vnav button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--teal);font-size:20px;cursor:pointer}.vnav button:hover{border-color:var(--teal)}
+@media(hover:hover){.vc{transition:transform .25s,box-shadow .25s}.vc:hover{transform:translateY(-4px);box-shadow:var(--sh2)}}
+@media(prefers-reduced-motion:reduce){.vc{transition:none}}
 </style>
 </head>
 <body>
@@ -534,6 +562,7 @@ footer .adm{display:block;margin-top:10px;color:#9fb5b0;font-size:13px;text-deco
   </div>
 </section>
 
+<section class="voices" id="voices" hidden><div class="vh"><h2 data-t="vcT">Kind words from our clients</h2><p data-t="vcS">Shared with their permission.</p></div><div class="vtrack" tabindex="0" aria-label="Client reviews"></div><div class="vnav"><button type="button" data-vn="-1" aria-label="Previous">‹</button><button type="button" data-vn="1" aria-label="Next">›</button></div></section>
 <section class="revs" id="reviews">
   <svg class="pat" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#D3AC66" stroke-width=".5"><rect x="50" y="50" width="100" height="100"></rect><rect x="50" y="50" width="100" height="100" transform="rotate(45 100 100)"></rect><circle cx="100" cy="100" r="70"></circle><circle cx="100" cy="100" r="40"></circle><circle cx="100" cy="100" r="95"></circle></g></svg>
   <div class="w" style="position:relative;z-index:1">
@@ -945,7 +974,7 @@ function waBtns(kind,cls){
   const txt=WAMSG[kind](S.sid);
   return L.map(w=>`<a class="btn ${cls||'o'} wabtn" href="${esc(waUrl(w.number,txt))}" target="_blank" rel="noopener">${WAICON}<span>${esc(kind==='consult'?t('doneConsult'):t(kind==='help'?'payHelpA':'doneMsg'))}${L.length>1?' · '+esc(waName(w)):''}</span></a>`).join('');
 }
-function commsRefresh(){waFab();waTiles()}
+function commsRefresh(){waFab();waTiles();if(typeof renderVoices==='function')renderVoices()}
 
 /* ----- ways to pay ----- */
 const mLabel=m=>lang==='ar'?(m.label_ar||m.label):m.label;
@@ -966,9 +995,56 @@ function payBlock(){
   `<div class="pmb">${m.bank?row('pBank',m.bank):''}${row('pHold',m.holder)}${row(valKey,m.value,true)}${safeHref(m.url)?`<a class="btn pml" href="${esc(safeHref(m.url))}" target="_blank" rel="noopener noreferrer">${t('pLink')}</a>`:''}${m.qr.map(q=>`<figure class="qrf"><button type="button" class="qr" data-big aria-label="${esc(t('qrTap'))}"><img src="${esc(q.src)}" alt="${esc(mLabel(m))} ${esc(t('qrAlt'))}"></button>${q.caption?`<figcaption>${esc(q.caption)}</figcaption>`:''}</figure>`).join('')}${mNote(m)?`<p class="pnote">${esc(mNote(m))}</p>`:''}</div>`;
 }
 const payMethodName=()=>{const m=curPm(payMethods());return m?(m.id==='default'?'QR code (original)':m.label):''};
+
+/* Kind words: reviews you chose to show in the admin */
+let VOICES=[];
+const VT={en:{vcT:'Kind words from our clients',vcS:'Shared with their permission.',vcC:'Basirah client'},ar:{vcT:'كلمات طيبة من عملائنا',vcS:'نُشرت بإذنهم.',vcC:'عميل بصيرة'}};
+for(const L of['en','ar'])Object.assign(T[L],VT[L]);
+function renderVoices(){
+  const sec=document.getElementById('voices');if(!sec)return;
+  const list=(VOICES||[]).map(v=>({q:(lang==='ar'?(v.quote_ar||v.quote):(v.quote||v.quote_ar))||'',n:v.name||'',s:Math.max(0,Math.min(5,v.stars|0))})).filter(v=>v.q);
+  sec.hidden=!list.length;if(!list.length)return;
+  sec.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
+  const tr=sec.querySelector('.vtrack');tr.textContent='';
+  for(const v of list){
+    const c=document.createElement('figure');c.className='vc';c.style.margin='0';
+    if(v.s){const s=document.createElement('div');s.className='vs';s.setAttribute('aria-label',v.s+' / 5');s.textContent='★'.repeat(v.s)+'☆'.repeat(5-v.s);c.appendChild(s)}
+    const q=document.createElement('blockquote');q.textContent=v.q;q.setAttribute('dir','auto');c.appendChild(q);
+    const w=document.createElement('figcaption');w.className='vw';
+    const m=document.createElement('span');m.className='vm';m.setAttribute('aria-hidden','true');m.textContent=(v.n.trim()[0]||'✦').toUpperCase();
+    const n=document.createElement('span');n.className='vn';n.textContent=v.n;const sm=document.createElement('small');sm.textContent=t('vcC');n.appendChild(sm);
+    w.append(m,n);c.appendChild(w);tr.appendChild(c)}
+  sec.querySelector('.vnav').style.display=list.length>2?'flex':'none';
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-vn]');if(!b)return;const tr=document.querySelector('#voices .vtrack'),c=tr.querySelector('.vc');if(!c)return;const d=(c.getBoundingClientRect().width+20)*(+b.dataset.vn)*(document.documentElement.dir==='rtl'?-1:1);tr.scrollBy({left:d,behavior:'smooth'})});
+/* Packages: prices, names, descriptions and times can be changed in the admin; the look of the page stays the same. */
+const PKKEY="bp1";let PKD=null;
+function applyPkData(j){
+  if(!PKD)PKD={f4p:{en:T.en.f4p,ar:T.ar.f4p},a2:{en:T.en.a2,ar:T.ar.a2},dur:{...CONFIG.duration},del:{...CONFIG.delivery},p:[1,2].map(i=>({n:{en:T.en['n'+i],ar:T.ar['n'+i]},k:{en:T.en['k'+i],ar:T.ar['k'+i]}}))};
+  const P=j&&Array.isArray(j.packages)&&j.packages.length===2?j.packages:null,I=(j&&j.info)||{};
+  const price=[200,400];
+  PK.length=0;
+  ['profile','consultation'].forEach((id,n)=>{
+    const c=P&&P.find(x=>x.id===id),i=n+1;
+    for(const L of['en','ar']){T[L]['n'+i]=(c&&(L==='ar'?c.name_ar:c.name))||PKD.p[n].n[L];T[L]['k'+i]=c?(L==='ar'?c.desc_ar:c.desc)||'':PKD.p[n].k[L]}
+    if(c)price[n]=c.price;
+    if(!(c&&c.hidden))PK.push({id,p:price[n],i,...(n===1?{f:1}:{})});
+  });
+  for(const L of['en','ar']){
+    T[L].f4p=PKD.f4p[L].replace(/\b200\b/,price[0]).replace(/\b400\b/,price[1]);
+    T[L].a2=PKD.a2[L].replace(/\b400\b/,price[1]);
+    CONFIG.duration[L]=I['duration_'+L]||PKD.dur[L];CONFIG.delivery[L]=I['delivery_'+L]||PKD.del[L];
+  }
+  const hb=document.querySelectorAll('.sc .pr .in b, .sc .pr .m2 b'),hp=document.querySelectorAll('.sc .pr > div');
+  if(hb[0])hb[0].textContent=price[0];if(hb[1])hb[1].textContent=price[1];
+  hp.forEach((el,n)=>{el.style.display=P&&P[n]&&P[n].hidden?'none':''});
+  if(typeof S!=='undefined'&&PK.length&&!PK.some(x=>x.id===S.pk))S.pk=PK[0].id;
+  try{if(P)localStorage.setItem(PKKEY,JSON.stringify({packages:P,info:I}));else localStorage.removeItem(PKKEY)}catch(e){}
+}
+try{const c=JSON.parse(localStorage.getItem(PKKEY)||'null');if(c)applyPkData(c)}catch(e){}
 async function loadBS(){
   try{const r=await fetch('/api/settings',{cache:'no-cache'});if(!r.ok)return;const j=await r.json();
-    if(j&&typeof j==='object'&&Array.isArray(j.whatsapp)&&Array.isArray(j.payments)){BS=j;if(typeof applyQs==='function'&&'questions' in j)applyQs(j.questions);commsRefresh();if(typeof ov!=='undefined'&&ov.classList.contains('on')&&S.step==='pay'&&!S.busy){sync();draw()}}}
+    if(j&&typeof j==='object'&&Array.isArray(j.whatsapp)&&Array.isArray(j.payments)){BS=j;if(typeof applyQs==='function'&&'questions' in j)applyQs(j.questions);VOICES=Array.isArray(j.testimonials)?j.testimonials:[];try{applyPkData(j);if(typeof applyLang==='function'&&document.getElementById('pk'))applyLang()}catch(e){}commsRefresh();if(typeof ov!=='undefined'&&ov.classList.contains('on')&&S.step==='pay'&&!S.busy){sync();draw()}}}
   catch(e){}
 }
 
