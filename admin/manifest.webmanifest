@@ -1,0 +1,33 @@
+{
+ "name": "Basirah Admin",
+ "short_name": "Basirah Admin",
+ "description": "Basirah admin dashboard",
+ "start_url": "/admin/",
+ "scope": "/admin/",
+ "id": "/admin/",
+ "display": "standalone",
+ "background_color": "#FEFBF2",
+ "theme_color": "#0B4F4C",
+ "lang": "en",
+ "dir": "auto",
+ "icons": [
+  {
+   "src": "/admin/icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/admin/icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/admin/icons/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

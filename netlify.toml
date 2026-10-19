@@ -1,0 +1,8 @@
+# If your site already has a netlify.toml, merge only the [[headers]] block below into it.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+    Referrer-Policy = "no-referrer"
+    X-Frame-Options = "DENY"

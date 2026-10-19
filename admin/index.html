@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B4F4C">
+<link rel="manifest" href="/admin/manifest.webmanifest"><link rel="icon" type="image/png" href="/admin/icons/icon-192.png"><link rel="apple-touch-icon" href="/admin/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Basirah Admin"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Basirah Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FEFAF3;--sage:#E4EDE7;--blush:#F4E7DF;--teal:#0B4F4C;--teal2:#3E6F6B;--gold:#B8914A;--line:#DCD3C0;--card:#fff;--txt:#0B4F4C;--sub:#587571;
+--green:#2f7d5b;--greenbg:#e1f1e8;--amber:#9a6a12;--amberbg:#fbf0d4;--red:#b24a3a;--redbg:#f8e3de;--blue:#2f6290;--bluebg:#e0ebf6;--grey:#6a7b78;--greybg:#eceeea;--goldbg:#f5ead2;
+--sh1:0 1px 2px rgba(11,79,76,.06),0 8px 22px -12px rgba(11,79,76,.22);--sh2:0 2px 6px rgba(11,79,76,.08),0 24px 48px -20px rgba(11,79,76,.35);--ease:cubic-bezier(.2,.7,.2,1)}
+@media (prefers-color-scheme:dark){:root{--cream:#121a19;--sage:#1a2624;--blush:#221f1c;--teal:#7fc4bb;--teal2:#a3cbc5;--gold:#d3ac66;--line:#33403d;--card:#1b2624;--txt:#e7f1ee;--sub:#a3bab6;
+--green:#7fc9a0;--greenbg:#1d3328;--amber:#e6c068;--amberbg:#3a3017;--red:#ef9582;--redbg:#3b2420;--blue:#8dbbe8;--bluebg:#1d2d3d;--grey:#a3b3b0;--greybg:#26302e;--goldbg:#372f1b;
+--sh1:0 1px 2px rgba(0,0,0,.3),0 8px 22px -12px rgba(0,0,0,.5);--sh2:0 2px 6px rgba(0,0,0,.3),0 24px 48px -20px rgba(0,0,0,.65)}}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--cream);color:var(--txt);font:16px/1.55 'Tajawal',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[hidden]{display:none!important}
+
+/* buttons & fields */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--teal);color:var(--cream);border:1.5px solid var(--teal);border-radius:99px;padding:9px 20px;font-weight:700;font-size:15px;line-height:1.2;text-decoration:none;transition:background .2s,transform .15s var(--ease),box-shadow .2s,opacity .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--sh1)}
+.btn:active{transform:none}
+.btn.o{background:transparent;color:var(--teal)}
+.btn.o:hover{background:var(--sage)}
+.btn.dg{background:var(--red);border-color:var(--red);color:#fff}
+.btn.dgo{background:transparent;border-color:var(--red);color:var(--red)}
+.btn.dgo:hover{background:var(--redbg)}
+.btn.sm{padding:6px 14px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.ib{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center;transition:border-color .2s}
+.ib:hover{border-color:var(--teal2)}
+.ib svg{width:18px;height:18px}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld>label,.lbl{font-size:13.5px;font-weight:500;color:var(--sub)}
+input[type=text],input[type=password],input[type=search],input[type=date],input[type=datetime-local],select,textarea{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;line-height:1.4;transition:border-color .2s,box-shadow .2s}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23808f8c' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea{min-height:90px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 38%,transparent)}
+[aria-invalid=true]{border-color:var(--red)!important}
+.err{color:var(--red);font-size:14px;min-height:20px}
+.hint{font-size:13.5px;color:var(--sub)}
+
+/* badges */
+.bd{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:2px 10px 2px 8px;font-size:13px;font-weight:700;white-space:nowrap}
+.bd i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.bd.green{color:var(--green);background:var(--greenbg)}.bd.amber{color:var(--amber);background:var(--amberbg)}.bd.red{color:var(--red);background:var(--redbg)}
+.bd.blue{color:var(--blue);background:var(--bluebg)}.bd.grey{color:var(--grey);background:var(--greybg)}.bd.gold{color:var(--amber);background:var(--goldbg)}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px}
+.lc{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:34px 30px;box-shadow:var(--sh2)}
+.lc h1{font-size:34px;margin-bottom:4px}
+.lc p{color:var(--sub);margin-bottom:22px}
+.lc .btn{width:100%;margin-top:14px;padding:12px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:var(--card);border-inline-end:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:6px}
+.brand{font:600 28px 'Cormorant Garamond',serif;padding:0 10px 2px}
+.brand small{display:block;font:500 13px 'Tajawal';color:var(--gold);letter-spacing:.04em}
+.side nav{display:flex;flex-direction:column;gap:2px;margin-top:18px}
+.nv{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-radius:12px;padding:10px 12px;text-align:start;font-weight:500;color:var(--sub);transition:background .2s,color .2s}
+.nv svg{width:20px;height:20px;flex:none}
+.nv:hover{background:var(--sage);color:var(--txt)}
+.nv[aria-current=page]{background:var(--sage);color:var(--teal);font-weight:700}
+.nv .ct{margin-inline-start:auto;font-size:12.5px;font-weight:700;background:var(--amberbg);color:var(--amber);border-radius:99px;padding:0 8px;min-width:22px;text-align:center}
+.nv .ct.red{background:var(--redbg);color:var(--red)}
+.side .out{margin-top:auto}
+.main{min-width:0;padding:28px clamp(16px,3vw,40px) 60px;max-width:1280px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.hd h1{font-size:clamp(30px,4vw,40px)}
+.hd p{color:var(--sub)}
+.hd .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.upd{font-size:13px;color:var(--sub)}
+@media(max-width:860px){
+ .shell{display:block}
+ .side{position:sticky;top:0;z-index:20;height:auto;flex-direction:row;align-items:center;gap:8px;padding:8px 12px;border-inline-end:0;border-bottom:1px solid var(--line);overflow-x:auto}
+ .brand{font-size:23px;padding:0 6px 0 0}.brand small{display:none}
+ .side nav{flex-direction:row;margin:0;gap:2px}
+ .nv{width:auto;padding:8px 12px;white-space:nowrap}.nv svg{display:none}
+ .side{gap:4px}.nv{padding:8px 10px;font-size:15px}
+ .side .out{margin:0 0 0 auto}.side .out span{display:none}.side .out svg{display:block}
+}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:26px}
+.cd{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;box-shadow:var(--sh1);text-align:start;display:flex;flex-direction:column;gap:2px;transition:transform .2s var(--ease),box-shadow .2s,border-color .2s}
+button.cd:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--teal2)}
+.cd .k{font-size:13.5px;color:var(--sub);font-weight:500}
+.cd .v{font:600 38px/1.1 'Cormorant Garamond',serif}
+.cd .s{font-size:13px;color:var(--sub)}
+.cd .v.mn{font-size:30px;white-space:nowrap}
+.cd.warn{border-color:var(--amber)}.cd.warn .v{color:var(--amber)}
+.cd.bad{border-color:var(--red);background:var(--redbg)}.cd.bad .v{color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh1);overflow:hidden}
+.panel>h2{font-size:24px;padding:16px 20px 4px}
+.panel>p.hint{padding:0 20px 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1000px){.two{grid-template-columns:1fr}}
+.li{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-top:1px solid var(--line);padding:12px 20px;text-align:start;transition:background .2s}
+.li:hover{background:var(--sage)}
+.li .g{flex:1;min-width:0}
+.li .g b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .g span{font-size:13.5px;color:var(--sub)}
+.li .r{font-size:13.5px;font-weight:700;white-space:nowrap}
+.r.late{color:var(--red)}.r.soon{color:var(--amber)}
+
+/* toolbar + table */
+.tb{display:grid;grid-template-columns:minmax(200px,1.6fr) repeat(4,minmax(130px,1fr));gap:10px;margin-bottom:14px;align-items:end}
+@media(max-width:1100px){.tb{grid-template-columns:repeat(3,1fr)}.tb .sr{grid-column:1/-1}}
+@media(max-width:600px){.tb{grid-template-columns:1fr 1fr}}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);font-weight:700;text-align:start;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:color-mix(in srgb,var(--sage) 55%,var(--card))}
+td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:color-mix(in srgb,var(--sage) 60%,transparent)}
+tbody tr:last-child td{border-bottom:0}
+.nm{font-weight:700}
+.sm2{font-size:13px;color:var(--sub);display:block}
+.num{text-align:end;white-space:nowrap}
+.pg{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--sub)}
+.pg .b{display:flex;gap:8px;align-items:center}
+@media(max-width:700px){
+ thead{display:none}
+ table,tbody,tr,td{display:block}
+ tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+ td{border:0;padding:2px 0;display:flex;justify-content:space-between;gap:12px;text-align:end}
+ td::before{content:attr(data-l);color:var(--sub);font-size:13px;text-align:start}
+ td.main-c{display:block;text-align:start}td.main-c::before{display:none}
+}
+.empty{text-align:center;padding:48px 24px}
+.empty svg{width:44px;height:44px;color:var(--gold);margin-bottom:10px}
+.empty h3{font-size:26px;margin-bottom:6px}
+.empty p{color:var(--sub);max-width:460px;margin:0 auto 16px}
+.sk{height:16px;border-radius:8px;background:linear-gradient(90deg,var(--sage),var(--line),var(--sage));background-size:200% 100%;animation:sh 1.2s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.skr{display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1fr;gap:18px;padding:18px 16px;border-bottom:1px solid var(--line)}
+.banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--redbg);color:var(--red);border:1px solid var(--red);border-radius:14px;padding:12px 16px;margin-bottom:16px;font-weight:500}
+
+/* summary */
+.smv{position:fixed;inset:0;z-index:50;background:var(--cream);overflow:auto}
+.smb{max-width:820px;margin:0 auto;padding:0 20px 60px}
+.smt{position:sticky;top:0;background:var(--cream);padding:14px 0;border-bottom:1px solid var(--line);margin-bottom:22px;display:flex;justify-content:flex-end}
+.smb header{margin-bottom:22px}.smb h1{font-size:40px;margin:6px 0}
+.rvs2{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.rvs2 span{background:var(--sage);border-radius:99px;padding:3px 14px;font-size:14px}
+.smq{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--line);break-inside:avoid}
+.smn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sage);color:var(--teal);display:grid;place-items:center;font-weight:700;font-size:14px}
+.smq h3{font:700 15.5px/1.5 'Tajawal',sans-serif;color:var(--sub);margin-bottom:4px}
+.smq p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16.5px}.smq audio{width:100%;margin-top:6px}
+@media print{body>*:not(#sm){display:none!important}.smv{position:static;overflow:visible;background:#fff}.smt,.smq audio{display:none}.smb{max-width:none;padding:0}:root{--cream:#fff;--sage:#eef2ef;--line:#ccc;--txt:#0B4F4C;--sub:#555}}
+/* packages */
+.pk{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.pk .panel{padding:22px}
+.pk h2{padding:0;font-size:28px}
+.pk .pr{font:600 40px 'Cormorant Garamond',serif;color:var(--gold);margin:4px 0 14px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:15px}
+.kv dt{color:var(--sub)}.kv dd{margin:0;font-weight:700;text-align:end}
+
+/* drawer */
+.ov{position:fixed;inset:0;z-index:40;background:rgba(6,47,45,.45);animation:fo .2s}
+@keyframes fo{from{opacity:0}}
+.dw{position:fixed;top:0;bottom:0;inset-inline-end:0;z-index:41;width:min(640px,100%);background:var(--cream);box-shadow:var(--sh2);display:flex;flex-direction:column;animation:sl .25s var(--ease)}
+@keyframes sl{from{transform:translateX(40px);opacity:0}}
+.dh{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:20px 22px 14px;border-bottom:1px solid var(--line);background:var(--card)}
+.dh h2{font-size:30px}
+.dh .meta{font-size:13.5px;color:var(--sub)}
+.db{overflow:auto;padding:18px 22px 40px;display:flex;flex-direction:column;gap:16px}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.sec h3{font-size:22px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kv2{display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:15px}
+.kv2 dt{color:var(--sub)}.kv2 dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.kv2 a{color:var(--teal);font-weight:500}
+.rcpt{max-width:180px;max-height:140px;border-radius:10px;border:1px solid var(--line);margin-top:8px;display:block;object-fit:cover}
+.steps{display:flex;gap:6px;margin:4px 0 14px;list-style:none;padding:0}
+.steps li{flex:1;font-size:12.5px;font-weight:700;text-align:center;color:var(--sub);border-top:4px solid var(--line);padding-top:6px}
+.steps li.dn{border-color:var(--teal2);color:var(--teal2)}
+.steps li.cu{border-color:var(--gold);color:var(--txt)}
+.qa{border-top:1px solid var(--line);padding:10px 0}
+.qa:first-child{border:0}
+.qa b{display:block;font-size:14px;color:var(--sub);font-weight:500}
+.qa p{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:2px}
+.qa audio{width:100%;margin-top:6px}
+details>summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details>summary::-webkit-details-marker{display:none}
+details>summary::after{content:"+";color:var(--gold);font-size:22px}
+details[open]>summary::after{content:"–"}
+.hist{list-style:none;padding:0;display:grid;gap:8px;font-size:14.5px}
+.hist li{display:flex;gap:12px}.hist time{color:var(--sub);white-space:nowrap;font-size:13.5px;min-width:130px}
+.cf{position:fixed;inset:0;z-index:60;background:rgba(6,47,45,.55);display:grid;place-items:center;padding:20px;animation:fo .15s}
+.cfb{background:var(--card);border-radius:20px;padding:26px;max-width:440px;width:100%;box-shadow:var(--sh2)}
+.cfb h3{font-size:27px;margin-bottom:8px}.cfb p{color:var(--sub)}
+.cfb .row{margin-top:22px;justify-content:flex-end}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.fgrid .full{grid-column:1/-1}
+@media(max-width:560px){.fgrid{grid-template-columns:1fr}.kv2{grid-template-columns:1fr}}
+.toasts{position:fixed;bottom:18px;inset-inline:0;z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 16px}
+.toast{background:var(--teal);color:var(--cream);border-radius:99px;padding:10px 20px;font-weight:500;box-shadow:var(--sh2);animation:tin .25s var(--ease);max-width:100%}
+.toast.bad{background:var(--red);color:#fff}
+@keyframes tin{from{transform:translateY(10px);opacity:0}}
+.sp{display:inline-block;width:15px;height:15px;border:2.5px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}.sp,.sk{animation-iteration-count:infinite!important;animation-duration:1.4s!important}}
+/* messages + settings */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:5px 14px;font-size:14px;font-weight:500;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--teal2)}
+.chip[aria-pressed=true]{background:var(--teal);color:var(--cream);border-color:var(--teal)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:99px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:none;padding:4px 16px;font-size:14px;font-weight:700;color:var(--sub)}
+.seg button[aria-pressed=true]{background:var(--sage);color:var(--teal)}
+.mtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 8px;flex-wrap:wrap}
+#mt{min-height:150px;line-height:1.6}
+.note{background:var(--goldbg);color:var(--amber);border-radius:12px;padding:8px 12px;font-size:14px;margin:8px 0}
+.cfgw{max-width:860px;display:flex;flex-direction:column;gap:20px;padding-bottom:90px}
+.cfgw .panel{padding:20px 22px}
+.cfgw .panel>h2{padding:0 0 2px}
+.cfgw .panel>p.hint{padding:0 0 14px}
+.crow{display:grid;grid-template-columns:1fr 1fr 1.1fr auto;gap:10px;align-items:end;margin-bottom:12px}
+@media(max-width:700px){.crow{grid-template-columns:1fr 1fr}.crow .fld.num2{grid-column:1/-1}}
+.pm{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px;background:var(--cream)}
+.pm .ph{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pm .ph .kd{font-size:12.5px;font-weight:700;color:var(--amber);background:var(--goldbg);border-radius:99px;padding:2px 10px;white-space:nowrap}
+.pm .ph .fld{flex:1}
+.pm .tools{display:flex;gap:4px}
+.pm .tools .ib{width:32px;height:32px}
+.pm .tools .ib svg{width:15px;height:15px}
+.pm .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:600px){.pm .g2{grid-template-columns:1fr}}
+.qrs{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.qrc{width:130px;display:flex;flex-direction:column;gap:6px}
+.qrc .im{position:relative;width:130px;height:130px;border:1px solid var(--line);border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.qrc .im img{max-width:100%;max-height:100%;object-fit:contain}
+.qrc .im button{position:absolute;top:4px;inset-inline-end:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:15px;line-height:1}
+.qrc input{padding:6px 8px;font-size:13px;border-radius:9px}
+.qadd{width:130px;height:130px;border:2px dashed var(--line);border-radius:12px;background:none;color:var(--sub);font-weight:700;font-size:14px;display:grid;place-items:center;text-align:center;padding:8px}
+.qadd:hover{border-color:var(--teal2);color:var(--teal)}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;font-weight:500}
+.chk input{width:20px;height:20px;margin-top:2px;accent-color:var(--teal)}
+.savebar{position:fixed;bottom:0;inset-inline:0;z-index:30;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -10px 30px -18px rgba(0,0,0,.4);padding:12px clamp(16px,3vw,40px);display:flex;gap:12px;align-items:center;justify-content:flex-end}
+.savebar span{margin-inline-end:auto;font-weight:700;color:var(--amber)}
+@media(min-width:861px){.savebar{inset-inline-start:240px}}
+.ph2{font-size:13px;color:var(--sub);min-height:19px;margin-top:2px}
+.setup{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--goldbg);border:1px solid var(--gold);border-radius:16px;padding:14px 18px;margin-bottom:18px}
+.setup b{display:block}
+
+/* questions */
+.qrow{display:grid;grid-template-columns:54px 1fr 250px;gap:14px;padding:14px 0;border-top:1px solid var(--line);align-items:start}
+.qrow.off{opacity:.55}
+.qrow.drag{opacity:.4}.qrow.over{box-shadow:0 -3px 0 var(--teal2)}
+.qn{display:flex;gap:6px;align-items:center;font-size:15px;color:var(--sub);padding-top:26px}
+.grip{cursor:grab;letter-spacing:-2px;font-size:18px;user-select:none;padding:2px 4px;color:var(--sub)}
+.qt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qt textarea{min-height:64px;resize:vertical}
+.qo .qb{display:flex;gap:4px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.qo .ib{width:34px;height:34px}.qo .ib:disabled{opacity:.35}
+.qwrap{max-width:1100px}
+@media(max-width:900px){.qrow{grid-template-columns:36px 1fr}.qrow .qo{grid-column:2}.qt{grid-template-columns:1fr}}
+/* app view: keep content clear of the phone's top notch and bottom bar when opened from the home screen */
+@media(max-width:860px){.side{padding-top:calc(8px + env(safe-area-inset-top,0px));padding-inline:max(12px,env(safe-area-inset-left,0px))}}
+@media(min-width:861px){.side{height:100dvh}}
+.savebar{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.main{padding-bottom:env(safe-area-inset-bottom,0px)}
+#dw{padding-bottom:env(safe-area-inset-bottom,0px)}
+#toasts{bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.lk{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;background:var(--cream)}
+.lk>div:first-child{min-width:0;display:flex;flex-direction:column;gap:2px}.lk span{font-size:14px;color:var(--sub)}.lk code{font-size:14px;word-break:break-all;color:var(--teal)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<script>
+/* ============ helpers ============ */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PK={profile:{name:'Full Personality Profile',price:200},consultation:{name:'Full Analysis + 1-to-1 Consultation',price:400}};
+const PAYL={pending:['Awaiting check','amber'],verified:['Verified','green'],rejected:['Rejected','red']};
+const REPL={not_started:['Not started','grey'],in_progress:['In preparation','blue'],ready:['Ready to send','gold'],delivered:['Delivered','green']};
+const CONL={not_scheduled:'Not scheduled',scheduled:'Scheduled',completed:'Completed'};
+const FLOW=['not_started','in_progress','ready','delivered'];
+const DAY=864e5,HOUR=36e5;
+const badge=(m,k)=>{const [t,c]=m[k]||[k,'grey'];return `<span class="bd ${c}"><i></i>${esc(t)}</span>`};
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+const dtf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+const dyf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+const fmtD=i=>i?dtf.format(new Date(i)):'—',fmtDay=i=>i?dyf.format(new Date(i)):'—';
+const money=n=>'SAR '+Number(n||0).toLocaleString('en-US');
+const dueAt=s=>s.payment_status==='verified'&&s.report_status!=='delivered'&&s.verified_at?Date.parse(s.verified_at)+DAY:null;
+const isOverdue=s=>{const d=dueAt(s);return d!==null&&d<Date.now()};
+const span=ms=>{const a=Math.abs(ms),h=Math.floor(a/HOUR),m=Math.floor(a%HOUR/6e4);return h>=48?Math.round(h/24)+' days':h?h+'h '+m+'m':Math.max(1,m)+'m'};
+const ago=iso=>span(Date.now()-Date.parse(iso));
+const ICON={
+ home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+ out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',refresh:'<path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/>',
+ qs:'<path d="M9 9a3 3 0 115 2c-1 .8-2 1.2-2 3M12 18h.01"/><circle cx="12" cy="12" r="10"/>',
+ doc:'<path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h5"/>',x:'<path d="M18 6L6 18M6 6l12 12"/>',inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13l3.5 7v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6z"/>'};
+const ic=(n,c='')=>`<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
+const toast=(m,bad)=>{const t=document.createElement('div');t.className='toast'+(bad?' bad':'');t.textContent=m;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),bad?6000:3200)};
+const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch{}}};
+
+/* ============ state + api ============ */
+const st={token:store.get('bat'),subs:[],loaded:false,loading:false,error:'',view:'overview',q:'',fPay:'',fRep:'',fPkg:'',sort:'new',page:1,size:25,openId:null,detail:null,busy:false,at:null,msg:''};
+async function api(method,path,body){
+  const r=await fetch('/api/admin'+path,{method,headers:{'Content-Type':'application/json',...(st.token?{Authorization:'Bearer '+st.token}:{})},body:body?JSON.stringify(body):undefined});
+  let j={};try{j=await r.json()}catch{}
+  if(r.status===401&&path!=='/login'){signOut('Your session expired. Please sign in again.');throw Object.assign(new Error('auth'),{handled:true})}
+  if(!r.ok)throw Object.assign(new Error(j.error||'Something went wrong ('+r.status+')'),{status:r.status,body:j});
+  return j;
+}
+function signOut(msg){store.set('bat',null);st.token=null;st.subs=[];st.loaded=false;st.msg=msg||'';st.openId=null;st.detail=null;render()}
+async function load(silent){
+  if(st.loading)return;st.loading=true;if(!silent){st.error='';renderBody()}
+  try{const j=await api('GET','/submissions');st.subs=j.submissions;st.loaded=true;st.error='';st.at=new Date();if(st.pendingOpen){const p=st.pendingOpen;st.pendingOpen=null;setTimeout(()=>openDrawer(p.id,p.tpl),0)}}
+  catch(e){if(e.handled)return;st.error=e.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':e.message;if(!silent)st.loaded=st.loaded}
+  finally{st.loading=false;if(st.token){renderNav();renderBody()}}
+}
+
+/* ============ derived data ============ */
+const D=()=>{
+  const s=st.subs,pend=s.filter(x=>x.payment_status==='pending'),ver=s.filter(x=>x.payment_status==='verified');
+  const queue=ver.filter(x=>x.report_status!=='delivered'),over=queue.filter(isOverdue);
+  return{pend,ver,queue,over,ready:ver.filter(x=>x.report_status==='ready'),deliv:ver.filter(x=>x.report_status==='delivered'),
+    prep:ver.filter(x=>x.report_status==='not_started'||x.report_status==='in_progress'),revenue:ver.reduce((a,x)=>a+x.price_sar,0)};
+};
+
+/* ============ shell ============ */
+function render(){
+  const app=$('#app');
+  if(!st.token){
+    app.innerHTML=`<main class="login"><form class="lc" id="lf" novalidate><h1>Basirah</h1><p>Admin sign-in</p>${st.msg?`<div class="err" role="alert" style="margin-bottom:10px">${esc(st.msg)}</div>`:''}
+    <div class="fld"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" autofocus></div><label class="chk" style="margin:0 0 14px"><input type="checkbox" id="rm" checked><span>Keep me signed in on this device for 30 days</span></label><div class="err" id="le" role="alert"></div><button class="btn" id="lb">Sign in</button></form></main>`;
+    $('#lf').onsubmit=async e=>{e.preventDefault();const b=$('#lb'),p=$('#pw');if(!p.value){$('#le').textContent='Enter the admin password.';p.setAttribute('aria-invalid','true');return p.focus()}
+      b.disabled=true;b.innerHTML='<span class="sp"></span> Signing in…';$('#le').textContent='';p.removeAttribute('aria-invalid');
+      try{const j=await api('POST','/login',{password:p.value,remember:$('#rm').checked});st.token=j.token;store.set('bat',j.token);st.msg='';const nx=store.get('bnext');if(nx){store.set('bnext',null);try{if(new URL(nx,location.href).origin===location.origin)return void location.replace(nx)}catch{}}render();load();loadCfg().then(()=>{if(st.view==='overview')renderBody()}).catch(()=>{})}
+      catch(err){b.disabled=false;b.textContent='Sign in';$('#le').textContent=err.message==='Failed to fetch'?'Can’t reach the server. Check your connection.':err.message;p.setAttribute('aria-invalid','true');p.select()}};
+    return;
+  }
+  app.innerHTML=`<div class="shell"><aside class="side"><div class="brand">Basirah<small>ADMIN</small></div><nav id="nav" aria-label="Sections"></nav><a class="nv" href="/admin/studio.html" style="text-decoration:none">${ic('doc')}<span>Feedback studio</span></a><button class="nv out" id="so">${ic('out')}<span>Sign out</span></button></aside><main class="main" id="main"></main></div>`;
+  $('#so').onclick=()=>signOut();renderNav();renderBody();
+}
+const VIEWS=[['overview','Overview','home'],['submissions','Submissions','list'],['delivery','Delivery queue','send'],['packages','Packages','box'],['questions','Questions','qs'],['settings','Settings','gear']];
+function renderNav(){
+  const nav=$('#nav');if(!nav)return;const d=D();
+  const ct={submissions:d.pend.length,delivery:d.queue.length};
+  nav.innerHTML=VIEWS.map(([k,l,i])=>`<button class="nv" data-v="${k}" ${st.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${ct[k]?`<span class="ct${k==='delivery'&&d.over.length?' red':''}" title="${k==='submissions'?'Payments awaiting check':'Reports still to deliver'}">${ct[k]}</span>`:''}</button>`).join('');
+  $$('[data-v]',nav).forEach(b=>b.onclick=()=>go(b.dataset.v));
+}
+function go(v,f){st.view=v;if(f)Object.assign(st,{q:'',fPay:'',fRep:'',fPkg:'',page:1},f);history.replaceState(null,'','#'+v);renderNav();renderBody();window.scrollTo(0,0)}
+function head(t,p,acts=''){return `<div class="hd"><div><h1>${t}</h1><p>${p}</p></div><div class="acts">${st.at?`<span class="upd">Updated ${st.at.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span>`:''}${acts}<button class="ib" id="rf" aria-label="Refresh" title="Refresh">${st.loading?'<span class="sp"></span>':ic('refresh')}</button></div></div>`}
+function bindHead(){const r=$('#rf');if(r)r.onclick=()=>load()}
+function errBanner(){return st.error?`<div class="banner" role="alert"><span>${esc(st.error)}</span><button class="btn sm o" id="retry">Try again</button></div>`:''}
+function bindErr(){const r=$('#retry');if(r)r.onclick=()=>load()}
+function renderBody(){
+  const m=$('#main');if(!m)return;
+  if((st.view==='settings'||st.view==='questions')&&$('.cfgw',m)){bindHead();return}   // never redraw the form while someone is typing in it
+  ({overview:vOverview,submissions:vSubs,delivery:vDelivery,packages:vPackages,questions:vQuestions,settings:vSettings}[st.view]||vOverview)(m);
+  bindHead();bindErr();
+}
+const emptyAll=()=>`<div class="panel empty">${ic('inbox')}<h3>No submissions yet</h3><p>New assessments appear here automatically as soon as a client submits one on the website. If you have earlier submissions in your email, you can add them by hand.</p><button class="btn" data-add>Add a submission</button></div>`;
+const loadingRows=()=>`<div class="panel" aria-busy="true" aria-label="Loading">${Array(6).fill('<div class="skr"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>').join('')}</div>`;
+function bindAdd(){$$('[data-add]').forEach(b=>b.onclick=addDialog)}
+function bindOpen(root=document){$$('[data-open]',root).forEach(b=>b.onclick=e=>{e.stopPropagation();openDrawer(b.dataset.open)})}
+
+/* ============ overview ============ */
+function vOverview(m){
+  if(!st.loaded&&!st.error){m.innerHTML=head('Overview','Loading your submissions…')+`<div class="cards">${Array(6).fill('<div class="cd"><div class="sk" style="width:60%"></div><div class="sk" style="height:34px;margin-top:8px;width:40%"></div></div>').join('')}</div>`;return}
+  if(!st.loaded){m.innerHTML=head('Overview','')+errBanner();return}
+  const d=D(),n=st.subs.length;
+  const card=(k,v,s,cls,fn)=>`<button class="cd ${cls||''}" data-go="${fn}"><span class="k">${k}</span><span class="v">${v}</span><span class="s">${s}</span></button>`;
+  const needSet=st.cfg&&!st.cfg.whatsapp.length&&!st.cfg.payments.length;
+  m.innerHTML=head('Overview',n?`${n} submission${n===1?'':'s'} in total`:'Everything at a glance','<button class="btn sm" data-add>Add a submission</button>')+errBanner()+(needSet?`<div class="setup"><div><b>Finish setting up</b><span class="hint">Add your WhatsApp number and ways to pay so clients can reach you and pay you.</span></div><button class="btn sm" data-go="settings">Open settings</button></div>`:'')+
+  (n?`<div class="cards">
+    ${card('Payments to check',d.pend.length,d.pend.length?'Oldest waiting '+ago(d.pend.at(-1).created_at):'All payments checked',d.pend.length?'warn':'','pay')}
+    ${card('Reports to prepare',d.prep.length,'Verified, not yet ready','','prep')}
+    ${card('Ready to send',d.ready.length,'Waiting to be delivered','','ready')}
+    ${card('Overdue',d.over.length,d.over.length?'Past the 24-hour delivery window':'Nothing overdue',d.over.length?'bad':'','over')}
+    ${card('Delivered',d.deliv.length,'Reports sent to clients','','deliv')}
+    ${card('Verified revenue','<span class="mn" style="font-size:30px;white-space:nowrap">'+money(d.revenue)+'</span>',d.ver.length+' verified payment'+(d.ver.length===1?'':'s'),'','rev')}
+   </div>
+   <div class="two">
+    <section class="panel"><h2>Payments waiting longest</h2><p class="hint">Check the receipt, then verify or reject.</p>${
+      d.pend.length?[...d.pend].reverse().slice(0,6).map(s=>`<button class="li" data-open="${esc(s.id)}"><span class="g"><b>${esc(s.full_name)}</b><span>${esc(PK[s.package].name)} · ${money(s.price_sar)}</span></span><span class="r ${Date.now()-Date.parse(s.created_at)>DAY?'late':''}">${ago(s.created_at)}</span></button>`).join(''):'<div class="li" style="cursor:default"><span class="g"><span>No payments are waiting. Nicely done.</span></span></div>'}</section>
+    <section class="panel"><h2>Delivery deadlines</h2><p class="hint">Reports are due 24 hours after payment is verified.</p>${
+      d.queue.length?[...d.queue].sort((a,b)=>dueAt(a)-dueAt(b)).slice(0,6).map(s=>{const du=dueAt(s),late=du<Date.now();return `<button class="li" data-open="${esc(s.id)}"><span class="g"><b>${esc(s.full_name)}</b><span>${esc(REPL[s.report_status][0])} · ${esc(PK[s.package].name)}</span></span><span class="r ${late?'late':du-Date.now()<4*HOUR?'soon':''}">${late?'Overdue '+span(Date.now()-du):'Due in '+span(du-Date.now())}</span></button>`}).join(''):'<div class="li" style="cursor:default"><span class="g"><span>No reports are waiting to be delivered.</span></span></div>'}</section>
+   </div>`:emptyAll());
+  $$('[data-go]').forEach(b=>b.onclick=()=>{const k=b.dataset.go;
+    ({settings:()=>go('settings'),pay:()=>go('submissions',{fPay:'pending'}),prep:()=>go('delivery'),ready:()=>go('submissions',{fPay:'verified',fRep:'ready'}),over:()=>go('delivery'),deliv:()=>go('submissions',{fRep:'delivered'}),rev:()=>go('submissions',{fPay:'verified'})})[k]()});
+  bindOpen(m);bindAdd();
+}
+
+/* ============ submissions ============ */
+const SORTS={new:['Newest first',(a,b)=>b.created_at.localeCompare(a.created_at)],old:['Oldest first',(a,b)=>a.created_at.localeCompare(b.created_at)],name:['Name A–Z',(a,b)=>a.full_name.localeCompare(b.full_name)],amt:['Amount, high to low',(a,b)=>b.price_sar-a.price_sar||b.created_at.localeCompare(a.created_at)]};
+function filtered(){
+  const q=st.q.trim().toLowerCase();
+  return st.subs.filter(s=>(!st.fPay||s.payment_status===st.fPay)&&(!st.fRep||s.report_status===st.fRep)&&(!st.fPkg||s.package===st.fPkg)&&
+    (!q||[s.full_name,s.contact,s.payment_reference,s.id].some(v=>String(v||'').toLowerCase().includes(q)))).sort(SORTS[st.sort][1]);
+}
+const opts=(o,cur,all)=>`<option value="">${all}</option>`+Object.entries(o).map(([k,v])=>`<option value="${k}" ${cur===k?'selected':''}>${esc(Array.isArray(v)?v[0]:v)}</option>`).join('');
+function vSubs(m){
+  if(!st.loaded&&!st.error){m.innerHTML=head('Submissions','Loading…')+loadingRows();return}
+  if(!st.loaded){m.innerHTML=head('Submissions','')+errBanner();return}
+  m.innerHTML=head('Submissions','Search, filter and open any client record.',`<button class="btn sm o" id="csv">Export CSV</button><button class="btn sm" data-add>Add a submission</button>`)+errBanner()+
+  `<div class="tb"><div class="fld sr"><label for="q">Search</label><input id="q" type="search" placeholder="Name, contact, payment reference or code" value="${esc(st.q)}"></div>
+   <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}</select></div>
+   <div class="fld"><label for="fr">Report</label><select id="fr">${opts(REPL,st.fRep,'All reports')}</select></div>
+   <div class="fld"><label for="fk">Package</label><select id="fk">${opts(Object.fromEntries(Object.entries(PK).map(([k,v])=>[k,v.name])),st.fPkg,'All packages')}</select></div>
+   <div class="fld"><label for="so2">Sort by</label><select id="so2">${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${st.sort===k?'selected':''}>${v[0]}</option>`).join('')}</select></div></div>
+   <div class="panel" id="res"></div>`;
+  $('#q').oninput=e=>{st.q=e.target.value;st.page=1;renderResults()};
+  [['fp','fPay'],['fr','fRep'],['fk','fPkg'],['so2','sort']].forEach(([id,k])=>$('#'+id).onchange=e=>{st[k]=e.target.value;st.page=1;renderResults()});
+  $('#csv').onclick=exportCsv;bindAdd();renderResults();
+}
+function renderResults(){
+  const r=$('#res');if(!r)return;const all=filtered(),pages=Math.max(1,Math.ceil(all.length/st.size));st.page=Math.min(st.page,pages);
+  const from=(st.page-1)*st.size,rows=all.slice(from,from+st.size);
+  if(!st.subs.length){r.outerHTML=emptyAll();bindAdd();return}
+  if(!all.length){r.innerHTML=`<div class="empty">${ic('inbox')}<h3>No matches</h3><p>No submission matches the current search and filters.</p><button class="btn o" id="clr">Clear search and filters</button></div>`;$('#clr').onclick=()=>go('submissions',{});return}
+  r.innerHTML=`<div class="tw"><table><thead><tr><th>Received</th><th>Client</th><th>Package</th><th class="num">Amount</th><th>Payment</th><th>Report</th><th>Contact</th></tr></thead><tbody>${rows.map(s=>`
+   <tr data-open="${esc(s.id)}" tabindex="0"><td data-l="Received">${fmtD(s.created_at)}</td>
+   <td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2">${esc(s.id)}${s.source==='manual'?' · added manually':''}${s.has_report?' · report drafted':''}</span></td>
+   <td data-l="Package">${esc(PK[s.package].name)}</td><td class="num" data-l="Amount">${money(s.price_sar)}</td>
+   <td data-l="Payment">${badge(PAYL,s.payment_status)}${s.payment_status==='verified'&&isOverdue(s)?' <span class="bd red"><i></i>Overdue</span>':''}</td><td data-l="Report">${badge(REPL,s.report_status)}</td>
+   <td data-l="Contact"><span dir="ltr">${esc(s.contact)}</span><span class="sm2">${esc(s.contact_method)}</span></td></tr>`).join('')}</tbody></table></div>
+   <div class="pg"><span>Showing ${from+1}–${from+rows.length} of ${all.length}${all.length!==st.subs.length?` (filtered from ${st.subs.length})`:''}</span>
+   <span class="b"><label class="hint" for="ps">Rows</label><select id="ps" style="width:auto">${[10,25,50,100].map(n=>`<option ${n===st.size?'selected':''}>${n}</option>`).join('')}</select>
+   <button class="btn sm o" id="pp" ${st.page<=1?'disabled':''}>Previous</button><span>Page ${st.page} of ${pages}</span><button class="btn sm o" id="pn" ${st.page>=pages?'disabled':''}>Next</button></span></div>`;
+  $$('tbody tr',r).forEach(tr=>{tr.onclick=()=>openDrawer(tr.dataset.open);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(tr.dataset.open)}}});
+  $('#pp').onclick=()=>{st.page--;renderResults()};$('#pn').onclick=()=>{st.page++;renderResults()};
+  $('#ps').onchange=e=>{st.size=+e.target.value;st.page=1;renderResults()};
+}
+function exportCsv(){
+  const rows=filtered(),cell=v=>{v=String(v??'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+  const head=['Code','Received','Name','Package','Amount (SAR)','Contact method','Contact','Payment reference','Paid with','Payment status','Report status','Payment verified','Report delivered'];
+  const csv=[head,...rows.map(s=>[s.id,s.created_at,s.full_name,PK[s.package].name,s.price_sar,s.contact_method,s.contact,s.payment_reference,s.payment_method||'',PAYL[s.payment_status][0],REPL[s.report_status][0],s.verified_at||'',s.delivered_at||''])].map(r=>r.map(cell).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='basirah-submissions-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();toast('Exported '+rows.length+' submission'+(rows.length===1?'':'s'));
+}
+
+/* ============ delivery queue ============ */
+const NEXT={not_started:['Start preparing','in_progress'],in_progress:['Mark ready','ready'],ready:['Mark delivered','delivered']};
+function vDelivery(m){
+  if(!st.loaded&&!st.error){m.innerHTML=head('Delivery queue','Loading…')+loadingRows();return}
+  if(!st.loaded){m.innerHTML=head('Delivery queue','')+errBanner();return}
+  const d=D(),q=[...d.queue].sort((a,b)=>dueAt(a)-dueAt(b));
+  m.innerHTML=head('Delivery queue','Verified clients still waiting for their report, most urgent first.')+errBanner()+(q.length?
+   `<div class="panel"><div class="tw"><table><thead><tr><th>Client</th><th>Package</th><th>Payment verified</th><th>Due</th><th>Report</th><th>Consultation</th><th><span class="vh">Action</span></th></tr></thead><tbody>${q.map(s=>{const du=dueAt(s),late=du<Date.now();return `
+   <tr data-open="${esc(s.id)}" tabindex="0"><td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2" dir="ltr">${esc(s.contact_method)} · ${esc(s.contact)}${s.has_report?' · report drafted':''}</span></td>
+   <td data-l="Package">${esc(PK[s.package].name)}</td><td data-l="Verified">${fmtD(s.verified_at)}</td>
+   <td data-l="Due"><b class="r ${late?'late':du-Date.now()<4*HOUR?'soon':''}">${late?'Overdue '+span(Date.now()-du):'In '+span(du-Date.now())}</b></td>
+   <td data-l="Report">${badge(REPL,s.report_status)}</td><td data-l="Consultation">${s.consult_status?esc(CONL[s.consult_status]):'—'}</td>
+   <td><button class="btn sm ${s.report_status==='ready'?'':'o'}" data-next="${esc(s.id)}">${NEXT[s.report_status][0]}</button></td></tr>`}).join('')}</tbody></table></div></div>`
+   :`<div class="panel empty">${ic('send')}<h3>All caught up</h3><p>No verified clients are waiting for a report. New ones appear here once you verify their payment.</p><button class="btn o" id="topay">Review payments</button></div>`);
+  $$('tbody tr',m).forEach(tr=>{tr.onclick=()=>openDrawer(tr.dataset.open);tr.onkeydown=e=>{if(e.target===tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openDrawer(tr.dataset.open)}}});
+  $$('[data-next]',m).forEach(b=>b.onclick=async e=>{e.stopPropagation();const s=st.subs.find(x=>x.id===b.dataset.next),[lbl,to]=NEXT[s.report_status];
+    if(to==='delivered'&&!await confirmBox({title:'Mark as delivered?',body:`Only do this once the report has been sent to ${s.full_name} (${s.contact_method}: ${s.contact}).`,ok:'Yes, it was sent'}))return;
+    b.disabled=true;b.innerHTML='<span class="sp"></span>';await patchById(s.id,{report_status:to},to==='delivered'?'Marked as delivered':lbl==='Start preparing'?'Report preparation started':'Marked ready to send');renderBody()});
+  const tp=$('#topay');if(tp)tp.onclick=()=>go('submissions',{fPay:'pending'});
+}
+
+/* ============ packages ============ */
+function vPackages(m){
+  if(!st.loaded&&!st.error){m.innerHTML=head('Packages','Loading…')+loadingRows();return}
+  if(!st.loaded){m.innerHTML=head('Packages','')+errBanner();return}
+  m.innerHTML=head('Packages','How each package is performing, from the same records as everywhere else.')+errBanner()+`<div class="pk">${Object.entries(PK).map(([k,p])=>{
+    const s=st.subs.filter(x=>x.package===k),ver=s.filter(x=>x.payment_status==='verified'),del=ver.filter(x=>x.delivered_at),
+    avg=del.length?del.reduce((a,x)=>a+Date.parse(x.delivered_at)-Date.parse(x.verified_at),0)/del.length:null;
+    return `<section class="panel"><h2>${esc(p.name)}</h2><div class="pr">${money(p.price)}</div><dl class="kv">
+     <dt>Submissions</dt><dd>${s.length}</dd><dt>Awaiting payment check</dt><dd>${s.filter(x=>x.payment_status==='pending').length}</dd>
+     <dt>Verified payments</dt><dd>${ver.length}</dd><dt>Verified revenue</dt><dd>${money(ver.length*p.price)}</dd>
+     <dt>Reports delivered</dt><dd>${del.length}</dd><dt>Average time to deliver</dt><dd>${avg===null?'—':span(avg)}</dd>
+     ${k==='consultation'?`<dt>Consultations scheduled</dt><dd>${ver.filter(x=>x.consult_status==='scheduled').length}</dd><dt>Consultations completed</dt><dd>${ver.filter(x=>x.consult_status==='completed').length}</dd>`:''}</dl>
+     <div class="row" style="margin-top:16px"><button class="btn sm o" data-pkg="${k}">View submissions</button></div></section>`}).join('')}</div>
+   <p class="hint" style="margin-top:18px;max-width:640px">Package names and prices are set on the public website, and the server applies the same prices to every submission so the figures here always match what clients were charged.</p>`;
+  $$('[data-pkg]',m).forEach(b=>b.onclick=()=>go('submissions',{fPkg:b.dataset.pkg}));
+}
+
+/* ============ dialogs ============ */
+function confirmBox({title,body,ok,cancel='Cancel',danger}){
+  return new Promise(res=>{
+    const prev=document.activeElement,d=document.createElement('div');d.className='cf';
+    d.innerHTML=`<div class="cfb" role="alertdialog" aria-modal="true" aria-labelledby="cft" aria-describedby="cfd"><h3 id="cft">${esc(title)}</h3><p id="cfd">${esc(body)}</p><div class="row"><button class="btn o" data-r="0">${esc(cancel)}</button><button class="btn${danger?' dg':''}" data-r="1">${esc(ok)}</button></div></div>`;
+    const done=v=>{d.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus();res(v)};
+    const kd=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done(false)}else if(e.key==='Tab'){const b=$$('button',d),i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.shiftKey?-1:1)+b.length)%b.length].focus()}};
+    d.onclick=e=>{const r=e.target.closest('[data-r]');if(r)done(r.dataset.r==='1');else if(e.target===d)done(false)};
+    document.addEventListener('keydown',kd,true);document.body.appendChild(d);$('[data-r="0"]',d).focus();
+  });
+}
+function addDialog(){
+  const prev=document.activeElement,o=document.createElement('div');o.className='cf';
+  o.innerHTML=`<form class="cfb" style="max-width:560px" role="dialog" aria-modal="true" aria-labelledby="adt" novalidate><h3 id="adt">Add a submission</h3><p>For a client whose assessment reached you by email before this dashboard existed.</p>
+  <div class="fgrid"><div class="fld full"><label for="a1">Full name</label><input id="a1" type="text" autocomplete="off"></div>
+  <div class="fld"><label for="a2">Contact method</label><select id="a2"><option>Email</option><option>WhatsApp</option><option>Mobile</option></select></div>
+  <div class="fld"><label for="a3">Contact</label><input id="a3" type="text" dir="ltr" autocomplete="off"></div>
+  <div class="fld"><label for="a4">Package</label><select id="a4">${Object.entries(PK).map(([k,p])=>`<option value="${k}">${esc(p.name)} · ${money(p.price)}</option>`).join('')}</select></div>
+  <div class="fld"><label for="a5">Date received</label><input id="a5" type="date"></div>
+  <div class="fld"><label for="a6">Payment reference</label><input id="a6" type="text" dir="ltr" autocomplete="off"></div>
+  <div class="fld"><label for="a7">Receipt link (optional)</label><input id="a7" type="text" dir="ltr" placeholder="https://" autocomplete="off"></div>
+  <div class="fld full"><label for="a8">Notes (optional)</label><textarea id="a8" style="min-height:70px"></textarea></div></div>
+  <div class="err" id="ae" role="alert" style="margin-top:8px"></div><div class="row"><button type="button" class="btn o" data-r="0">Cancel</button><button class="btn" id="as">Add submission</button></div></form>`;
+  const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
+  const kd=e=>{if(e.key==='Escape'){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
+  o.onclick=e=>{if(e.target===o||e.target.closest('[data-r]'))done()};
+  $('form',o).onsubmit=async e=>{e.preventDefault();const g=i=>$('#'+i,o),v=i=>g(i).value.trim(),bad=(i,m)=>{$('#ae',o).textContent=m;g(i).setAttribute('aria-invalid','true');g(i).focus()};
+    $$('[aria-invalid]',o).forEach(x=>x.removeAttribute('aria-invalid'));$('#ae',o).textContent='';
+    if(!v('a1'))return bad('a1','Enter the client’s full name.');if(!v('a3'))return bad('a3','Enter the client’s contact.');
+    if(v('a7')&&!safeUrl(v('a7')))return bad('a7','The receipt link must start with http:// or https://');
+    const b=g('as');b.disabled=true;b.innerHTML='<span class="sp"></span> Adding…';
+    try{const j=await api('POST','/submissions',{full_name:v('a1'),contact_method:v('a2'),contact:v('a3'),package:v('a4'),created_at:v('a5')||undefined,payment_reference:v('a6'),payment_receipt:v('a7'),notes:v('a8')});
+      st.subs.unshift(j.submission);st.subs.sort(SORTS.new[1]);done();renderNav();renderBody();toast('Submission added');openDrawer(j.submission.id)}
+    catch(err){if(err.handled)return;b.disabled=false;b.textContent='Add submission';$('#ae',o).textContent=err.message}};
+  document.body.appendChild(o);$('#a1',o).focus();
+}
+
+/* ============ detail drawer ============ */
+async function openDrawer(id,tpl){
+  st.openId=id;st.detail=null;st.focused=false;drawer();
+  try{const [j]=await Promise.all([api('GET','/submissions/'+encodeURIComponent(id)),loadCfg().catch(e=>{if(e.handled)throw e})]);if(st.openId!==id)return;st.detail=j.submission;st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;
+    if(tpl&&DEF_TPL[tpl]){const m=mstate(st.detail);m.tpl=tpl;m.text=tplFill(tpl,m.lang,st.detail)}
+    drawer();if(tpl)setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}
+  catch(e){if(e.handled)return;if(st.openId===id){st.detail={error:e.message};drawer()}}
+}
+function closeDrawer(){st.openId=null;st.detail=null;$('#dw')?.remove();$('#dov')?.remove();document.removeEventListener('keydown',dkd);if(st.opener&&st.opener.isConnected)st.opener.focus()}
+const dkd=e=>{if(e.key==='Escape'&&!$('.cf'))closeDrawer()};
+function patchLocal(sub){const i=st.subs.findIndex(x=>x.id===sub.id);if(i>=0){const{answers,history,...rest}=sub;st.subs[i]={...st.subs[i],...rest}}if(st.detail&&st.detail.id===sub.id){sub.report_link=st.detail.report_link;sub.pdf_link=st.detail.pdf_link;st.detail=sub}}
+async function patchById(id,fields,okMsg){
+  const base=st.detail&&st.detail.id===id?st.detail:st.subs.find(x=>x.id===id);
+  try{const j=await api('PATCH','/submissions/'+encodeURIComponent(id),{updated_at:base.updated_at,...fields});patchLocal(j.submission);toast(okMsg);return true}
+  catch(e){if(e.handled)return false;if(e.status===409&&e.body?.submission)patchLocal(e.body.submission);toast(e.message==='Failed to fetch'?'Can’t reach the server. Nothing was changed.':e.message,true);return false}
+  finally{renderNav()}
+}
+async function act(fields,okMsg){if(st.busy)return;st.busy=true;drawer();const ok=await patchById(st.detail.id,fields,okMsg);st.busy=false;drawer();renderBody();return ok}
+function contactLink(s){
+  const c=esc(s.contact),digits=String(s.contact).replace(/[^\d]/g,'');
+  if(s.contact_method==='Email')return `<a href="mailto:${c}">${c}</a>`;
+  if(s.contact_method==='WhatsApp'&&digits.length>=7)return `<a href="https://wa.me/${digits}" target="_blank" rel="noopener">${c}</a>`;
+  return digits.length>=7?`<a href="tel:${c}">${c}</a>`:c;
+}
+function drawer(){
+  let dw=$('#dw');
+  if(st.openId&&!dw){st.opener=document.activeElement;const ov=document.createElement('div');ov.className='ov';ov.id='dov';ov.onclick=closeDrawer;document.body.appendChild(ov);
+    dw=document.createElement('aside');dw.id='dw';dw.className='dw';dw.setAttribute('role','dialog');dw.setAttribute('aria-modal','true');dw.setAttribute('aria-label','Submission details');document.body.appendChild(dw);dw.onclick=drawerAction;dw.oninput=drawerInput;document.addEventListener('keydown',dkd)}
+  if(!st.openId){return}
+  const s=st.detail;
+  if(!s){dw.innerHTML=`<div class="dh"><div><h2>Loading…</h2></div><button class="ib" id="dx" aria-label="Close">${ic('x')}</button></div><div class="db"><div class="sec" aria-busy="true"><div class="sk" style="width:50%"></div><div class="sk" style="margin-top:12px"></div><div class="sk" style="margin-top:12px;width:70%"></div></div></div>`;$('#dx').onclick=closeDrawer;$('#dx').focus();return}
+  if(s.error){dw.innerHTML=`<div class="dh"><div><h2>Couldn’t open this record</h2></div><button class="ib" id="dx" aria-label="Close">${ic('x')}</button></div><div class="db"><div class="banner" role="alert"><span>${esc(s.error)}</span><button class="btn sm o" id="dr">Try again</button></div></div>`;$('#dx').onclick=closeDrawer;$('#dr').onclick=()=>openDrawer(st.openId);return}
+  const keepScroll=$('.db',dw)?.scrollTop||0,focusId=document.activeElement&&dw.contains(document.activeElement)?document.activeElement.id:'';
+  const verified=s.payment_status==='verified',pk=PK[s.package],idx=FLOW.indexOf(s.report_status),B=st.busy?'disabled':'';
+  const rc=safeUrl(s.payment_receipt),due=dueAt(s);
+  const ans=s.answers||[];
+  dw.innerHTML=`<div class="dh"><div style="min-width:0"><h2 dir="auto">${esc(s.full_name)}</h2><div class="meta">${esc(s.id)} · received ${fmtD(s.created_at)}${s.source==='manual'?' · added manually':''}</div></div><button class="ib" id="dx" aria-label="Close">${ic('x')}</button></div>
+  <div class="db" ${st.busy?'aria-busy="true"':''}>
+   <section class="sec"><h3>Client</h3><dl class="kv2"><dt>${esc(s.contact_method)}</dt><dd dir="ltr">${contactLink(s)}</dd><dt>Language</dt><dd>${s.language==='ar'?'Arabic':'English'}</dd><dt>Consent</dt><dd>${s.consent_at?`Given ${fmtD(s.consent_at)} (${s.consent_language==='ar'?'Arabic':'English'} text)`:'<span class="hint">Not recorded</span>'}</dd></dl></section>
+   ${composer(s)}
+   <section class="sec"><h3>Payment ${badge(PAYL,s.payment_status)}</h3>
+    <dl class="kv2"><dt>Package</dt><dd>${esc(pk.name)}</dd><dt>Amount due</dt><dd><b>${money(s.price_sar)}</b></dd><dt>Paid with</dt><dd>${esc(s.payment_method)||'<span class="hint">Not recorded</span>'}</dd><dt>Reference</dt><dd dir="ltr">${esc(s.payment_reference)||'—'}</dd>
+    <dt>Receipt</dt><dd>${rc?`<a href="${esc(rc)}" target="_blank" rel="noopener">Open receipt</a><img class="rcpt" data-hide src="${esc(rc)}" alt="Payment receipt preview" loading="lazy">`:'<span class="hint">No receipt link</span>'}</dd>
+    ${s.verified_at?`<dt>Verified</dt><dd>${fmtD(s.verified_at)}</dd>`:''}</dl>
+    <div class="row" style="margin-top:14px">
+     ${s.payment_status!=='verified'?`<button class="btn" id="pv" ${B}>Verify payment</button>`:''}
+     ${s.payment_status==='pending'?`<button class="btn dgo" id="pr" ${B}>Reject</button>`:''}
+     ${s.payment_status!=='pending'?`<button class="btn o" id="pp" ${B} ${verified&&s.report_status!=='not_started'?'disabled title="Move the report back to Not started first"':''}>Set back to pending</button>`:''}</div>
+    ${s.payment_status==='pending'?'<p class="hint" style="margin-top:8px">Check the amount and reference against your bank, then verify. Verifying starts the 24-hour delivery clock.</p>':''}</section>
+   <section class="sec"><h3>Report delivery ${badge(REPL,s.report_status)}</h3>
+    <ol class="steps" aria-label="Report progress">${FLOW.map((k,i)=>`<li class="${i<idx?'dn':i===idx?'cu':''}">${REPL[k][0]}</li>`).join('')}</ol>
+    ${due?`<p style="margin-bottom:10px;font-weight:700" class="r ${due<Date.now()?'late':''}">${due<Date.now()?'Overdue by '+span(Date.now()-due):'Due in '+span(due-Date.now())} <span class="hint" style="font-weight:400">(${fmtD(new Date(due))})</span></p>`:''}
+    ${s.delivered_at?`<p style="margin-bottom:10px">Delivered ${fmtD(s.delivered_at)}</p>`:''}
+    <div id="rpt">${reportBlock(s)}</div>
+    ${verified?'':'<p class="hint" style="margin-bottom:10px">Verify the payment first. The report steps unlock afterwards.</p>'}
+    <div class="row"><button class="btn" id="rn" ${B} ${!verified||s.report_status==='delivered'?'disabled':''}>${NEXT[s.report_status]?NEXT[s.report_status][0]:'Delivered'}</button>
+     <button class="btn o" id="rb" ${B} ${s.report_status==='not_started'?'disabled':''}>Move back a step</button></div>
+    <div class="fld" style="margin-top:12px"><label for="dn">Delivery note (optional, e.g. “sent by WhatsApp”)</label><input id="dn" type="text" value="${esc(s.delivery_note)}" maxlength="1000"></div></section>
+   ${s.package==='consultation'?`<section class="sec"><h3>Consultation call</h3><div class="fgrid" style="margin-top:0"><div class="fld"><label for="cs">Status</label><select id="cs">${Object.entries(CONL).map(([k,v])=>`<option value="${k}" ${s.consult_status===k?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="fld"><label for="ca">Date and time</label><input id="ca" type="datetime-local" value="${s.consult_at?toLocalInput(s.consult_at):''}"></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn sm" id="csv2" ${B}>Save consultation</button></div></section>`:''}
+   <section class="sec"><h3>Notes</h3><textarea id="nt" aria-label="Notes" maxlength="4000" placeholder="Anything worth remembering about this client">${esc(s.notes)}</textarea><div class="row" style="margin-top:10px"><button class="btn sm" id="ns" ${B}>Save notes and delivery note</button></div></section>
+   <section class="sec"><details><summary><h3 style="margin:0">Answers (${ans.length})</h3></summary><div style="margin-top:12px">
+    ${ans.length?`<div class="row" style="margin-bottom:6px"><button class="btn sm" id="sv">Open printable summary</button><button class="btn sm o" id="cp">Copy all answers</button></div>`+ans.map(qaHtml).join(''):'<p class="hint">No answers are stored for this record'+(s.source==='manual'?' because it was added manually.':'.')+'</p>'}</div></details></section>
+   <section class="sec"><h3>Activity</h3><ul class="hist">${[...s.history].reverse().map(h=>`<li><time>${fmtD(h.at)}</time><span>${esc(h.action)}</span></li>`).join('')}</ul></section>
+   <section class="sec"><h3>Remove record</h3><p class="hint" style="margin-bottom:10px">Permanently deletes this submission and its history. Use for sample or duplicate entries.</p><button class="btn dgo btn sm" id="del" ${B}>Delete submission</button></section>
+  </div>`;
+  const g=id=>$('#'+id,dw);
+  $('.db',dw).scrollTop=keepScroll;if(focusId&&g(focusId)&&!g(focusId).disabled)g(focusId).focus({preventScroll:true});else if(!focusId&&!st.focused){g('dx').focus();st.focused=true}
+  $$('img[data-hide]',dw).forEach(i=>i.onerror=()=>i.remove());
+  g('dx').onclick=closeDrawer;
+  if(g('pv'))g('pv').onclick=()=>act({payment_status:'verified'},'Payment verified');
+  if(g('pr'))g('pr').onclick=async()=>{if(await confirmBox({title:'Reject this payment?',body:`${s.full_name} will stay in the list as rejected and no report will be prepared. You can set it back to pending later.`,ok:'Reject payment',danger:true}))act({payment_status:'rejected'},'Payment rejected')};
+  if(g('pp'))g('pp').onclick=()=>act({payment_status:'pending'},'Payment set back to pending');
+  if(g('rn'))g('rn').onclick=async()=>{const to=NEXT[s.report_status]?.[1];if(!to)return;
+    if(to==='delivered'&&!await confirmBox({title:'Mark as delivered?',body:`Only do this once the report has been sent to ${s.full_name} (${s.contact_method}: ${s.contact}).`,ok:'Yes, it was sent'}))return;
+    act({report_status:to,delivery_note:g('dn').value},to==='delivered'?'Marked as delivered':to==='ready'?'Marked ready to send':'Report preparation started')};
+  if(g('rb'))g('rb').onclick=async()=>{const to=FLOW[idx-1];
+    if(s.report_status==='delivered'&&!await confirmBox({title:'Undo delivery?',body:'This removes the delivered status so you can correct it. The client is not notified.',ok:'Undo delivery'}))return;
+    act({report_status:to},'Moved back to “'+REPL[to][0]+'”')};
+  if(g('csv2'))g('csv2').onclick=()=>act({consult_status:g('cs').value,consult_at:g('ca').value?new Date(g('ca').value).toISOString():null},'Consultation saved');
+  g('ns').onclick=()=>act({notes:g('nt').value,delivery_note:g('dn').value},'Notes saved');
+  if(g('sv'))g('sv').onclick=()=>summaryView(s);
+  if(g('cp'))g('cp').onclick=async()=>{const t=ans.map(a=>a.n+'. '+a.q+'\n'+a.a).join('\n\n');try{await navigator.clipboard.writeText(t);toast('Answers copied')}catch{toast('Copy isn’t available in this browser',true)}};
+  g('del').onclick=async()=>{if(await confirmBox({title:'Delete this submission?',body:`${s.full_name} (${s.id}) and all of its answers and history will be permanently removed. This cannot be undone.`,ok:'Delete permanently',danger:true})){
+    st.busy=true;drawer();try{await api('DELETE','/submissions/'+encodeURIComponent(s.id));st.subs=st.subs.filter(x=>x.id!==s.id);st.busy=false;closeDrawer();renderNav();renderBody();toast('Submission deleted')}catch(e){st.busy=false;drawer();if(!e.handled)toast(e.message,true)}}};
+}
+const SKIPPED='SKIPPED BY CLIENT',VOICEP='VOICE ANSWER - tap to listen: ';
+const voiceUrl=a=>a.a.startsWith(VOICEP)?safeUrl(a.a.slice(VOICEP.length)):'';
+function qaHtml(a){const v=voiceUrl(a);return `<div class="qa"><b>${a.n}. ${esc(a.q)}</b>${v?`<span class="bd blue"><i></i>Voice answer</span><audio controls preload="none" src="${esc(v)}"></audio>`:a.a===SKIPPED?'<span class="bd grey"><i></i>Skipped by client</span>':`<p dir="auto">${esc(a.a)||'—'}</p>`}</div>`}
+const studioUrl=(s,extra='')=>'/admin/studio.html?sid='+encodeURIComponent(s.id)+extra;
+function pdfBlock(s){
+  const l=s.pdf_link;
+  return l?`<div class="note" style="background:var(--greenbg);color:var(--green)" role="status"><b>PDF shared by private link</b> · updated ${fmtD(l.at)}<br>${l.downloaded_at?'Client downloaded it '+fmtD(l.downloaded_at):l.opened_at?'Client opened the link '+fmtD(l.opened_at)+(l.opens>1?' ('+l.opens+' times)':''):'Not opened by the client yet'}</div>
+   <div class="row" style="margin-bottom:12px"><button class="btn sm" data-do="sendpdf">Send link on WhatsApp</button><button class="btn sm o" data-do="sendfile">Send PDF as attachment</button><button class="btn sm o" data-do="copylink">Copy link</button><button class="btn sm dgo" data-do="stoppdf">Stop sharing</button></div>`
+  :`<p class="hint" style="margin-bottom:8px">To send the PDF, open the studio and press “Send to client”, or send it as an attachment.</p>${s.report_link?`<div class="row" style="margin-bottom:12px"><button class="btn sm o" data-do="sendfile">Send PDF as attachment</button></div>`:''}`;
+}
+function reportBlock(s){
+  const l=s.report_link;
+  return l?`<p style="margin-bottom:8px"><span class="bd green"><i></i>Feedback report drafted</span> <span class="hint">saved ${fmtD(l.updatedAt)}</span></p>
+   <div class="row" style="margin-bottom:12px"><a class="btn sm" href="${studioUrl(s)}" target="_blank" rel="noopener">Edit feedback report</a><a class="btn sm o" href="${studioUrl(s,'&dl=1')}" target="_blank" rel="noopener">Download PDF</a></div>${pdfBlock(s)}`
+  :`<p class="hint" style="margin-bottom:8px">No feedback report yet. The studio opens with this client’s name and answers beside it.</p>
+   <div class="row" style="margin-bottom:12px"><a class="btn sm" href="${studioUrl(s)}" target="_blank" rel="noopener">Write feedback report</a></div>`;
+}
+async function refreshReport(){
+  if(!st.openId||!st.detail||st.detail.error)return;
+  try{const j=await api('GET','/submissions/'+encodeURIComponent(st.openId));if(!st.detail||st.detail.id!==st.openId)return;
+    st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;drawer()}catch{}
+}
+function summaryView(s){
+  const prev=document.activeElement,o=document.createElement('div');o.id='sm';o.className='smv';
+  const ans=s.answers||[],voice=ans.filter(a=>a.a.startsWith(VOICEP)).length,skip=ans.filter(a=>a.a===SKIPPED).length,typed=ans.length-voice-skip;
+  o.innerHTML=`<div class="smb" role="dialog" aria-modal="true" aria-label="Answer summary"><div class="smt"><div class="row"><a class="btn sm" href="${studioUrl(s)}" target="_blank" rel="noopener">${s.report_link?'Edit feedback report':'Write feedback report'}</a><button class="btn sm o" id="smp">Print or save as PDF</button><button class="btn sm o" id="smc">Close</button></div></div>
+   <header><div class="brand" style="padding:0">Basirah <small style="display:inline;font-size:14px">ANSWER SUMMARY</small></div><h1 dir="auto">${esc(s.full_name)}</h1>
+   <p class="hint">${esc(PK[s.package].name)} · ${esc(s.id)} · received ${fmtD(s.created_at)}<br>${esc(s.contact_method)}: <span dir="ltr">${esc(s.contact)}</span>${s.consent_at?'<br>Consent given '+fmtD(s.consent_at):''}</p>
+   <div class="rvs2"><span><b>${ans.length}</b> questions</span><span><b>${typed}</b> typed</span><span><b>${voice}</b> voice</span><span><b>${skip}</b> skipped</span></div></header>
+   ${ans.map(a=>{const v=voiceUrl(a);return `<section class="smq"><div class="smn">${a.n}</div><div><h3>${esc(a.q)}</h3>${v?`<p class="hint">Voice answer · <a href="${esc(v)}" target="_blank" rel="noopener">open recording</a></p><audio controls preload="none" src="${esc(v)}"></audio>`:a.a===SKIPPED?'<p class="hint">Skipped by the client</p>':`<p dir="auto">${esc(a.a)||'—'}</p>`}</div></section>`}).join('')}</div>`;
+  const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
+  const kd=e=>{if(e.key==='Escape'){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
+  document.body.appendChild(o);$('#smc',o).onclick=done;$('#smp',o).onclick=()=>window.print();$('#smc',o).focus();
+}
+function toLocalInput(iso){const d=new Date(iso),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
+
+/* ============ settings + messages to clients ============ */
+const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(raw.startsWith('00'))d=d.slice(2);else if(/^05\d{8}$/.test(d))d='966'+d.slice(1);else if(/^5\d{8}$/.test(d))d='966'+d;return d.length>=8&&d.length<=15?d:''};
+const showPh=d=>d?'+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4'):'';
+const DEF_TPL={
+ received:{en:'Hello {name}, this is {business}. We received your assessment ({code}) and are checking your payment. Your results follow within 24 hours of confirmation.',
+  ar:'مرحباً {name}، معكم {business}. استلمنا تقييمك ({code}) ونراجع الدفع الآن. ستصلك نتائجك خلال 24 ساعة من تأكيد الدفع.'},
+ payment_issue:{en:'Hello {name}, this is {business}. We could not confirm the payment for your assessment ({code}). Could you please send a clear copy of your receipt or the transfer reference? Thank you.',
+  ar:'مرحباً {name}، معكم {business}. لم نتمكن من تأكيد الدفع الخاص بتقييمك ({code}). نرجو إرسال صورة واضحة من الإيصال أو رقم العملية. شكراً لك.'},
+ report:{en:'Hello {name}, your {business} feedback report is ready. You can open and save it here:\n{link}\n\nIf you would like to talk it through, just reply to this message.',
+  ar:'مرحباً {name}، تقريرك من {business} جاهز. يمكنك فتحه وحفظه من هذا الرابط:\n{link}\n\nإن رغبت في مناقشته، يسعدنا الرد على هذه الرسالة.'},
+ report_file:{en:'Hello {name}, your {business} feedback report is attached to this message as a PDF. If you would like to talk it through, just reply here.',
+  ar:'مرحباً {name}، تقريرك من {business} مرفق مع هذه الرسالة بصيغة PDF. إن رغبت في مناقشته، يسعدنا الرد هنا.'},
+ consult:{en:'Hello {name}, thank you for choosing the consultation with your assessment ({code}). Please tell us which days and times suit you this week and we will confirm a time.',
+  ar:'مرحباً {name}، شكراً لاختيارك الاستشارة مع تقييمك ({code}). نرجو إخبارنا بالأيام والأوقات المناسبة لك هذا الأسبوع لنؤكد لك الموعد.'},
+ consult_confirm:{en:'Hello {name}, your consultation is confirmed for {date}. If the time no longer suits you, please reply here and we will find another.',
+  ar:'مرحباً {name}، تم تأكيد موعد استشارتك في {date}. إن لم يعد الموعد مناسباً، يرجى الرد هنا وسنجد وقتاً آخر.'}};
+const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time'};
+const KIND_PRESETS={stc:['STC Pay','STC Pay'],bank:['Bank transfer (IBAN)','تحويل بنكي (IBAN)'],apple:['Apple Pay','Apple Pay'],qr:['QR code','رمز QR'],link:['Pay online','الدفع عبر الإنترنت'],other:['Other','أخرى']};
+const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR code',link:'Payment link',other:'Other'};
+
+st.cfg=null;st.cfgDraft=null;st.cfgDirty=false;st.tk='report';st.mc=null;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const uid=()=>'n'+Math.random().toString(36).slice(2,8);
+async function loadCfg(force){
+  if(st.cfg&&!force)return st.cfg;
+  try{const j=await api('GET','/settings');st.cfg=j.settings;if(!st.cfgDirty)st.cfgDraft=clone(st.cfg)}catch(e){if(e.handled)throw e}
+  return st.cfg;
+}
+const tplEffective=(key,lang)=>((st.cfg&&st.cfg.templates&&st.cfg.templates[key]&&st.cfg.templates[key][lang])||DEF_TPL[key][lang]);
+function tplVars(s,lang){
+  const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
+  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',date:d};
+}
+const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
+const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
+
+/* ---- message composer in the client drawer ---- */
+function mstate(s){
+  if(!st.mc||st.mc.id!==s.id)st.mc={id:s.id,tpl:'',lang:s.language==='ar'?'ar':'en',text:'',phone:s.contact_method==='Email'?'':showPh(normPh(s.contact))};
+  return st.mc;
+}
+function composer(s){
+  const m=mstate(s),keys=['received','payment_issue','report','report_file',...(s.package==='consultation'?['consult','consult_confirm']:[])];
+  const blocked=m.tpl?tplBlocked(m.tpl,s):'',isEmail=s.contact_method==='Email'&&/@/.test(s.contact),B=st.busy?'disabled':'';
+  const hasPh=!!normPh(m.phone);
+  return `<section class="sec" id="msc"><h3>Message the client</h3>
+   <div class="chips" role="group" aria-label="Message type">${keys.map(k=>`<button type="button" class="chip" data-do="tpl" data-v="${k}" aria-pressed="${m.tpl===k}">${TPL_NAMES[k]}</button>`).join('')}<button type="button" class="chip" data-do="tpl" data-v="custom" aria-pressed="${m.tpl==='custom'}">Write my own</button></div>
+   <div class="mtop"><span class="hint">Language of the message</span><span class="seg" role="group" aria-label="Message language"><button type="button" data-do="lang" data-v="en" aria-pressed="${m.lang==='en'}">English</button><button type="button" data-do="lang" data-v="ar" aria-pressed="${m.lang==='ar'}">العربية</button></span></div>
+   <textarea id="mt" dir="auto" aria-label="Message" placeholder="Choose a message type above, or write your own here.">${esc(m.text)}</textarea>
+   ${m.tpl==='report_file'&&!blocked?`<div class="note" style="background:var(--sage);color:var(--txt)" role="status"><b>To attach the PDF:</b> 1. <button type="button" class="chip" style="padding:2px 12px" data-do="dlpdf">Download the PDF</button> 2. Press <b>Open WhatsApp</b> 3. In the chat, tap the paperclip and choose the file.</div>`:''}
+   ${blocked?`<div class="note" role="status">${esc(blocked)}${m.tpl==='report'?` <a href="${studioUrl(s)}" target="_blank" rel="noopener" style="color:inherit;font-weight:700">Open the studio</a>`:''}</div>`:''}
+   <div class="fld" style="margin-top:10px"><label for="mph">WhatsApp number</label><input id="mph" type="text" inputmode="tel" dir="ltr" value="${esc(m.phone)}" placeholder="e.g. 0551234567"><span class="ph2" id="mphn">${s.contact_method==='Email'&&!m.phone?'This client chose email. Add a number only if they gave you one.':hasPh?'Will open WhatsApp chat with '+showPh(normPh(m.phone)):m.phone?'This number does not look right.':''}</span></div>
+   <div class="row" style="margin-top:10px"><button class="btn" data-do="wa" ${B} ${!m.text.trim()||!hasPh||blocked?'disabled':''}>Open WhatsApp</button>${isEmail?`<button class="btn o" data-do="mail" ${B} ${!m.text.trim()||blocked?'disabled':''}>Email</button>`:''}<button class="btn o" data-do="copy" ${!m.text.trim()?'disabled':''}>Copy message</button></div>
+   <p class="hint" style="margin-top:8px">WhatsApp opens with the message ready. Check it, then press send there.</p></section>`;
+}
+async function logContact(s,channel){
+  try{const j=await api('POST','/submissions/'+encodeURIComponent(s.id)+'/contact',{channel,what:st.mc&&st.mc.tpl&&st.mc.tpl!=='custom'?TPL_NAMES[st.mc.tpl]:'Own message'});patchLocal(j.submission);drawer()}catch(e){if(!e.handled)toast('Opened, but the note could not be saved in the activity list.',true)}
+}
+async function drawerAction(e){
+  const b=e.target.closest('[data-do]');if(!b||!st.detail||st.detail.error)return;
+  const s=st.detail,m=mstate(s),a=b.dataset.do;
+  if(a==='tpl'){m.tpl=b.dataset.v;m.text=m.tpl==='custom'?m.text:tplFill(m.tpl,m.lang,s);if(m.tpl==='custom'&&!m.text)m.text='';drawer();$('#mt')?.focus({preventScroll:true})}
+  else if(a==='lang'){m.lang=b.dataset.v;if(m.tpl&&m.tpl!=='custom')m.text=tplFill(m.tpl,m.lang,s);drawer()}
+  else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(m.text),'_blank','noopener');logContact(s,'whatsapp')}
+  else if(a==='mail'){window.open('mailto:'+encodeURIComponent(s.contact).replace('%40','@')+'?subject='+encodeURIComponent(((st.cfg&&st.cfg.business_name)||'Basirah')+(m.lang==='ar'?' – تقييمك':' – your assessment'))+'&body='+encodeURIComponent(m.text),'_self');logContact(s,'email')}
+  else if(a==='copy'){try{await navigator.clipboard.writeText(m.text);toast('Message copied');logContact(s,'copy')}catch{toast('Copy isn’t available in this browser',true)}}
+  else if(a==='copylink'){try{await navigator.clipboard.writeText(location.origin+s.pdf_link.path);toast('Link copied')}catch{toast('Copy isn’t available in this browser',true)}}
+  else if(a==='sendfile'){m.tpl='report_file';m.text=tplFill('report_file',m.lang,s);drawer();$('#msc')?.scrollIntoView({behavior:'smooth',block:'center'})}
+  else if(a==='dlpdf'){
+    if(s.pdf_link){try{const r=await fetch('/api/admin/submissions/'+encodeURIComponent(s.id)+'/pdf',{headers:{Authorization:'Bearer '+st.token}});if(!r.ok)throw 0;const u=URL.createObjectURL(await r.blob()),x=document.createElement('a');x.href=u;x.download='Basirah Report - '+s.full_name.replace(/[\\\/:*?"<>|]/g,'')+'.pdf';document.body.appendChild(x);x.click();x.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('PDF downloaded')}catch{toast('The PDF could not be downloaded',true)}}
+    else window.open(studioUrl(s,'&dl=1'),'_blank','noopener')}
+  else if(a==='sendpdf'){m.tpl='report';m.text=tplFill('report',m.lang,s);drawer();$('#msc')?.scrollIntoView({behavior:'smooth',block:'center'})}
+  else if(a==='stoppdf'){if(!await confirmBox({title:'Stop sharing this report?',body:'The private link will stop working straight away. You can create a new one from the studio later.',ok:'Stop sharing',danger:true}))return;
+    try{const j=await api('DELETE','/submissions/'+encodeURIComponent(s.id)+'/pdf');patchLocal(j.submission);st.detail.pdf_link=null;if(m.tpl==='report'){m.tpl='';m.text=''}drawer();toast('Link switched off')}catch(err){if(!err.handled)toast(err.message,true)}}
+}
+function drawerInput(e){
+  const s=st.detail;if(!s||s.error)return;const m=mstate(s);
+  if(e.target.id==='mt'){m.text=e.target.value;const dis=!m.text.trim();$$('#msc [data-do=wa],#msc [data-do=mail],#msc [data-do=copy]').forEach(x=>{if(x.dataset.do==='copy')x.disabled=dis;else if(x.dataset.do==='wa')x.disabled=dis||!normPh(m.phone)||!!(m.tpl&&tplBlocked(m.tpl,s));else x.disabled=dis||!!(m.tpl&&tplBlocked(m.tpl,s))})}
+  if(e.target.id==='mph'){m.phone=e.target.value;const ph=normPh(m.phone),n=$('#mphn');if(n)n.textContent=ph?'Will open WhatsApp chat with '+showPh(ph):m.phone?'This number does not look right.':'';const w=$('#msc [data-do=wa]');if(w)w.disabled=!ph||!m.text.trim()||!!(m.tpl&&tplBlocked(m.tpl,s))}
+}
+
+/* ---- Settings page ---- */
+const cfgBar=()=>{const b=$('#sbar');if(!b)return;b.hidden=!st.cfgDirty};
+const markDirty=()=>{st.cfgDirty=true;cfgBar()};
+function setPath(o,path,v){const ks=path.split('.');let t=o;for(let i=0;i<ks.length-1;i++)t=t[ks[i]];t[ks[ks.length-1]]=v}
+function vSettings(m){
+  m.innerHTML=head('Settings','WhatsApp numbers, ways to pay and the wording of your messages')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
+  bindHead();
+  if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='settings')vSettings($('#main'))}).catch(()=>{});return}
+  const d=st.cfgDraft;
+  const waRows=d.whatsapp.map((w,i)=>`<div class="crow" data-i="${i}"><div class="fld"><label for="wl${i}">Name (English)</label><input id="wl${i}" type="text" data-k="whatsapp.${i}.label" value="${esc(w.label)}" maxlength="40" placeholder="e.g. Consultations"></div>
+    <div class="fld"><label for="wa${i}">Name (Arabic)</label><input id="wa${i}" type="text" dir="rtl" data-k="whatsapp.${i}.label_ar" value="${esc(w.label_ar)}" maxlength="40" placeholder="مثال: الاستشارات"></div>
+    <div class="fld num2"><label for="wn${i}">Number</label><input id="wn${i}" type="text" inputmode="tel" dir="ltr" data-k="whatsapp.${i}.number" value="${esc(w.number&&/^966/.test(w.number)?'+'+w.number:w.number)}" placeholder="0551234567"><span class="ph2" data-nm="${i}">${showPh(normPh(w.number))}</span></div>
+    <div class="row" style="padding-bottom:20px"><a class="btn sm o" data-test="${i}" href="#" rel="noopener">Test</a><button class="ib" data-rm="whatsapp.${i}" aria-label="Remove this number" title="Remove">${ic('x')}</button></div></div>`).join('');
+  const qrHtml=(p,i)=>`<div class="qrs">${p.qr.map((q,j)=>`<div class="qrc"><div class="im"><img src="${esc(q.src)}" alt="QR code ${j+1}"><button data-rm="payments.${i}.qr.${j}" aria-label="Remove this QR code">×</button></div><input type="text" data-k="payments.${i}.qr.${j}.caption" value="${esc(q.caption)}" maxlength="60" placeholder="Caption (optional)" aria-label="Caption"></div>`).join('')}${p.qr.length<4?`<button class="qadd" data-qr="${i}">+ Add a QR code<br><span style="font-weight:400;font-size:12.5px">PNG or JPG</span></button>`:''}</div>`;
+  const pmCards=d.payments.map((p,i)=>{
+    const f=(k,l,ph,extra='')=>`<div class="fld"><label for="p${i}${k}">${l}</label><input id="p${i}${k}" type="text" data-k="payments.${i}.${k}" value="${esc(p[k])}" ${extra} placeholder="${esc(ph)}"></div>`;
+    const valueLbl={stc:'STC Pay mobile number',bank:'IBAN',apple:'Phone number or Apple Pay ID (optional)',other:'Number or account (optional)',qr:'Number (optional)',link:'Number (optional)'}[p.kind];
+    return `<div class="pm" data-i="${i}"><div class="ph"><span class="kd">${KIND_NAMES[p.kind]}</span><div class="fld"><input type="text" aria-label="Name shown to clients" data-k="payments.${i}.label" value="${esc(p.label)}" maxlength="60" placeholder="Name shown to clients"></div>
+      <div class="tools"><button class="ib" data-mv="${i}:-1" aria-label="Move up" ${i===0?'disabled':''}>↑</button><button class="ib" data-mv="${i}:1" aria-label="Move down" ${i===d.payments.length-1?'disabled':''}>↓</button><button class="ib" data-rm="payments.${i}" aria-label="Remove this method">${ic('x')}</button></div></div>
+      <div class="g2">${f('label_ar','Name (Arabic)','الاسم بالعربية','dir="rtl" maxlength="60"')}${f('value',valueLbl,p.kind==='bank'?'SA00 0000 0000 0000 0000 0000':p.kind==='stc'?'0551234567':'','dir="ltr" maxlength="120"')}</div>
+      <div class="g2">${p.kind==='bank'?f('bank','Bank name','e.g. Al Rajhi Bank','maxlength="100"'):''}${f('holder','Account holder name','Shown so clients can check the name','maxlength="100"')}</div>
+      ${['apple','link','other','bank','stc','qr'].includes(p.kind)?`<div class="g2">${f('url',p.kind==='apple'?'Payment link (Apple Pay works through a checkout link)':'Payment link (optional)','https://','dir="ltr" maxlength="500"')}<span></span></div>`:''}
+      <div class="g2"><div class="fld"><label for="p${i}n">Note for clients (English)</label><textarea id="p${i}n" style="min-height:64px" data-k="payments.${i}.note" maxlength="400" placeholder="e.g. Please write your confirmation code in the transfer note.">${esc(p.note)}</textarea></div>
+       <div class="fld"><label for="p${i}na">Note for clients (Arabic)</label><textarea id="p${i}na" dir="rtl" style="min-height:64px" data-k="payments.${i}.note_ar" maxlength="400">${esc(p.note_ar)}</textarea></div></div>
+      <div class="lbl" style="margin-bottom:8px">QR codes (you can add up to 4)</div>${qrHtml(p,i)}</div>`}).join('');
+  const tk=st.tk,tv=l=>(d.templates[tk]&&d.templates[tk][l]!=null?d.templates[tk][l]:DEF_TPL[tk][l]);
+  const siteUrl=location.origin+'/',admUrl=location.origin+'/admin/';
+  const body=`<div class="cfgw">
+   <section class="panel"><h2>Your links and phone app</h2><p class="hint">The same dashboard works on any phone, tablet or computer, at the same time. There is no limit on devices: just sign in with your password on each one.</p>
+    <div class="lk"><div><b>Client website</b><span>Send this to clients. They never see the admin.</span><code dir="ltr">${esc(siteUrl)}</code></div><div class="row"><button class="btn sm o" data-copy="${esc(siteUrl)}">Copy</button><a class="btn sm o" href="https://wa.me/?text=${encodeURIComponent(siteUrl)}" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn sm o" href="${esc(siteUrl)}" target="_blank" rel="noopener">Open</a></div></div>
+    <div class="lk"><div><b>Your admin (private)</b><span>Needs your password. Keep it to yourself.</span><code dir="ltr">${esc(admUrl)}</code></div><div class="row"><button class="btn sm o" data-copy="${esc(admUrl)}">Copy</button></div></div>
+    <p class="hint" style="margin:14px 0 0"><b>Put it on your phone like an app:</b> on iPhone open the link in Safari, tap Share, then <b>Add to Home Screen</b>. On Android open it in Chrome, tap the ⋮ menu, then <b>Install app</b> (or Add to Home screen). It opens full screen, with no browser bars.</p></section>
+   <section class="panel"><h2>WhatsApp numbers</h2><p class="hint">Clients can message you on WhatsApp from the website, and from the confirmation screen after they submit. Add one number or several (for example one for consultations and one for support). Normal WhatsApp and WhatsApp Business numbers both work.</p>
+    ${waRows||'<p class="hint" style="margin-bottom:12px">No numbers yet. The WhatsApp button stays hidden on the website until you add one.</p>'}
+    ${d.whatsapp.length<6?'<button class="btn sm o" id="addwa">+ Add a WhatsApp number</button>':''}
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><div class="fld"><label for="wge">First message clients send (English)</label><textarea id="wge" style="min-height:70px" data-k="wa_greeting.en" maxlength="300">${esc(d.wa_greeting.en)}</textarea></div><div class="fld"><label for="wga">First message clients send (Arabic)</label><textarea id="wga" dir="rtl" style="min-height:70px" data-k="wa_greeting.ar" maxlength="300">${esc(d.wa_greeting.ar)}</textarea></div></div></section>
+   <section class="panel"><h2>Ways to pay</h2><p class="hint">Clients see these on the payment step and choose one. Add as many as you like: STC Pay, bank transfer, Apple Pay or any payment link, and several QR codes.</p>
+    <label class="chk"><input type="checkbox" data-k="show_default_qr" ${d.show_default_qr?'checked':''}><span>Also show the original QR code that is already on the website<span class="hint" style="display:block;font-weight:400">Untick this when your new methods replace it.</span></span></label>
+    ${pmCards||'<p class="hint" style="margin-bottom:12px">No extra methods yet. Clients see the original QR code.</p>'}
+    ${d.payments.length<10?`<div class="addrow">${Object.keys(KIND_NAMES).map(k=>`<button class="btn sm o" data-addpm="${k}">+ ${KIND_NAMES[k]}</button>`).join('')}</div>`:''}
+    <p class="hint" style="margin-top:12px">Apple Pay cannot be paid to a plain number. To accept it, use a payment link from your payment provider and add it under Apple Pay.</p></section>
+   <section class="panel"><h2>Message wording</h2><p class="hint">These are the messages you can send from a client’s record. Change the wording to suit you. Words in curly brackets are filled in automatically: {name} {business} {code} {link} {date}.</p>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px"><div class="fld"><label for="bn">Business name used in messages</label><input id="bn" type="text" data-k="business_name" value="${esc(d.business_name)}" maxlength="60"></div><div class="fld"><label for="tks">Message</label><select id="tks">${Object.keys(TPL_NAMES).map(k=>`<option value="${k}" ${k===tk?'selected':''}>${TPL_NAMES[k]}</option>`).join('')}</select></div></div>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fld"><label for="te">English</label><textarea id="te" data-tl="en" style="min-height:140px" maxlength="1000">${esc(tv('en'))}</textarea></div><div class="fld"><label for="ta">Arabic</label><textarea id="ta" dir="rtl" data-tl="ar" style="min-height:140px" maxlength="1000">${esc(tv('ar'))}</textarea></div></div>
+    <div class="row" style="margin-top:10px"><button class="btn sm o" id="tr">Reset this message to the original wording</button></div></section></div>
+   <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`;
+  m.insertAdjacentHTML('beforeend',body);
+  const root=$('.cfgw',m);
+  const rerender=()=>vSettings($('#main'));
+  m.oninput=e=>{const t=e.target;
+    if(t.dataset.k){const v=t.type==='checkbox'?t.checked:t.value;setPath(d,t.dataset.k,v);markDirty();
+      const mm=/^whatsapp\.(\d+)\.number$/.exec(t.dataset.k);if(mm){const n=$(`[data-nm="${mm[1]}"]`,m);if(n)n.textContent=normPh(t.value)?showPh(normPh(t.value)):t.value?'This number does not look right.':''}}
+    else if(t.dataset.tl){d.templates[st.tk]={...(d.templates[st.tk]||{}),[t.dataset.tl]:t.value};markDirty()}};
+  m.onchange=e=>{const t=e.target;if(t.id==='tks'){st.tk=t.value;rerender()}};
+  m.onclick=async e=>{
+    const b=e.target.closest('button,a');if(!b)return;
+    if(b.dataset.copy){try{await navigator.clipboard.writeText(b.dataset.copy);toast('Link copied')}catch{toast('Could not copy. Select the link and copy it by hand.',true)}return}
+    if(b.dataset.test!==undefined){e.preventDefault();const n=normPh(d.whatsapp[+b.dataset.test].number);if(!n)return toast('Enter a valid number first',true);window.open('https://wa.me/'+n,'_blank','noopener');return}
+    if(b.id==='addwa'){d.whatsapp.push({id:uid(),label:'',label_ar:'',number:''});markDirty();rerender();return}
+    if(b.dataset.addpm){const k=b.dataset.addpm;d.payments.push({id:uid(),kind:k,label:KIND_PRESETS[k][0],label_ar:KIND_PRESETS[k][1],value:'',holder:'',bank:'',url:'',note:'',note_ar:'',qr:[]});markDirty();rerender();return}
+    if(b.dataset.rm){const ks=b.dataset.rm.split('.'),idx=+ks.pop();let arr=d;ks.forEach(k=>arr=arr[k]);arr.splice(idx,1);markDirty();rerender();return}
+    if(b.dataset.mv){const[i,dir]=b.dataset.mv.split(':').map(Number),j=i+dir;if(j<0||j>=d.payments.length)return;[d.payments[i],d.payments[j]]=[d.payments[j],d.payments[i]];markDirty();rerender();return}
+    if(b.dataset.qr!==undefined){pickQr(+b.dataset.qr,rerender);return}
+    if(b.id==='tr'){if(d.templates[st.tk])delete d.templates[st.tk];markDirty();rerender();return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;rerender();return}
+    if(b.id==='csave')saveCfg(b);
+  };
+}
+const redrawCfg=()=>(st.view==='questions'?vQuestions:vSettings)($('#main'));
+async function saveCfg(btn){
+  const d=clone(st.cfgDraft);
+  for(const k of Object.keys(d.templates)){for(const l of['en','ar']){if(d.templates[k][l]===DEF_TPL[k][l])d.templates[k][l]=''}if(!d.templates[k].en&&!d.templates[k].ar)delete d.templates[k]}
+  if(d.questions&&sameAsOrig(d.questions))d.questions=null;
+  btn.disabled=true;btn.innerHTML='<span class="sp"></span> Saving…';
+  try{const j=await api('PUT','/settings',{...d,updated_at:st.cfg.updated_at});st.cfg=j.settings;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;toast(st.view==='questions'?'Questions saved':'Settings saved');redrawCfg()}
+  catch(e){if(e.handled)return;btn.disabled=false;btn.textContent='Save changes';
+    if(e.status===409&&e.body?.settings){st.cfg=e.body.settings;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;redrawCfg()}
+    toast(e.message==='Failed to fetch'?'Can’t reach the server. Nothing was saved.':e.message,true)}
+}
+/* a QR picture is shrunk in the browser so it stays small and sharp */
+function pickQr(i,done){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/webp';
+  inp.onchange=async()=>{const f=inp.files[0];if(!f)return;
+    try{const src=await shrinkQr(f);st.cfgDraft.payments[i].qr.push({src,caption:''});markDirty();done()}
+    catch(e){toast(e.message||'That picture could not be used. Try a PNG or JPG.',true)}};
+  inp.click();
+}
+async function shrinkQr(file){
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw new Error('Please choose a PNG or JPG picture.');
+  const url=URL.createObjectURL(file);
+  try{const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('That picture could not be read.'));i.src=url});
+    for(const side of[640,520,420,320]){
+      const k=Math.min(1,side/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*k));c.height=Math.max(1,Math.round(img.naturalHeight*k));
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+      for(const[t,q]of[['image/png'],['image/jpeg',.92],['image/jpeg',.8]]){const d=c.toDataURL(t,q);if(d.length<=200000)return d}}
+    throw new Error('That picture is too detailed. Use a simpler or smaller QR image.');
+  }finally{URL.revokeObjectURL(url)}
+}
+
+/* ---- Questions page ---- */
+const ORIG_QS=[["اكتب يوم وشهر ميلادك، وماذا يعني لك هذا اليوم؟ اوصف شعورك.", "Write your day and month of birth. What does this day mean to you?"], ["ما اللون الذي تحب ارتداءه أكثر؟", "What color do you most enjoy wearing?"], ["ما اللون الذي تحب رؤيته، لكنك لا تفضّل ارتداءه؟", "What color do you enjoy seeing but prefer not to wear?"], ["ما حيوانك المفضل؟ ولماذا؟", "What is your favorite animal, and why?"], ["ما رقمك المفضل وشكلك الهندسي المفضل؟", "What is your favorite number and geometric shape?"], ["صِف أكثر منظر طبيعي تحبه، حتى لو لم تزره شخصيًا.", "Describe the natural landscape you love most, even if you have never visited it in person."], ["تخيّل أنك في صحراء وتشعر بعطش شديد، ووجدت أمامك ثلاثة أكواب من الماء: كوبًا من الحديد، وآخر من الخشب، وثالثًا من الزجاج. أيّها تختار لتشرب منه؟ ولماذا؟", "Imagine you are in a desert, extremely thirsty, and you find three cups of water: one made of iron, one of wood, and one of glass. Which would you choose to drink from, and why?"], ["تخيّل أنك تريد تسلّق جبل كبير جدًا، وهذا الجبل قادر على سماعك وفهمك. ماذا ستقول له قبل أن تبدأ الصعود؟", "Imagine you are about to climb a very large mountain that can hear and understand you. What would you say to it before you begin climbing?"], ["من قدوتك؟ اذكر صفاتها.", "Who is your role model? Describe their qualities."], ["ما الصفات التي تحبها وتكرهها في الرجل؟", "What qualities do you like and dislike in men?"], ["ما الصفات التي تحبها وتكرهها في المرأة؟ وهل ترى أن كل ما هو جميل يُعد جذابًا؟ هل هناك رابط بين الجمال والجاذبية؟", "What qualities do you like and dislike in women? Do you believe that everything beautiful is attractive? Is there a connection between beauty and attractiveness?"], ["اذكر شخصية تعجبك من أي مجال، مثل العلماء أو السياسيين أو المؤثرين أو الفنانين. أجب بعفوية، فلا توجد إجابة مثالية.", "Name a person you admire from any field, such as science, politics, social media, or the arts. Answer spontaneously; there is no ideal answer."], ["ما أول شيء تلاحظه في الناس؟", "What is the first thing you notice about people?"], ["عرّف كلًّا مما يلي بكلمة واحدة فقط:\nالحب\nالزواج\nالصداقة\nالجنس\nالألم\nالدنيا", "Define each of the following in one word only:\nLove\nMarriage\nFriendship\nSex\nPain\nLife / The World"], ["ما مشروبك المفضل؟", "What is your favorite drink?"], ["ما طعامك المفضل؟", "What is your favorite food?"], ["ما الاسم المفضل لديك؟", "What is your favorite name?"], ["كيف تختار أهدافك؟", "How do you choose your goals?"], ["إذا كنت آلة، فماذا ستكون؟", "If you were a machine, what would you be?"], ["هل تتعارض السياسة مع الأخلاق؟", "Do politics and ethics conflict with each other?"], ["ما أكثر ما يسبب لك الإحباط في الحياة؟", "What frustrates you most in life?"], ["ما أقصى حلم تتمناه؟", "What is your greatest dream?"], ["إذا كُلّفت بإدارة مشروع، فما خطوتك الأولى: التخطيط، أم اختيار الفريق، أم شيء آخر؟ ولماذا؟", "If you were assigned to manage a project, what would be your first step: planning, selecting the team, or something else? Why?"], ["ما الشيء الذي تحمله معك دائمًا؟", "What is something you always carry with you?"], ["ما رأيك في الانتقام؟", "What is your opinion of revenge?"], ["كيف تتصرف عند اللوم أو الجدال أو التعرّض للظلم؟", "How do you respond to blame, arguments, or being treated unfairly?"], ["ماذا تود أن تغيّر في نفسك وفي العالم؟", "What would you like to change about yourself and the world?"], ["ما مفهوم الصبر بالنسبة لك؟", "What does patience mean to you?"], ["ما الشيء الذي تعتقد أنه لا يمكن إصلاحه؟", "What do you believe cannot be repaired or made right?"], ["هل هناك مسألة دينية تجد صعوبة في فهمها أو تقبّلها؟", "Is there a religious matter you find difficult to understand or accept?"], ["ما الحقيقة أو الممارسة التي تعزّز إيمانك؟", "What truth or practice strengthens your faith?"], ["أين يتجسّد الفن في وجهة نظرك؟", "Where, in your view, does art manifest itself?"], ["إذا طُلب منك الهجرة قسرًا إلى مكان مجهول، فما الشيء الذي ستأخذه معك؟", "If you were forced to move to an unknown place, what is the one thing you would take with you?"], ["ما الشيء الذي ترى أنه لا بد من تغييره في نفسك؟", "What is one thing you believe you must change about yourself?"], ["هل أنت شخص صباحي أم مسائي؟", "Are you a morning person or a night person?"], ["لو اضطررت إلى اتخاذ قرار مهم خلال دقيقة واحدة، ولم يُسمح لك بشرح قرارك أو الدفاع عنه لأحد، فما الذي ستعتمد عليه أكثر: مبادئك، أم خبرتك، أم شعورك اللحظي، أم النتائج المتوقعة؟ ولماذا؟", "If you had to make an important decision within one minute and were not allowed to explain or defend it to anyone, what would you rely on most: your principles, your experience, your immediate feelings, or the expected outcomes? Why?"], ["لو مُنحت سلطة اتخاذ قرار واحد يؤثر في حياة كل من حولك، دون أن يعرف أحد أنك صاحب القرار، فما نوع القرار الذي قد تميل إلى اتخاذه؟", "If you were given the power to make one decision affecting the lives of everyone around you, without anyone knowing you were responsible, what kind of decision would you be inclined to make?"], ["لو أمكن لشخص واحد أن يرى شخصيتك كاملة دون أي أقنعة أو تبريرات، من الشخص الذي ستختاره؟ ومن الشخص الذي ستخشى أن يراك بهذه الصورة؟ ولماذا؟", "If one person could see your entire personality without any masks or justifications, whom would you choose? And who would you be afraid to let see you this way? Why?"]];
+const origList=()=>ORIG_QS.map((q,i)=>({id:'q'+String(i+1).padStart(2,'0'),ar:q[0],en:q[1],required:true,hidden:false}));
+const sameAsOrig=l=>{const o=origList();return l.length===o.length&&l.every((q,i)=>q.id===o[i].id&&q.en===o[i].en&&q.ar===o[i].ar&&q.required&&!q.hidden)};
+function vQuestions(m){
+  m.innerHTML=head('Questions','Change the order and wording, and decide which answers are required')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
+  bindHead();
+  if(!st.cfgDraft){loadCfg().then(()=>{if(st.view==='questions')vQuestions($('#main'))}).catch(()=>{});return}
+  const d=st.cfgDraft,custom=!!d.questions,list=d.questions||origList();
+  const own=()=>{const c=st.cfgDraft;if(!c.questions)c.questions=origList();return c.questions};   // always the current draft, never a stale copy
+  const vis=list.filter(q=>!q.hidden).length,req=list.filter(q=>!q.hidden&&q.required).length;
+  const rows=list.map((q,i)=>`<div class="qrow${q.hidden?' off':''}" data-qi="${i}" draggable="false">
+    <div class="qn"><span class="grip" data-grip aria-hidden="true" title="Drag to move">⋮⋮</span><b>${i+1}</b></div>
+    <div class="qt"><div class="fld"><label for="qe${i}">English</label><textarea id="qe${i}" data-qf="en" rows="2" maxlength="600">${esc(q.en)}</textarea></div><div class="fld"><label for="qa${i}">Arabic</label><textarea id="qa${i}" dir="rtl" data-qf="ar" rows="2" maxlength="600">${esc(q.ar)}</textarea></div></div>
+    <div class="qo"><div class="fld"><label for="qr${i}">Answer</label><select id="qr${i}" data-qf="required"><option value="0" ${q.required?'':'selected'}>Can be skipped</option><option value="1" ${q.required?'selected':''}>Required</option></select></div>
+      <div class="qb"><button class="ib" data-qmv="${i}:-1" aria-label="Move question ${i+1} up" title="Move up" ${i===0?'disabled':''}>↑</button><button class="ib" data-qmv="${i}:1" aria-label="Move question ${i+1} down" title="Move down" ${i===list.length-1?'disabled':''}>↓</button>
+      <button class="btn sm o" data-qhide="${i}" aria-pressed="${q.hidden}">${q.hidden?'Show':'Hide'}</button><button class="ib" data-qdel="${i}" aria-label="Delete question ${i+1}" title="Delete">${ic('x')}</button></div></div></div>`).join('');
+  m.insertAdjacentHTML('beforeend',`<div class="cfgw qwrap"><div class="panel"><h2>Assessment questions</h2>
+    <p class="hint">${custom?'You are using your own list.':'You are using the original questions.'} <b>${vis}</b> shown to clients${req?`, <b>${req}</b> required`:''}. Changes apply to new assessments after you save. Anyone halfway through keeps their answers.</p>
+    <div class="note" style="margin-top:0"><b>Required</b> means the client must write or record an answer. <b>Can be skipped</b> keeps the “prefer not to answer” button, as today. <b>Hide</b> keeps a question in your list but removes it from the website.</div>
+    <div class="qlist" id="qlist">${rows}</div>
+    <div class="addrow" style="margin-top:14px"><button class="btn o" id="qadd">+ Add a question</button><button class="btn sm o" id="qreset" ${custom?'':'disabled'}>Go back to the original questions</button></div></div></div>
+    <div class="savebar" id="sbar" ${st.cfgDirty?'':'hidden'}><span>You have unsaved changes</span><button class="btn o" id="cdisc">Discard</button><button class="btn" id="csave">Save changes</button></div>`);
+  const rerender=()=>vQuestions($('#main'));
+  const fit=t=>{t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,260)+'px'};$$('.qt textarea',m).forEach(fit);
+  const move=(i,j)=>{const a=own();if(j<0||j>=a.length||i===j)return;const [x]=a.splice(i,1);a.splice(j,0,x);markDirty();rerender();setTimeout(()=>{const r=$(`[data-qi="${j}"]`,m);if(r)r.scrollIntoView({block:'nearest'})},0)};
+  m.oninput=e=>{const t=e.target,r=t.closest('[data-qi]');if(!r||!t.dataset.qf||t.dataset.qf==='required')return;fit(t);own()[+r.dataset.qi][t.dataset.qf]=t.value;markDirty()};
+  m.onchange=e=>{const t=e.target,r=t.closest('[data-qi]');if(!r||t.dataset.qf!=='required')return;own()[+r.dataset.qi].required=t.value==='1';markDirty();rerender()};
+  m.onclick=async e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.qmv){const[i,dir]=b.dataset.qmv.split(':').map(Number);move(i,i+dir);return}
+    if(b.dataset.qhide!==undefined){const q=own()[+b.dataset.qhide];if(!q.hidden&&own().filter(x=>!x.hidden).length<2)return toast('Keep at least one question visible.',true);q.hidden=!q.hidden;markDirty();rerender();return}
+    if(b.dataset.qdel!==undefined){const i=+b.dataset.qdel,a=own();if(a.filter(x=>!x.hidden).length<2&&!a[i].hidden)return toast('Keep at least one question visible.',true);
+      if(!await confirmBox({title:'Delete question '+(i+1)+'?',body:'It is removed from the website. Answers clients already gave to it are kept in their records. You can use Hide instead if you may want it back.',ok:'Delete'}))return;a.splice(i,1);markDirty();rerender();return}
+    if(b.id==='qadd'){own().push({id:uid(),en:'',ar:'',required:true,hidden:false});markDirty();rerender();setTimeout(()=>{const t=$(`#qe${own().length-1}`,m);if(t){t.scrollIntoView({block:'center'});t.focus()}},0);return}
+    if(b.id==='qreset'){if(!await confirmBox({title:'Go back to the original questions?',body:'Your own wording, order and settings are replaced by the original list when you save.',ok:'Go back'}))return;st.cfgDraft.questions=null;markDirty();rerender();return}
+    if(b.id==='cdisc'){if(!await confirmBox({title:'Discard your changes?',body:'Everything you changed since the last save will be lost.',ok:'Discard'}))return;st.cfgDraft=clone(st.cfg);st.cfgDirty=false;rerender();return}
+    if(b.id==='csave')saveCfg(b);
+  };
+  /* drag to reorder: only from the grip, so typing and selecting text still work */
+  let from=null;
+  m.onmousedown=e=>{const r=e.target.closest('[data-qi]');if(r)r.draggable=!!e.target.closest('[data-grip]')};
+  m.ondragstart=e=>{const r=e.target.closest&&e.target.closest('[data-qi]');if(!r||!r.draggable)return;from=+r.dataset.qi;r.classList.add('drag');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(from))}catch{}};
+  m.ondragover=e=>{if(from===null)return;e.preventDefault();const r=e.target.closest('[data-qi]');$$('.qrow.over',m).forEach(x=>x.classList.remove('over'));if(r)r.classList.add('over')};
+  m.ondrop=e=>{if(from===null)return;e.preventDefault();const r=e.target.closest('[data-qi]'),f=from;from=null;if(r)move(f,+r.dataset.qi)};
+  m.ondragend=()=>{from=null;$$('.qrow',m).forEach(x=>{x.classList.remove('drag','over');x.draggable=false})};
+}
+window.addEventListener('beforeunload',e=>{if(st.cfgDirty){e.preventDefault();e.returnValue=''}});
+
+/* ============ start ============ */
+window.name='basirah-admin';   // lets the studio send you back to this same tab
+{const qp=new URLSearchParams(location.search);if(/^BSR-[A-Z0-9]{4,10}$/.test(qp.get('open')||'')){st.pendingOpen={id:qp.get('open'),tpl:qp.get('tpl')||''};history.replaceState(null,'',location.pathname+location.hash)}}
+const h=location.hash.slice(1);if(['overview','submissions','delivery','packages','questions','settings'].includes(h))st.view=h;
+render();if(st.token){load();loadCfg().then(()=>{if(st.view==='overview')renderBody()}).catch(()=>{})}
+setInterval(()=>{if(st.token&&!document.hidden&&!st.busy)load(true)},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&st.token){load(true);refreshReport()}});
+</script>
+</body>
+</html>
