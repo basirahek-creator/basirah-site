@@ -21,30 +21,42 @@ const pkgInfo = async (store, id) => {
 };
 /* promo codes */
 const normCode = (v) => (typeof v === 'string' ? v.toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 24) : '');
-const promoWhy = (c, pk, t, used) => {
+const promoWhy = (c, pk, t, used, personUsed = false) => {
   if (!c || c.active === false) return 'invalid';
   if (c.starts_at && Date.parse(c.starts_at) > t) return 'soon';
   if (c.ends_at && Date.parse(c.ends_at) <= t) return 'expired';
   if (c.max_uses > 0 && used >= c.max_uses) return 'used_up';
+  if (c.once_per_person && personUsed) return 'person_used';
   if (Array.isArray(c.packages) && c.packages.length && !c.packages.includes(pk.id)) return 'wrong_package';
   if (c.combine === false && pk.sale) return 'no_combine';
   return '';
 };
 const promoMath = (c, base) => {
+  if (c.type === 'free') return { discount: base, final: 0 };       // a free code: nothing to pay
   const raw = c.type === 'percent' ? Math.round((base * c.value) / 100) : c.value;
   const discount = Math.max(0, Math.min(raw, base - 1));          // the price never goes below 1 SAR
   return { discount, final: base - discount };
 };
 const promoUsed = async (store, code) => (await store.get('promouse/' + code))?.n || 0;
 // returns { ok, code, discount, final, base, type, value } or { ok:false, reason }
-async function checkPromo(store, rawCode, pk) {
+// one person = one email address or one phone number, written the same way however the client typed it
+const personKey = (contact) => {
+  const s = String(contact || '').trim().toLowerCase();
+  if (!s) return '';
+  const k = s.includes('@') ? s : normPhone(s) || s.replace(/\s+/g, '');
+  return createHash('sha256').update(k).digest('hex').slice(0, 24);
+};
+async function checkPromo(store, rawCode, pk, contact) {
   const code = normCode(rawCode);
   if (!code || !pk) return { ok: false, reason: 'invalid' };
   const set = await store.get('settings');
   const c = Array.isArray(set?.promo?.codes) ? set.promo.codes.find((x) => x.code === code) : null;
-  const why = promoWhy(c, pk, Date.now(), c ? await promoUsed(store, code) : 0);
+  const pkey = personKey(contact);
+  const personUsed = c && c.once_per_person && pkey ? !!(await store.get('promoperson/' + code + '.' + pkey)) : false;
+  const why = promoWhy(c, pk, Date.now(), c ? await promoUsed(store, code) : 0, personUsed);
   if (why) return { ok: false, reason: why };
-  return { ok: true, code, type: c.type, value: c.value, base: pk.price, image: c.image || '', ...promoMath(c, pk.price) };
+  const m = promoMath(c, pk.price);
+  return { ok: true, code, type: c.type, value: c.value, base: pk.price, image: c.image || '', free: m.final === 0, once: c.once_per_person === true, pkey, label: c.campaign || c.note || '', campaign: c.campaign || '', ...m };
 }
 export async function handlePromo(req, store) {
   if (req.method !== 'POST') return fail(405, 'Method not allowed');
@@ -55,7 +67,9 @@ export async function handlePromo(req, store) {
   if (n > 40) return fail(429, 'Too many tries. Please wait a little and try again.');
   await store.set(rk, { n });
   const pk = await pkgInfo(store, b?.package);
-  return json(await checkPromo(store, b?.code, pk));
+  const r = await checkPromo(store, b?.code, pk, str(b?.contact, 200));
+  const { pkey, once, label, campaign, ...pub } = r;                // the browser only needs the price and whether it is free
+  return json(pub);
 }
 export const PAYMENT = ['pending', 'verified', 'rejected'];
 export const REPORT = ['not_started', 'in_progress', 'ready', 'delivered'];
@@ -71,13 +85,22 @@ const now = () => new Date().toISOString();
 const keyOf = (id) => 'sub/' + id;
 
 // applies a promo code to a new order; the code is checked again here, and a code that stopped being valid is only flagged for the admin
-async function promoFor(store, raw, pki) {
+async function promoFor(store, raw, pki, contact, subId) {
   const code = normCode(raw);
   if (!code) return {};
-  const r = await checkPromo(store, code, pki);
+  const r = await checkPromo(store, code, pki, contact);
   if (!r.ok) return { promo_invalid: code + ' (' + r.reason + ')' };
   await store.set('promouse/' + code, { n: (await promoUsed(store, code)) + 1 });
-  return { promo_code: code, discount_sar: r.discount, price_sar: r.final };
+  const out = { promo_code: code, discount_sar: r.discount, price_sar: r.final, ...(r.campaign ? { promo_campaign: r.campaign } : {}) };
+  if (r.once && r.pkey) { await store.set('promoperson/' + code + '.' + r.pkey, { sub: subId, at: now() }); out.promo_person = r.pkey; }
+  if (r.free) Object.assign(out, { is_free: true, free_by: 'code', free_value_sar: r.base, free_label: r.label || code });
+  return out;
+}
+// a free order needs no payment: it is marked as verified straight away so the report steps are open
+function makeFree(rec, t, how) {
+  rec.payment_status = 'verified'; rec.verified_at = t; rec.price_sar = 0; rec.pay_flags = [];
+  rec.payment_reference = ''; rec.payment_receipt = ''; rec.payment_method = how;
+  rec.history.push({ at: t, by: rec.free_by === 'admin' ? 'admin' : 'system', action: 'Free order (' + (rec.free_by === 'admin' ? 'gift' : 'code ' + rec.promo_code) + ')' + (rec.free_label ? ': ' + rec.free_label : '') + '. No payment needed, marked as verified' });
 }
 
 /* ---------------- public: the site posts every finished assessment here ---------------- */
@@ -103,7 +126,7 @@ export async function handleSubmit(req, store) {
   const rec = {
     id, source: 'site', created_at: t, updated_at: t,
     full_name: name, package: pkg, package_name: pki.name, price_sar: pki.price, list_price: pki.list,
-    ...(await promoFor(store, b.promo_code, pki)),
+    ...(await promoFor(store, b.promo_code, pki, contact, id)),
     contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
     payment_reference: str(b.payment_reference, 200), payment_receipt: str(b.payment_receipt, 2000), payment_method: str(b.payment_method, 80),
     language: b.language === 'ar' ? 'ar' : 'en', answers,
@@ -114,9 +137,10 @@ export async function handleSubmit(req, store) {
     verified_at: null, delivered_at: null, delivery_note: '', notes: '',
     history: [{ at: t, by: 'client', action: 'Assessment submitted' }],
   };
-  rec.pay_flags = await payFlags(store, rec);
+  if (rec.is_free) makeFree(rec, t, 'Free (code ' + rec.promo_code + ')');
+  else rec.pay_flags = await payFlags(store, rec);
   await store.set(keyOf(id), rec);
-  return json({ ok: true, id }, 201);
+  return json({ ok: true, id, free: rec.is_free === true }, 201);
 }
 
 /* ---------------- admin ---------------- */
@@ -216,6 +240,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
     if (!pkg || !name || !contact) return fail(400, 'Name, contact and package are required');
     const t = now(), when = b.created_at && !isNaN(Date.parse(b.created_at)) ? new Date(b.created_at).toISOString() : t;
     const nid = 'BSR-M' + randomBytes(3).toString('hex').toUpperCase().slice(0, 5);
+    const free = b.free === true;
     const rec = {
       id: nid, source: 'manual', created_at: when, updated_at: t, full_name: name, package: pkg, package_name: pki.name, price_sar: pki.price, list_price: pki.list,
       contact_method: METHODS.includes(b.contact_method) ? b.contact_method : 'Email', contact,
@@ -223,8 +248,10 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       payment_status: 'pending', report_status: 'not_started', consult_status: pki.consult ? 'not_scheduled' : null, consult_at: null,
       verified_at: null, delivered_at: null, delivery_note: '', notes: str(b.notes, 4000),
       history: [{ at: t, by: 'admin', action: 'Added manually' }],
+      ...(free ? { discount_sar: pki.price, is_free: true, free_by: 'admin', free_value_sar: pki.price, free_label: str(b.free_reason, 100) || 'Gift' } : {}),
     };
-    rec.pay_flags = await payFlags(store, rec);
+    if (free) makeFree(rec, t, 'Free (gift)');
+    else rec.pay_flags = await payFlags(store, rec);
     await store.set(keyOf(nid), rec);
     return json({ submission: summary(rec) }, 201);
   }
@@ -264,6 +291,11 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   }
 
   if (m === 'DELETE') {
+    if (rec.promo_code) {                              // a deleted order gives its code use (and the person's turn) back
+      const used = await promoUsed(store, rec.promo_code);
+      if (used > 0) await store.set('promouse/' + rec.promo_code, { n: used - 1 });
+      if (rec.promo_person) await store.delete('promoperson/' + rec.promo_code + '.' + rec.promo_person);
+    }
     await dropFiles(store, rec);                       // the client's voice answers and receipt go too
     await store.delete(keyOf(id)); await store.delete('doc/r-' + id); await dropPdf(store, id);
     await dropReview(store, id);
@@ -278,8 +310,25 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
     const next = { ...rec, history: [...rec.history] };
     const L = (action) => next.history.push({ at: t, by: 'admin', action });
 
-    if (b.payment_status !== undefined && b.payment_status !== rec.payment_status) {
+    if (b.mark_free === true) {            // an order that was really a gift but went through the payment steps
+      if (rec.is_free) return fail(409, 'This is already a free order.');
+      const reason = str(b.free_reason, 100) || 'Gift';
+      next.was = { price_sar: rec.price_sar, payment_status: rec.payment_status, verified_at: rec.verified_at || null, payment_method: rec.payment_method || '', payment_reference: rec.payment_reference || '', payment_receipt: rec.payment_receipt || '', discount_sar: rec.discount_sar ?? null, pay_flags: rec.pay_flags || [] };
+      next.is_free = true; next.free_by = 'admin'; next.free_label = reason; next.free_value_sar = rec.price_sar || rec.list_price || 0;
+      next.discount_sar = rec.list_price || rec.price_sar || 0; next.price_sar = 0; next.pay_flags = [];
+      next.payment_status = 'verified'; next.verified_at = rec.verified_at || t; next.payment_method = 'Free (gift)'; next.reject_reason = '';
+      L('Marked as a free order: ' + reason + '. It no longer counts as revenue (it was SAR ' + (rec.price_sar || 0) + ', ' + rec.payment_status + ')');
+    } else if (b.unmark_free === true) {  // put it back exactly as it was
+      if (!rec.is_free || !rec.was) return fail(409, 'This order can not be turned back into a paid order.');
+      const w = rec.was;
+      next.price_sar = w.price_sar; next.payment_status = w.payment_status; next.verified_at = w.verified_at; next.payment_method = w.payment_method; next.payment_reference = w.payment_reference; next.payment_receipt = w.payment_receipt; next.pay_flags = w.pay_flags || [];
+      if (w.discount_sar === null) delete next.discount_sar; else next.discount_sar = w.discount_sar;
+      for (const k of ['is_free', 'free_by', 'free_label', 'free_value_sar', 'was']) delete next[k];
+      L('Turned back into a paid order (SAR ' + w.price_sar + ', ' + w.payment_status + ')');
+    }
+    if (b.payment_status !== undefined && b.payment_status !== rec.payment_status && !b.mark_free && !b.unmark_free) {
       if (!PAYMENT.includes(b.payment_status)) return fail(400, 'Invalid payment status');
+      if (rec.is_free) return fail(409, 'This is a free order, so there is no payment to change.');
       if (rec.payment_status === 'verified' && rec.report_status !== 'not_started') return fail(409, 'Move the report back to “Not started” before changing a verified payment.');
       next.payment_status = b.payment_status;
       next.verified_at = b.payment_status === 'verified' ? t : null;
@@ -520,13 +569,15 @@ function cleanSettings(b, prev) {
       if (code.length < 3) return { error: 'Every promo code needs at least 3 letters or numbers.' };
       if (seenC.has(code)) return { error: 'The promo code ' + code + ' is listed twice.' };
       seenC.add(code);
-      const type = c?.type === 'fixed' ? 'fixed' : 'percent', value = Math.round(Number(c?.value));
+      const type = c?.type === 'fixed' ? 'fixed' : c?.type === 'free' ? 'free' : 'percent';
+      const value = type === 'free' ? 100 : Math.round(Number(c?.value));
       if (!Number.isFinite(value) || value < 1 || (type === 'percent' ? value > 90 : value > 100000)) return { error: 'The discount of ' + code + ' must be ' + (type === 'percent' ? 'between 1% and 90%.' : 'a whole number of riyals.') };
       codes.push({
         code, type, value, active: c?.active !== false, combine: c?.combine !== false,
         packages: (Array.isArray(c?.packages) ? c.packages : []).filter((id) => pids.has(id)),
         starts_at: isoOrEmpty(c?.starts_at), ends_at: isoOrEmpty(c?.ends_at),
         max_uses: Math.max(0, Math.min(100000, Math.round(Number(c?.max_uses)) || 0)), note: str(c?.note, 100), image: imgOf(c?.image),
+        once_per_person: c?.once_per_person === undefined ? type === 'free' : c.once_per_person === true, campaign: str(c?.campaign, 40),
       });
     }
   }
@@ -833,7 +884,10 @@ async function handleAdminReviews(req, store, sid) {
   return json({ review: next });
 }
 
-const OGTAGS = (origin, title, desc, img) => `<meta property="og:image" content="${H(origin)}${H(img || '/og.png')}">${img && !/^\/og-/.test(img) ? '' : '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'}<meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
+const OGTAGS = (origin, title, desc, img, pageUrl = '') => {
+  const src = origin + (img || '/og.png'), stock = !img || /^\/og-/.test(img);
+  return `<meta name="description" content="${H(desc)}"><meta property="og:site_name" content="Basirah · بصيرة"><meta property="og:type" content="website">${pageUrl ? `<meta property="og:url" content="${H(pageUrl)}">` : ''}<meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta property="og:image" content="${H(src)}"><meta property="og:image:secure_url" content="${H(src)}">${stock ? '<meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' : ''}<meta property="og:image:alt" content="${H(title)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${H(title)}"><meta name="twitter:description" content="${H(desc)}"><meta name="twitter:image" content="${H(src)}">`;
+};
 
 /* a small page that WhatsApp shows with the Basirah logo; people who tap it go to the website */
 /* ---------------- marketing pictures (packages, offers, promo codes) ---------------- */
@@ -871,6 +925,7 @@ const MSG_CARDS = {
   help:          { img: '/og-card.png',  en: ['Basirah · We are here to help with your payment', 'Reply on WhatsApp and we will guide you to the next step.'], ar: ['بصيرة · نحن هنا لمساعدتك في الدفع', 'راسلنا عبر واتساب وسنرشدك إلى الخطوة التالية.'] },
   done:          { img: '/og-check.png', en: ['Basirah · Your assessment is in', 'We are confirming your payment. Your personal insight reaches you within 24 hours.'], ar: ['بصيرة · وصلنا تقييمك', 'نؤكد الدفع الآن، وتصلك بصيرتك الخاصة خلال ٢٤ ساعة.'] },
   consult:       { img: '/og-cal.png',   en: ['Basirah · Book your 1-to-1 consultation', 'Where insight becomes a plan. Choose a time that suits you.'], ar: ['بصيرة · احجز استشارتك الفردية', 'حيث تتحول البصيرة إلى خطة. اختر الوقت الذي يناسبك.'] },
+  received_free: { img: '/og-gift.png',  en: ['Basirah · Your journey has begun', 'Your free access is confirmed. Your personal insight is being prepared with care.'], ar: ['بصيرة · بدأت رحلتك', 'تم تأكيد وصولك المجاني، ونُعدّ بصيرتك الخاصة بعناية.'] },
   received:      { img: '/og-check.png', en: ['Basirah · Your journey has begun', 'We have received your assessment. Your personal insight is prepared with care.'], ar: ['بصيرة · بدأت رحلتك', 'وصلنا تقييمك، ونُعدّ بصيرتك الخاصة بعناية.'] },
   payment_issue: { img: '/og-card.png',  en: ['Basirah · One small step to go', 'We could not yet match your payment. A clear receipt photo will set everything in motion.'], ar: ['بصيرة · خطوة صغيرة متبقية', 'لم نتمكن بعد من مطابقة الدفع. صورة واضحة للإيصال تُسرّع كل شيء.'] },
   delay:         { img: '/og-clock.png', en: ['Basirah · Your insight is on its way', 'Thank you for your patience. We are giving your report the care it deserves.'], ar: ['بصيرة · بصيرتك في الطريق إليك', 'شكراً لصبرك. نمنح تقريرك العناية التي يستحقها.'] },
@@ -894,11 +949,11 @@ export async function handleShare(req, store) {
     const p = pkg && Array.isArray(set?.packages) ? set.packages.find((x) => x.id === pkg) : null;
     const bn = set?.promo?.banner;
     if (ann && bn && (bn.en || bn.ar)) { title = '📣 ' + (bn.en || bn.ar).slice(0, 80); desc = 'Basirah · بصيرة. Tap to see the packages.'; image = bn.image || ''; }
-    else if (c) { title = '🎁 A gift from Basirah'; desc = 'A gift is waiting for you. Your promo code is applied automatically.'; image = c.image || ''; }
+    else if (c) { title = '🎁 A gift from Basirah'; desc = c.type === 'free' ? 'Your assessment is a gift, free of charge. Your code is applied automatically.' : 'A gift is waiting for you. Your promo code is applied automatically.'; image = c.image || ''; if (!image && c.type === 'free') stock = '/og-gift.png'; }
     if (!image && p) { title = p.name + ' · Basirah'; desc = (saleOn(p) ? 'Now SAR ' + p.sale_price + ' instead of SAR ' + p.price + '. ' : 'SAR ' + p.price + '. ') + (p.desc || ''); image = p.image || ''; }
     else if (p && !c) { title = p.name + ' · Basirah'; }
   } catch { /* the plain Basirah preview is used */ }
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${H(title)}</title>${OGTAGS(origin, title, desc.slice(0, 200), imgOf(image) || stock)}<meta http-equiv="refresh" content="0;url=${H(dest)}"></head><body><a href="${H(dest)}">Basirah</a><script>location.replace(${JSON.stringify(dest).replace(/</g, '\\u003c')})</script></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${H(title)}</title>${OGTAGS(origin, title, desc.slice(0, 200), imgOf(image) || stock, u.href)}</head><body><a href="${H(dest)}">Basirah</a><script>location.replace(${JSON.stringify(dest).replace(/</g, '\\u003c')})</script></body></html>`;
   return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=120' } });
 }
 

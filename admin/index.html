@@ -370,6 +370,17 @@ input::placeholder,textarea::placeholder{color:var(--sub);opacity:.75}
 .cpb{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:700;min-height:28px;cursor:pointer;margin-inline-start:6px}.cpb:hover{background:var(--sage)}
 .rcl{display:block;text-decoration:none;color:var(--teal);font-weight:600}.rcpt.big{max-width:100%;width:100%;max-height:420px;object-fit:contain;background:var(--sage)}.rcl span{display:inline-block;margin-top:6px;font-size:14px}
 .rjp{margin-top:14px;background:var(--sage);border-radius:14px;padding:14px}.rjp label{display:block;margin-bottom:10px;font-weight:600}.rjp input{margin-top:10px}
+
+/* free orders */
+.frb{border:1px solid var(--green,#2e7d5b);background:color-mix(in srgb,var(--green,#2e7d5b) 9%,transparent);border-radius:14px;padding:14px 16px}
+.frb>b{display:block;margin-bottom:8px;font-size:16px}
+[hidden]{display:none !important}
+
+/* clear digits: the serif heading font draws 1 like a capital I, so every digit comes from Cormorant Infant (same family look, a proper 1). Letters keep the serif. */
+@font-face{font-family:'Cormorant Garamond';font-weight:400 500;src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+0030-0039,U+002C}
+@font-face{font-family:'Cormorant Garamond';font-weight:600 800;src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+0030-0039,U+002C}
+
+.cf{overflow:auto}.cfb{max-height:calc(100dvh - 40px);overflow-y:auto}
 </style>
 </head>
 <body>
@@ -388,6 +399,7 @@ const REPL={not_started:['Not started','grey'],in_progress:['In preparation','bl
 const CONL={not_scheduled:'Not scheduled',scheduled:'Scheduled',completed:'Completed'};
 const FLOW=['not_started','in_progress','ready','delivered'];
 const DAY=864e5,HOUR=36e5;
+const payBadge=s=>s.is_free?'<span class="bd green"><i></i>Free</span>':badge(PAYL,s.payment_status);
 const badge=(m,k)=>{const [t,c]=m[k]||[k,'grey'];return `<span class="bd ${c}"><i></i>${esc(t)}</span>`};
 const WAMOB=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||'');
 const waLink=(ph,txt)=>WAMOB?'https://wa.me/'+(ph||'')+(txt?(ph?'?':'?')+'text='+encodeURIComponent(txt):''):'https://web.whatsapp.com/send?'+(ph?'phone='+ph+'&':'')+(txt?'text='+encodeURIComponent(txt):'');
@@ -433,7 +445,7 @@ const D=()=>{
   const s=st.subs,pend=s.filter(x=>x.payment_status==='pending'),ver=s.filter(x=>x.payment_status==='verified');
   const queue=ver.filter(x=>x.report_status!=='delivered'),over=queue.filter(isOverdue);
   return{pend,ver,queue,over,ready:ver.filter(x=>x.report_status==='ready'),deliv:ver.filter(x=>x.report_status==='delivered'),
-    prep:ver.filter(x=>x.report_status==='not_started'||x.report_status==='in_progress'),revenue:ver.reduce((a,x)=>a+x.price_sar,0)};
+    prep:ver.filter(x=>x.report_status==='not_started'||x.report_status==='in_progress'),paid:ver.filter(x=>!x.is_free),free:s.filter(x=>x.is_free),freeValue:s.filter(x=>x.is_free).reduce((a,x)=>a+(x.free_value_sar||0),0),revenue:ver.reduce((a,x)=>a+x.price_sar,0)};
 };
 
 /* ============ shell ============ */
@@ -491,7 +503,8 @@ function vOverview(m){
     ${card('Ready to send',d.ready.length,'Waiting to be delivered','','ready')}
     ${card('Overdue',d.over.length,d.over.length?'Past the 24-hour delivery window':'Nothing overdue',d.over.length?'bad':'','over')}
     ${card('Delivered',d.deliv.length,'Reports sent to clients','','deliv')}
-    ${card('Verified revenue','<span class="mn" style="font-size:30px;white-space:nowrap">'+money(d.revenue)+'</span>',d.ver.length+' verified payment'+(d.ver.length===1?'':'s'),'','rev')}
+    ${card('Verified revenue','<span class="mn" style="font-size:30px;white-space:nowrap">'+money(d.revenue)+'</span>',d.paid.length+' verified payment'+(d.paid.length===1?'':'s'),'','rev')}
+    ${card('Free orders',d.free.length,d.free.length?money(d.freeValue)+' given as free access':'No free orders yet','','free')}
    </div>
    <div class="two">
     <section class="panel"><h2>Payments waiting longest</h2><p class="hint">Check the receipt, then verify or reject.</p>${
@@ -500,7 +513,7 @@ function vOverview(m){
       d.queue.length?[...d.queue].sort((a,b)=>dueAt(a)-dueAt(b)).slice(0,6).map(s=>{const du=dueAt(s),late=du<Date.now();return `<button class="li" data-open="${esc(s.id)}"><span class="g"><b>${esc(s.full_name)}</b><span>${esc(REPL[s.report_status][0])} · ${esc(PK[s.package].name)}</span></span><span class="r ${late?'late':du-Date.now()<4*HOUR?'soon':''}">${late?'Overdue '+span(Date.now()-du):'Due in '+span(du-Date.now())}</span></button>`}).join(''):'<div class="li" style="cursor:default"><span class="g"><span>No reports are waiting to be delivered.</span></span></div>'}</section>
    </div>`:emptyAll());
   $$('[data-go]').forEach(b=>b.onclick=()=>{const k=b.dataset.go;
-    ({settings:()=>go('settings'),pay:()=>go('submissions',{fPay:'pending'}),prep:()=>go('delivery'),ready:()=>go('submissions',{fPay:'verified',fRep:'ready'}),over:()=>go('delivery'),deliv:()=>go('submissions',{fRep:'delivered'}),rev:()=>go('submissions',{fPay:'verified'})})[k]()});
+    ({settings:()=>go('settings'),pay:()=>go('submissions',{fPay:'pending'}),prep:()=>go('delivery'),ready:()=>go('submissions',{fPay:'verified',fRep:'ready'}),over:()=>go('delivery'),deliv:()=>go('submissions',{fRep:'delivered'}),rev:()=>go('submissions',{fPay:'paid'}),free:()=>go('submissions',{fPay:'free'})})[k]()});
   bindOpen(m);bindAdd();
 }
 
@@ -508,7 +521,7 @@ function vOverview(m){
 const SORTS={new:['Newest first',(a,b)=>b.created_at.localeCompare(a.created_at)],old:['Oldest first',(a,b)=>a.created_at.localeCompare(b.created_at)],name:['Name A–Z',(a,b)=>a.full_name.localeCompare(b.full_name)],amt:['Amount, high to low',(a,b)=>b.price_sar-a.price_sar||b.created_at.localeCompare(a.created_at)]};
 function filtered(){
   const q=st.q.trim().toLowerCase();
-  return st.subs.filter(s=>(!st.fPay||(st.fPay==='flag'?(s.payment_status==='pending'&&hasFlags(s)):s.payment_status===st.fPay))&&(!st.fRep||s.report_status===st.fRep)&&(!st.fPkg||s.package===st.fPkg)&&
+  return st.subs.filter(s=>(!st.fPay||(st.fPay==='flag'?(s.payment_status==='pending'&&hasFlags(s)):st.fPay==='free'?s.is_free===true:st.fPay==='paid'?(s.payment_status==='verified'&&!s.is_free):s.payment_status===st.fPay))&&(!st.fRep||s.report_status===st.fRep)&&(!st.fPkg||s.package===st.fPkg)&&
     (!q||[s.full_name,s.contact,s.payment_reference,s.id].some(v=>String(v||'').toLowerCase().includes(q)))).sort(SORTS[st.sort][1]);
 }
 const hasFlags=s=>Array.isArray(s.pay_flags)&&s.pay_flags.length>0;
@@ -519,7 +532,7 @@ function vSubs(m){
   if(!st.loaded){m.innerHTML=head('Submissions','')+errBanner();return}
   m.innerHTML=head('Submissions','Search, filter and open any client record.',`<button class="btn sm o" id="csv">Export CSV</button><button class="btn sm" data-add>Record manual order</button>`)+errBanner()+
   `<div class="tb"><div class="fld sr"><label for="q">Search</label><input id="q" type="search" placeholder="Name, contact, payment reference or code" value="${esc(st.q)}"></div>
-   <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}<option value="flag" ${st.fPay==='flag'?'selected':''}>Needs a closer look</option></select></div>
+   <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}<option value="paid" ${st.fPay==='paid'?'selected':''}>Paid and verified</option><option value="free" ${st.fPay==='free'?'selected':''}>Free orders</option><option value="flag" ${st.fPay==='flag'?'selected':''}>Needs a closer look</option></select></div>
    <div class="fld"><label for="fr">Report</label><select id="fr">${opts(REPL,st.fRep,'All reports')}</select></div>
    <div class="fld"><label for="fk">Package</label><select id="fk">${opts(Object.fromEntries(Object.entries(PK).map(([k,v])=>[k,v.name])),st.fPkg,'All packages')}</select></div>
    <div class="fld"><label for="so2">Sort by</label><select id="so2">${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${st.sort===k?'selected':''}>${v[0]}</option>`).join('')}</select></div></div>
@@ -536,8 +549,8 @@ function renderResults(){
   r.innerHTML=`<div class="tw"><table><thead><tr><th>Received</th><th>Client</th><th>Package</th><th class="num">Amount</th><th>Payment</th><th>Report</th><th>Contact</th></tr></thead><tbody>${rows.map(s=>`
    <tr data-open="${esc(s.id)}" tabindex="0"><td data-l="Received">${fmtD(s.created_at)}</td>
    <td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2">${esc(s.id)}${s.source==='manual'?' · added manually':''}${s.has_report?' · report drafted':''}</span></td>
-   <td data-l="Package">${esc(PK[s.package].name)}</td><td class="num" data-l="Amount">${money(s.price_sar)}</td>
-   <td data-l="Payment">${badge(PAYL,s.payment_status)}${flagChip(s)}${s.payment_status==='verified'&&isOverdue(s)?' <span class="bd red"><i></i>Overdue</span>':''}</td><td data-l="Report">${badge(REPL,s.report_status)}</td>
+   <td data-l="Package">${esc(PK[s.package].name)}</td><td class="num" data-l="Amount">${s.is_free?'Free':money(s.price_sar)}</td>
+   <td data-l="Payment">${payBadge(s)}${flagChip(s)}${s.payment_status==='verified'&&isOverdue(s)?' <span class="bd red"><i></i>Overdue</span>':''}</td><td data-l="Report">${badge(REPL,s.report_status)}</td>
    <td data-l="Contact"><span dir="ltr">${esc(s.contact)}</span><span class="sm2">${esc(s.contact_method)}</span></td></tr>`).join('')}</tbody></table></div>
    <div class="pg"><span>Showing ${from+1}–${from+rows.length} of ${all.length}${all.length!==st.subs.length?` (filtered from ${st.subs.length})`:''}</span>
    <span class="b"><label class="hint" for="ps">Rows</label><select id="ps" style="width:auto">${[10,25,50,100].map(n=>`<option ${n===st.size?'selected':''}>${n}</option>`).join('')}</select>
@@ -548,8 +561,8 @@ function renderResults(){
 }
 function exportCsv(){
   const rows=filtered(),cell=v=>{v=String(v??'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
-  const head=['Code','Received','Name','Package','Amount (SAR)','Contact method','Contact','Payment reference','Paid with','Payment status','Report status','Payment verified','Report delivered'];
-  const csv=[head,...rows.map(s=>[s.id,s.created_at,s.full_name,PK[s.package].name,s.price_sar,s.contact_method,s.contact,s.payment_reference,s.payment_method||'',PAYL[s.payment_status][0],REPL[s.report_status][0],s.verified_at||'',s.delivered_at||''])].map(r=>r.map(cell).join(',')).join('\r\n');
+  const head=['Code','Received','Name','Package','Amount (SAR)','Contact method','Contact','Payment reference','Paid with','Payment status','Report status','Payment verified','Report delivered','Free order','Promo code','Value given free (SAR)','Campaign or reason'];
+  const csv=[head,...rows.map(s=>[s.id,s.created_at,s.full_name,PK[s.package].name,s.price_sar,s.contact_method,s.contact,s.payment_reference,s.payment_method||'',s.is_free?'Free':PAYL[s.payment_status][0],REPL[s.report_status][0],s.verified_at||'',s.delivered_at||'',s.is_free?'Yes':'',s.promo_code||'',s.is_free?(s.free_value_sar||0):'',s.promo_campaign||s.free_label||''])].map(r=>r.map(cell).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='basirah-submissions-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();toast('Exported '+rows.length+' submission'+(rows.length===1?'':'s'));
 }
 
@@ -645,10 +658,10 @@ function vInsights(m){
   const first=all.length?Math.min(...all.map(x=>T(x.created_at))):now;
   const start=R?now-R*DAY:first,prev0=R?start-R*DAY:null;
   const inR=(iso,a,b)=>{if(!iso)return false;const t=T(iso);return t>=a&&t<b};
-  const calc=(a,b)=>{const sub=all.filter(x=>inR(x.created_at,a,b)),ver=all.filter(x=>x.payment_status==='verified'&&inR(x.verified_at,a,b)),del=all.filter(x=>x.delivered_at&&inR(x.delivered_at,a,b)&&x.verified_at);
-    const rev=ver.reduce((t,x)=>t+x.price_sar,0),conv=sub.length?sub.filter(x=>x.payment_status==='verified').length/sub.length:0,
+  const calc=(a,b)=>{const sub=all.filter(x=>inR(x.created_at,a,b)),ver=all.filter(x=>x.payment_status==='verified'&&!x.is_free&&inR(x.verified_at,a,b)),free=sub.filter(x=>x.is_free),del=all.filter(x=>x.delivered_at&&inR(x.delivered_at,a,b)&&x.verified_at);
+    const rev=ver.reduce((t,x)=>t+x.price_sar,0),conv=sub.length?sub.filter(x=>x.payment_status==='verified'&&!x.is_free).length/sub.length:0,
     lead=del.length?del.reduce((t,x)=>t+T(x.delivered_at)-T(x.verified_at),0)/del.length:null,ont=del.length?del.filter(x=>T(x.delivered_at)-T(x.verified_at)<=DAY).length/del.length:null;
-    return{sub,ver,del,rev,conv,lead,ont,aov:ver.length?rev/ver.length:0}};
+    return{sub,ver,free,del,rev,conv,lead,ont,aov:ver.length?rev/ver.length:0}};
   const c=calc(start,now+1),p=R?calc(prev0,start):null;
   const delta=(a,b,inv)=>{if(!p)return '';if(!b)return a?'<span class="dl up">New</span>':'<span class="dl fl">No change</span>';const r=Math.round((a-b)/b*100);if(!r)return '<span class="dl fl">No change</span>';const good=inv?r<0:r>0;return `<span class="dl ${good?'up':'dn'}">${r>0?'▲':'▼'} ${Math.abs(r)}%</span> <span class="bm">vs previous ${R} days</span>`};
   const k=(t,v,s)=>`<div class="cd"><span class="k">${t}</span><span class="v">${v}</span><span class="s">${s||'&nbsp;'}</span></div>`;
@@ -666,7 +679,12 @@ function vInsights(m){
   const grp=(list,fn)=>{const o={};list.forEach(x=>{const k=fn(x)||'Not recorded';o[k]=(o[k]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])};
   const hb=(rows,tot)=>rows.length?rows.map(([n,v])=>`<div class="hb"><span>${esc(n)}</span><span class="tr"><i style="width:${tot?Math.round(v/tot*100):0}%"></i></span><b>${v} · ${tot?Math.round(v/tot*100):0}%</b></div>`).join(''):'<p class="hint">Nothing in this period yet.</p>';
   const S=c.sub,rejected=S.filter(x=>x.payment_status==='rejected').length,pend=S.filter(x=>x.payment_status==='pending').length;
-  const byPkg=Object.keys(PK).map(id=>{const s2=S.filter(x=>x.package===id),v2=c.ver.filter(x=>x.package===id);return[PK[id].name,s2.length,v2.length,v2.reduce((t,x)=>t+x.price_sar,0)]});
+  const byPkg=Object.keys(PK).map(id=>{const s2=S.filter(x=>x.package===id),v2=c.ver.filter(x=>x.package===id);return[PK[id].name,s2.length,v2.length,v2.reduce((t,x)=>t+x.price_sar,0),c.free.filter(x=>x.package===id).length]});
+  const freeVal=c.free.reduce((t,x)=>t+(x.free_value_sar||0),0);
+  const promoTable=(keyf,first)=>{const o={};S.filter(x=>x.promo_code||x.is_free).forEach(x=>{const k=keyf(x);if(!k)return;const r=o[k]||(o[k]={n:0,free:0,paid:0,del:0,rev:0,disc:0,camp:{}});r.n++;if(x.is_free)r.free++;if(x.payment_status==='verified'&&!x.is_free){r.paid++;r.rev+=x.price_sar}if(x.report_status==='delivered')r.del++;r.disc+=x.discount_sar||0;const cp=x.promo_campaign||(x.free_by==='admin'?x.free_label:'');if(cp)r.camp[cp]=(r.camp[cp]||0)+1});
+    const rows=Object.entries(o).sort((a,b)=>b[1].n-a[1].n);if(!rows.length)return '<p class="hint">No promo codes or free orders in this period yet.</p>';
+    return `<div class="tw"><table><thead><tr><th>${first}</th><th class="num">Orders</th><th class="num">Free</th><th class="num">Paid</th><th class="num">Delivered</th><th class="num">Revenue</th><th class="num">Given away</th></tr></thead><tbody>${rows.map(([k,r])=>`<tr><td data-l="${first}"><b>${esc(k)}</b>${first==='Code or source'&&Object.keys(r.camp).length?`<span class="sm2">${esc(Object.entries(r.camp).sort((a,b)=>b[1]-a[1])[0][0])}</span>`:''}</td><td class="num" data-l="Orders">${r.n}</td><td class="num" data-l="Free">${r.free}</td><td class="num" data-l="Paid">${r.paid}</td><td class="num" data-l="Delivered">${r.del}</td><td class="num" data-l="Revenue">${money(r.rev)}</td><td class="num" data-l="Given away">${money(r.disc)}</td></tr>`).join('')}</tbody></table></div>`};
+  const hasCamp=S.some(x=>x.promo_campaign||(x.free_by==='admin'&&x.free_label));
   const contacts={};all.forEach(x=>{const k=(x.contact||'').toLowerCase().replace(/\s+/g,'');if(k)contacts[k]=(contacts[k]||0)+1});
   const clients=Object.keys(contacts).length,repeat=Object.values(contacts).filter(v=>v>1).length;
   const allVer=all.filter(x=>x.payment_status==='verified'),allRev=allVer.reduce((t,x)=>t+x.price_sar,0);
@@ -677,6 +695,8 @@ function vInsights(m){
    ${k('Verified revenue',money(c.rev),delta(c.rev,p&&p.rev))}
    ${k('New assessments',c.sub.length,delta(c.sub.length,p&&p.sub.length))}
    ${k('Paid clients',c.ver.length,delta(c.ver.length,p&&p.ver.length))}
+   ${k('Free orders',c.free.length,c.free.length?delta(c.free.length,p&&p.free.length):'None in this period')}
+   ${k('Given as free access',money(freeVal),'Value of free packages in this period')}
    ${k('Average order',c.ver.length?money(Math.round(c.aov)):'—',delta(c.aov,p&&p.aov))}
    ${k('Payment check rate',c.sub.length?pct(c.conv):'—','Share of new assessments with a verified payment')}
    ${k('Average delivery time',c.lead===null?'—':span(c.lead),p?delta(c.lead||0,p.lead||0,true):'')}
@@ -688,11 +708,13 @@ function vInsights(m){
   </div>
   <div class="ins2">
    <section class="panel"><h2>From submission to delivery</h2><p class="hint">Assessments received in this period.</p>
-    <div class="fn"><div><b>${S.length}</b><span>Submitted</span></div><div><b>${S.filter(x=>x.payment_status==='verified').length}</b><span>Payment verified</span></div><div><b>${S.filter(x=>x.report_status==='delivered').length}</b><span>Report delivered</span></div></div>
+    <div class="fn"><div><b>${S.length}</b><span>Submitted</span></div><div><b>${S.filter(x=>x.payment_status==='verified').length}</b><span>Paid or free</span></div><div><b>${S.filter(x=>x.report_status==='delivered').length}</b><span>Report delivered</span></div></div>
     <p class="hint" style="margin-top:12px">${pend} waiting for a payment check${rejected?`, ${rejected} rejected`:''}.</p></section>
    <section class="panel"><h2>By package</h2><p class="hint">This period.</p>
-    <table><thead><tr><th>Package</th><th class="num">Submitted</th><th class="num">Paid</th><th class="num">Revenue</th></tr></thead><tbody>${byPkg.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${money(r[3])}</td></tr>`).join('')}</tbody></table></section>
+    <div class="tw"><table><thead><tr><th>Package</th><th class="num">Submitted</th><th class="num">Paid</th><th class="num">Free</th><th class="num">Revenue</th></tr></thead><tbody>${byPkg.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[4]}</td><td class="num">${money(r[3])}</td></tr>`).join('')}</tbody></table></div></section>
   </div>
+  <section class="panel" id="pcodes" style="margin-bottom:16px"><h2>Promo codes and free access</h2><p class="hint">Every order that used a code, or that you gave as a gift, in this period. “Given away” is the money you did not charge: discounts plus the value of free packages.</p>${promoTable(x=>x.promo_code||'Admin gift','Code or source')}</section>
+  ${hasCamp?`<section class="panel" style="margin-bottom:16px"><h2>By campaign</h2><p class="hint">Codes and gifts grouped by the campaign name or reason you gave them.</p>${promoTable(x=>x.promo_campaign||(x.free_by==='admin'?x.free_label:''),'Campaign')}</section>`:''}
   <div class="ins2">
    <section class="panel"><h2>How clients pay</h2>${hb(grp(c.ver,x=>x.payment_method),c.ver.length)}</section>
    <section class="panel"><h2>How clients want their report</h2>${hb(grp(S,x=>x.contact_method),S.length)}</section>
@@ -866,7 +888,8 @@ const PROMO_EX=[
  {en:'🌙 Launch offer: save on every package, this week only',ar:'🌙 عرض الإطلاق: وفّر على جميع الباقات، هذا الأسبوع فقط'},
  {en:'✨ New: book the Full Analysis with a 1-to-1 consultation',ar:'✨ جديد: احجز التحليل الكامل مع استشارة فردية'},
  {en:'🎁 Use code WELCOME10 at checkout for 10% off',ar:'🎁 استخدم الكود WELCOME10 عند الدفع لخصم 10٪'}];
-const newCode=()=>({code:'',type:'percent',value:10,packages:[],starts_at:'',ends_at:'',max_uses:0,active:true,combine:true,note:''});
+const newCode=()=>({code:'',type:'percent',value:10,packages:[],starts_at:'',ends_at:'',max_uses:0,active:true,combine:true,note:'',once_per_person:false,campaign:''});
+const giftCode=()=>({...newCode(),code:'GIFT-'+Array.from({length:4},()=>'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*31)]).join(''),type:'free',value:100,max_uses:20,once_per_person:true,combine:true});
 function vPromos(m){
   m.innerHTML=head('Promotions','Offers, promo codes and an announcement bar that appear on the client app')+(st.cfgDraft?'':'<div class="panel" aria-busy="true" style="padding:20px"><div class="sk" style="width:40%"></div><div class="sk" style="margin-top:12px"></div></div>');
   bindHead();
@@ -878,15 +901,19 @@ function vPromos(m){
   const codeCards=P.codes.map((c,i)=>{const u=uses[(c.code||'').toUpperCase()]||0,exp=c.ends_at&&Date.parse(c.ends_at)<=Date.now(),full=c.max_uses>0&&u>=c.max_uses;
     return `<div class="pm cdc" data-ci="${i}"><div class="ph"><div class="fld"><label for="cc${i}">Code</label><input id="cc${i}" data-c="code" value="${esc(c.code)}" maxlength="24" dir="ltr" style="text-transform:uppercase;font-weight:700;letter-spacing:.06em" placeholder="WELCOME10"></div>
       <span class="kd">${!c.active?'Paused':exp?'Expired':full?'Used up':'Live'}</span><span class="tools"><button class="ib" data-cshare="${i}" aria-label="Share on WhatsApp" title="Share on WhatsApp">💬</button><button class="ib" data-ccopy="${i}" aria-label="Copy a link that applies this code" title="Copy a link that applies this code">🔗</button><button class="ib" data-cdel="${i}" aria-label="Delete code">✕</button></span></div>
-     <div class="g2"><div class="fld"><label for="ct${i}">Takes off</label><select id="ct${i}" data-c="type"><option value="percent" ${c.type==='percent'?'selected':''}>A percentage (%)</option><option value="fixed" ${c.type==='fixed'?'selected':''}>A fixed amount (SAR)</option></select></div>
-      <div class="fld"><label for="cv${i}">${c.type==='percent'?'Percent off (1–90)':'Riyals off'}</label><input id="cv${i}" data-c="value" type="number" inputmode="numeric" min="1" value="${esc(c.value)}"></div></div>
+     <div class="g2"><div class="fld"><label for="ct${i}">Takes off</label><select id="ct${i}" data-c="type"><option value="percent" ${c.type==='percent'?'selected':''}>A percentage (%)</option><option value="fixed" ${c.type==='fixed'?'selected':''}>A fixed amount (SAR)</option><option value="free" ${c.type==='free'?'selected':''}>Everything: free access (no payment)</option></select></div>
+      ${c.type==='free'?'<div class="fld"><label>Discount</label><p class="hint" style="margin:10px 0 0"><b>100%.</b> The client pays nothing and skips the payment step.</p></div>':`<div class="fld"><label for="cv${i}">${c.type==='percent'?'Percent off (1–90)':'Riyals off'}</label><input id="cv${i}" data-c="value" type="number" inputmode="numeric" min="1" value="${esc(c.value)}"></div>`}</div>
      <div class="fld"><label>Works on</label><div class="chips">${pks.map(p=>`<label class="chp"><input type="checkbox" data-cp="${i}:${esc(p.id)}" ${(c.packages||[]).includes(p.id)?'checked':''}><span>${esc(p.name)}</span></label>`).join('')}</div><p class="hint" style="margin:4px 0 0">${(c.packages||[]).length?'Only the ticked packages.':'Nothing ticked means every package.'}</p></div>
      <div class="g2"><div class="fld"><label for="cs${i}">Starts – optional</label><input id="cs${i}" type="datetime-local" data-cdt="starts_at" value="${toLoc(c.starts_at)}"></div><div class="fld"><label for="ce${i}">Ends – optional</label><input id="ce${i}" type="datetime-local" data-cdt="ends_at" value="${toLoc(c.ends_at)}"></div></div>
-     <div class="g2"><div class="fld"><label for="cm${i}">Limit of uses (0 = no limit)</label><input id="cm${i}" data-c="max_uses" type="number" inputmode="numeric" min="0" value="${esc(c.max_uses)}"><p class="hint" style="margin:4px 0 0">Used so far: <b>${u}</b>${c.max_uses>0?' of '+c.max_uses:''}</p></div>
+     <div class="g2"><div class="fld"><label for="cm${i}">Limit of uses (0 = no limit)</label><input id="cm${i}" data-c="max_uses" type="number" inputmode="numeric" min="0" value="${esc(c.max_uses)}"><p class="hint" style="margin:4px 0 0">Used so far: <b>${u}</b>${c.max_uses>0?' of '+c.max_uses+' ('+Math.max(0,c.max_uses-u)+' left)':''}</p>${(()=>{const mine=(st.subs||[]).filter(x=>x.promo_code===c.code);return mine.length?`<p class="hint" style="margin:2px 0 0">Orders: <b>${mine.length}</b> · delivered: <b>${mine.filter(x=>x.report_status==='delivered').length}</b> · given away: <b>${money(mine.reduce((a,x)=>a+(x.discount_sar||0),0))}</b></p>`:''})()}</div>
       <div class="fld"><label for="cn${i}">Note to yourself (clients never see it)</label><input id="cn${i}" data-c="note" value="${esc(c.note)}" maxlength="100" placeholder="e.g. Instagram story, October"></div></div>
+     <div class="fld"><label for="ck${i}">Campaign name – optional (appears in your reports)</label><input id="ck${i}" data-c="campaign" value="${esc(c.campaign||'')}" maxlength="40" placeholder="e.g. Ramadan giveaway"></div>
+     ${c.type==='free'&&!(c.max_uses>0)&&!c.ends_at?'<div class="note" style="margin-bottom:12px">⚠ This free code has no limit and no end date. Anyone who gets the link can use it. Set a limit of uses or an end date.</div>':''}
      ${imgFld(c.image,'c:'+i)}<p class="hint" style="margin:-6px 0 12px">Shown to the client when they use this code, and in the WhatsApp preview when you share it.</p>
      <label class="chk"><input type="checkbox" data-cb="${i}:active" ${c.active?'checked':''}><span>Code is active</span></label>
+     <label class="chk"><input type="checkbox" data-cb="${i}:once_per_person" ${c.once_per_person?'checked':''}><span>One use per person (the same email address or phone number can use it once)</span></label>
      <label class="chk"><input type="checkbox" data-cb="${i}:combine" ${c.combine?'checked':''}><span>Can be used on top of an offer price</span></label></div>`}).join('');
+  const freeCodes=P.codes.filter(c=>c.type==='free'),fSubs=(st.subs||[]).filter(x=>x.is_free);
   m.innerHTML+=`<div class="cfgw">
    <section class="panel"><h2>Announcement bar</h2><p class="hint">A slim, elegant bar at the very top of the website. Best for one clear offer and a real deadline.</p>
     <label class="chk"><input type="checkbox" id="anon" ${B.on?'checked':''}><span>Show the announcement bar</span></label>
@@ -896,6 +923,10 @@ function vPromos(m){
     <div class="hint" style="margin-top:10px">Need an idea? Tap one to use it:</div><div class="row">${PROMO_EX.map((x,i)=>`<button class="btn sm o" data-ex="${i}">${esc(x.en.slice(0,34))}…</button>`).join('')}</div>
     <div class="hint" style="margin:14px 0 6px">Preview</div><div id="anp">${bar(B.en)}</div>
     <div class="row" style="margin-top:12px"><button class="btn sm o" id="ashare">Share on WhatsApp</button></div></section>
+   <section class="panel"><h2>Free access</h2><p class="hint">Give a client the assessment for nothing, without opening a payment loophole. Make a free code, set how many people can use it, and share its link. The client skips the payment step, the order shows a green <b>Free</b> tag, and your revenue stays honest: free orders are counted separately.</p>
+    <dl class="kv"><dt>Free codes</dt><dd>${freeCodes.length}</dd><dt>Free orders so far</dt><dd>${fSubs.length}</dd><dt>Value given as free access</dt><dd>${money(fSubs.reduce((a,x)=>a+(x.free_value_sar||0),0))}</dd></dl>
+    <div class="row"><button class="btn sm" id="cfree" ${P.codes.length>=40?'disabled':''}>+ Make a free-access code</button><button class="btn sm o" data-go="free">See free orders</button></div>
+    <p class="hint" style="margin-top:10px">To gift one person directly, open <b>Record manual order</b> and tick “This is a free order”.</p></section>
    <section class="panel"><h2>Promo codes</h2><p class="hint">Clients type a code on the package screen and see the new price straight away. The server checks the code again when the order arrives. The 🔗 button copies a website link that fills the code in for them. Perfect for Instagram, WhatsApp status or a flyer.</p>
     ${codeCards||'<p class="hint">No codes yet.</p>'}<div class="row"><button class="btn sm" id="cadd" ${P.codes.length>=40?'disabled':''}>+ Add a promo code</button></div></section>
    <section class="panel"><h2>Message under the prices</h2><p class="hint">One reassuring line builds trust, for example your privacy promise or delivery time.</p>
@@ -921,6 +952,8 @@ function vPromos(m){
     if(b.dataset.imgx!==undefined){const k=b.dataset.imgx;if(k==='banner')p2().banner.image='';else p2().codes[+k.slice(2)].image='';markDirty();vPromos(m);return}
     if(b.id==='ashare'){if(!(B.en||B.ar))return toast('Write the announcement text first.',true);shareDialog('ann',B);return}
     if(b.dataset.ex!==undefined){const x=PROMO_EX[+b.dataset.ex];p2().banner.en=x.en;p2().banner.ar=x.ar;p2().banner.on=true;markDirty();vPromos(m);return}
+    if(b.dataset.go==='free'){go('submissions',{fPay:'free'});return}
+    if(b.id==='cfree'){p2().codes.push(giftCode());markDirty();vPromos(m);const c=$$('.cdc',m).pop();if(c){c.scrollIntoView({behavior:'smooth',block:'center'});const i=$('input',c);if(i)i.focus()}return}
     if(b.id==='cadd'){p2().codes.push(newCode());markDirty();vPromos(m);const c=$$('.cdc',m).pop();if(c){c.scrollIntoView({behavior:'smooth',block:'center'});const i=$('input',c);if(i)i.focus()}return}
     if(b.dataset.cdel!==undefined){if(!await confirmBox({title:'Delete this promo code?',body:'Clients will no longer be able to use it. Orders that already used it keep their discount.',ok:'Delete',danger:true}))return;p2().codes.splice(+b.dataset.cdel,1);markDirty();vPromos(m);return}
     if(b.dataset.cshare!==undefined){const c=p2().codes[+b.dataset.cshare];if(!c.code)return toast('Type the code first.',true);shareDialog('code',c);return}
@@ -976,11 +1009,12 @@ function shareText(kind,it,L,who){
   const sig=ar?`\n\n✨ ${biz} من إحسان\nبصيرة… لترى نفسك بوضوح`:`\n\n✨ ${biz} by EhsanKey\nSee yourself clearly.`;
   if(kind==='code'){
     const names=(it.packages||[]).map(id=>{const p=(st.cfgDraft.packages||PKDEF).find(x=>x.id===id);return p?(ar?p.name_ar:p.name):''}).filter(Boolean);
+    const free=it.type==='free';
     const off=it.type==='percent'?(ar?numL(it.value,L)+'٪':it.value+'%'):(ar?numL(it.value,L)+' ر.س':'SAR '+it.value);
     const ends=it.ends_at?fmtShareDate(it.ends_at,L):'',lim=+it.max_uses>0;
     return ar
-      ?`${hi}🎁 هدية صغيرة من ${biz}\n\nاستخدم الكود *${it.code}* لتحصل على خصم ${off}${names.length?' على '+names.join(' / '):' على أي باقة'} ✨\n${ends?'\n⏳ ينتهي العرض: '+ends:''}${lim?'\n🔥 العدد محدود: '+numL(it.max_uses,L)+' استخدام فقط':''}\n\nابدأ رحلتك لفهم نفسك الآن 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(الكود يُطبَّق تلقائياً)${sig}`
-      :`${hi}🎁 A little gift from ${biz}\n\nUse code *${it.code}* for ${off} off ${names.length?names.join(' / '):'any package'} ✨\n${ends?'\n⏳ Ends: '+ends:''}${lim?'\n🔥 Limited: only '+it.max_uses+' uses':''}\n\nBegin your journey of self-insight 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(the code applies automatically)${sig}`;
+      ?`${hi}🎁 هدية صغيرة من ${biz}\n\nاستخدم الكود *${it.code}* ${free?'لتحصل على '+(names.length?names.join(' / '):'تقييمك')+' مجاناً':'لتحصل على خصم '+off+(names.length?' على '+names.join(' / '):' على أي باقة')} ✨\n${ends?'\n⏳ ينتهي العرض: '+ends:''}${lim?'\n🔥 العدد محدود: '+numL(it.max_uses,L)+' استخدام فقط':''}\n\nابدأ رحلتك لفهم نفسك الآن 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(الكود يُطبَّق تلقائياً)${sig}`
+      :`${hi}🎁 A little gift from ${biz}\n\nUse code *${it.code}* ${free?'for '+(names.length?names.join(' / '):'your assessment')+', free of charge':'for '+off+' off '+(names.length?names.join(' / '):'any package')} ✨\n${ends?'\n⏳ Ends: '+ends:''}${lim?'\n🔥 Limited: only '+it.max_uses+' uses':''}\n\nBegin your journey of self-insight 👇\n${site}/s?code=${encodeURIComponent(it.code)}\n(the code applies automatically)${sig}`;
   }
   const p=pkFull(it),live=saleLive(p),pct=live?Math.round(100-100*p.sale_price/p.price):0,name=ar?p.name_ar:p.name,desc=ar?p.desc_ar:p.desc;
   const feats=(p.features||[]).map(f=>ar?f.ar||f.en:f.en||f.ar).filter(Boolean).map(f=>'✔ '+f).join('\n');
@@ -1021,30 +1055,41 @@ function addDialog(){
   <div class="fld"><label for="a2">Contact method</label><select id="a2"><option>Email</option><option>WhatsApp</option><option>Mobile</option></select></div>
   <div class="fld"><label for="a3">Contact</label><div id="a3w"><input id="a3" type="text" dir="ltr" autocomplete="off" placeholder="name@example.com"></div></div>
   <div class="fld"><label for="a4">Package</label><select id="a4">${Object.entries(PK).map(([k,p])=>`<option value="${k}">${esc(p.name)} · ${money(p.price)}</option>`).join('')}</select></div>
+  <div class="fld full"><label class="chk" style="margin:0"><input type="checkbox" id="afree"><span><b>This is a free order (a gift).</b> No payment needed. It opens the report steps straight away and is not counted as revenue.</span></label></div>
+  <div class="fld full" id="afw" hidden><label for="afr">Why is it free? (for your records)</label><select id="afr"><option>Gift for a friend or family</option><option>Partner or staff</option><option>Giveaway or campaign</option><option>Feedback or testing</option><option>Other</option></select></div>
   <div class="fld full"><label for="a9">How did it reach you?</label><select id="a9"><option>Website downtime</option><option>WhatsApp or direct message</option><option>Bank transfer or in person</option><option>Email</option><option>Other exception</option></select></div>
   <div class="fld"><label for="a5">Date received</label><input id="a5" type="date"></div>
-  <div class="fld"><label for="a6">Payment reference</label><input id="a6" type="text" dir="ltr" autocomplete="off"></div>
-  <div class="fld"><label for="a7">Receipt link (optional)</label><input id="a7" type="text" dir="ltr" placeholder="https://" autocomplete="off"></div>
+  <div class="fld" data-pay><label for="a6">Payment reference</label><input id="a6" type="text" dir="ltr" autocomplete="off"></div>
+  <div class="fld" data-pay><label for="a7">Receipt link (optional)</label><input id="a7" type="text" dir="ltr" placeholder="https://" autocomplete="off"></div>
   <div class="fld full"><label for="a8">Notes (optional)</label><textarea id="a8" style="min-height:70px"></textarea></div></div>
   <div class="err" id="ae" role="alert" style="margin-top:8px"></div><div class="row"><button type="button" class="btn o" data-r="0">Cancel</button><button class="btn" id="as">Record order</button></div></form>`;
   const done=()=>{o.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.isConnected)prev.focus()};
   const kd=e=>{if(e.key==='Escape'&&!ccOpen){e.stopPropagation();done()}};document.addEventListener('keydown',kd,true);
   o.onclick=e=>{if(e.target===o||e.target.closest('[data-r]'))done()};
+  $('#afree',o).onchange=e=>{$('#afw',o).hidden=!e.target.checked;$$('[data-pay]',o).forEach(x=>x.hidden=e.target.checked)};
   $('#a2',o).onchange=e=>{$('#a3w',o).innerHTML=e.target.value==='Email'?'<input id="a3" type="text" dir="ltr" autocomplete="off" placeholder="name@example.com">':phoneField('a3','')};
   $('form',o).onsubmit=async e=>{e.preventDefault();const g=i=>$('#'+i,o),v=i=>g(i).value.trim(),bad=(i,m)=>{$('#ae',o).textContent=m;g(i).setAttribute('aria-invalid','true');g(i).focus()};
     $$('[aria-invalid]',o).forEach(x=>x.removeAttribute('aria-invalid'));$('#ae',o).textContent='';
     if(!v('a1'))return bad('a1','Enter the client’s full name.');if(!v('a3'))return bad('a3','Enter the client’s contact.');if(v('a2')!=='Email'&&!normPh(v('a3')))return bad('a3','Enter a valid phone number.');
-    if(v('a7')&&!safeUrl(v('a7')))return bad('a7','The receipt link must start with http:// or https://');
+    const free=g('afree').checked;
+    if(!free&&v('a7')&&!safeUrl(v('a7')))return bad('a7','The receipt link must start with http:// or https://');
     const b=g('as');b.disabled=true;b.innerHTML='<span class="sp"></span> Recording…';
-    try{const j=await api('POST','/submissions',{full_name:v('a1'),contact_method:v('a2'),contact:v('a3'),package:v('a4'),created_at:v('a5')||undefined,payment_reference:v('a6'),payment_receipt:v('a7'),notes:('Recorded manually ('+v('a9')+').'+(v('a8')?'\n'+v('a8'):''))});
+    try{const j=await api('POST','/submissions',{full_name:v('a1'),contact_method:v('a2'),contact:v('a3'),package:v('a4'),created_at:v('a5')||undefined,payment_reference:free?'':v('a6'),payment_receipt:free?'':v('a7'),free,free_reason:free?v('afr'):undefined,notes:('Recorded manually ('+v('a9')+').'+(v('a8')?'\n'+v('a8'):''))});
       st.subs.unshift(j.submission);st.subs.sort(SORTS.new[1]);done();renderNav();renderBody();toast('Order recorded');openDrawer(j.submission.id)}
     catch(err){if(err.handled)return;b.disabled=false;b.textContent='Record order';$('#ae',o).textContent=err.message}};
   document.body.appendChild(o);$('#a1',o).focus();
 }
 
 /* ============ detail drawer ============ */
+const freeSec=s=>`<section class="sec"><h3>Payment ${payBadge(s)}</h3><div class="frb"><b>🎁 Free order. No payment needed.</b>
+  <dl class="kv2"><dt>Package</dt><dd>${esc((PK[s.package]||{}).name||s.package_name||s.package)}</dd><dt>Given free</dt><dd><b>${money(s.free_value_sar||0)}</b> <span class="hint">value of the package</span></dd>
+  <dt>How</dt><dd>${s.free_by==='admin'?'A gift you added':`Code <span class="bd green"><i></i>${esc(s.promo_code)}</span>`}</dd>
+  ${s.free_label&&s.free_label!==s.promo_code?`<dt>${s.free_by==='admin'?'Reason':'Note'}</dt><dd>${esc(s.free_label)}</dd>`:''}${s.promo_campaign?`<dt>Campaign</dt><dd>${esc(s.promo_campaign)}</dd>`:''}
+  <dt>Opened</dt><dd>${fmtD(s.verified_at||s.created_at)}</dd></dl>
+  <p class="hint" style="margin:8px 0 0">The report steps below are open straight away. This order is not counted as revenue.</p>
+  ${s.was?`<p class="hint" style="margin:8px 0 0">It was SAR ${esc(s.was.price_sar)} (${esc(s.was.payment_status)}) before you marked it free. <button type="button" class="cpb" data-do="unfree">Turn back into a paid order</button></p>`:''}</div></section>`;
 async function openDrawer(id,tpl){
-  st.rej=null;st.openId=id;st.detail=null;st.focused=false;drawer();
+  st.rej=null;st.mkf=null;st.openId=id;st.detail=null;st.focused=false;drawer();
   try{const [j]=await Promise.all([api('GET','/submissions/'+encodeURIComponent(id)),loadCfg().catch(e=>{if(e.handled)throw e})]);if(st.openId!==id)return;st.detail=j.submission;st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;st.detail.review_link=j.review_link;
     if(tpl==='review')await ensureRv(st.detail);
     if(tpl&&DEF_TPL[tpl]){const m=mstate(st.detail);m.tpl=tpl;m.text=tplFill(tpl,m.lang,st.detail)}
@@ -1083,7 +1128,7 @@ function drawer(){
   <div class="db" ${st.busy?'aria-busy="true"':''}>
    <section class="sec"><h3>Client</h3><dl class="kv2"><dt>${esc(s.contact_method)}</dt><dd dir="ltr">${contactLink(s)}</dd><dt>Language</dt><dd>${s.language==='ar'?'Arabic':'English'}</dd><dt>Consent</dt><dd>${s.consent_at?`Given ${fmtD(s.consent_at)} (${s.consent_language==='ar'?'Arabic':'English'} text)`:'<span class="hint">Not recorded</span>'}</dd></dl></section>
    ${composer(s)}
-   <section class="sec"><h3>Payment ${badge(PAYL,s.payment_status)}</h3>
+   ${s.is_free?freeSec(s):`<section class="sec"><h3>Payment ${payBadge(s)}</h3>
     ${(s.pay_flags||[]).length?`<div class="pfl" role="alert">${s.pay_flags.map(f=>`<div class="pf"><span>⚠ ${esc(f.text)}</span>${f.other?`<button type="button" class="btn sm o" data-do="gother" data-v="${esc(f.other)}">Open that order</button>`:''}${f.code==='no_receipt'?`<button type="button" class="btn sm o" data-do="askrc">Ask for the receipt</button>`:''}</div>`).join('')}</div>`:''}
     <div class="pcmp">
      <div class="pcl"><div class="pch">What the client entered</div>
@@ -1095,15 +1140,19 @@ function drawer(){
       ${s.verified_at?`<dt>Verified</dt><dd>${fmtD(s.verified_at)}</dd>`:''}${s.reject_reason&&s.payment_status==='rejected'?`<dt>Reject reason</dt><dd>${esc(s.reject_reason)}</dd>`:''}</dl></div>
      <div class="pcr"><div class="pch">Receipt</div>${rc?`<a href="${esc(rc)}" target="_blank" rel="noopener" class="rcl"><img class="rcpt big" data-hide src="${esc(rc)}" alt="Payment receipt" loading="lazy"><span>Open full size</span></a>`:'<p class="hint">No receipt link.</p>'}</div>
     </div>
-    ${st.rej===s.id?`<div class="rjp"><label for="rjr">Why is it being rejected? The client will get a kind message with this reason.</label>
+    ${st.mkf===s.id?`<div class="rjp"><label for="mfr">Why is this order free? It will stop counting as revenue and the payment details are kept in the activity list.</label>
+      <div class="chips">${['Gift for a friend or family','Partner or staff','Giveaway or campaign','Feedback or testing'].map(x=>`<button type="button" class="chip" data-do="mfchip" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+      <input id="mfr" type="text" maxlength="100" placeholder="Reason (for your records)">
+      <div class="row" style="margin-top:10px"><button class="btn" id="mfgo" ${B}>Mark as free order</button><button class="btn o" data-do="mfno">Cancel</button></div></div>`:st.rej===s.id?`<div class="rjp"><label for="rjr">Why is it being rejected? The client will get a kind message with this reason.</label>
       <div class="chips">${['The amount is less than the price','The receipt is not clear','We could not find the payment','The payment went to a different account'].map(x=>`<button type="button" class="chip" data-do="rjchip" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>
       <input id="rjr" type="text" maxlength="300" placeholder="Reason (optional, but helpful)">
       <div class="row" style="margin-top:10px"><button class="btn dg" id="rjgo" ${B}>Reject and write to the client</button><button class="btn o" data-do="rjno">Cancel</button></div></div>`
     :`<div class="row" style="margin-top:14px">
      ${s.payment_status!=='verified'?`<button class="btn" id="pv" ${B}>Verify payment</button>`:''}
+     <button class="btn o" data-do="mkfree" ${B}>This order should be free</button>
      ${s.payment_status==='pending'?`<button class="btn dgo" id="pr" ${B}>Reject</button>`:''}
      ${s.payment_status!=='pending'?`<button class="btn o" id="pp" ${B} ${verified&&s.report_status!=='not_started'?'disabled title="Move the report back to Not started first"':''}>Set back to pending</button>`:''}</div>`}
-    ${s.payment_status==='pending'&&st.rej!==s.id?'<p class="hint" style="margin-top:8px">Compare the amount and reference with your bank, then verify. Verifying starts the 24-hour delivery clock.</p>':''}</section>
+    ${s.payment_status==='pending'&&st.rej!==s.id?'<p class="hint" style="margin-top:8px">Compare the amount and reference with your bank, then verify. Verifying starts the 24-hour delivery clock.</p>':''}</section>`}
    <section class="sec"><h3>Report delivery ${badge(REPL,s.report_status)}</h3>
     <ol class="steps" aria-label="Report progress">${FLOW.map((k,i)=>`<li class="${i<idx?'dn':i===idx?'cu':''}">${REPL[k][0]}</li>`).join('')}</ol>
     ${due?`<p style="margin-bottom:10px;font-weight:700" class="r ${due<Date.now()?'late':''}">${due<Date.now()?'Overdue by '+span(Date.now()-due):'Due in '+span(due-Date.now())} <span class="hint" style="font-weight:400">(${fmtD(new Date(due))})</span></p>`:''}
@@ -1128,6 +1177,7 @@ function drawer(){
   g('dx').onclick=closeDrawer;
   if(g('pv'))g('pv').onclick=()=>act({payment_status:'verified'},'Payment verified');
   if(g('pr'))g('pr').onclick=()=>{st.rej=s.id;drawer();const r=$('#rjr',dw);if(r)r.focus({preventScroll:true})};
+  if(g('mfgo'))g('mfgo').onclick=async()=>{const why=(g('mfr').value||'').trim();st.mkf=null;await act({mark_free:true,free_reason:why},'Marked as a free order')};
   if(g('rjgo'))g('rjgo').onclick=async()=>{const why=(g('rjr').value||'').trim();st.rej=null;const ok=await act({payment_status:'rejected',reject_reason:why},'Payment rejected');if(ok!==false&&st.detail&&st.detail.id===s.id){const d2=st.detail,m=mstate(d2);m.tpl='payment_issue';m.text=tplFill('payment_issue',m.lang,d2);drawer();setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}};
   if(g('pp'))g('pp').onclick=()=>act({payment_status:'pending'},'Payment set back to pending');
   if(g('rn'))g('rn').onclick=async()=>{const to=NEXT[s.report_status]?.[1];if(!to)return;
@@ -1266,6 +1316,8 @@ const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {bus
 const DEF_TPL={
  received:{en:'*Your journey has begun* 🌿\nPeace be upon you, {name}. We have received your assessment (order code {code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
   ar:'*بدأت رحلتك* 🌿\nالسلام عليكم يا {name}. وصلنا تقييمك (رمز الطلب {code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
+ received_free:{en:'*Your journey has begun* 🌿\nPeace be upon you, {name}. We have received your assessment (order code {code}) and your free access is confirmed 🎁\n\nYour personal insight is now being prepared with care and will reach you within 24 hours ✨\n\n{site}'+SIGEN,
+  ar:'*بدأت رحلتك* 🌿\nالسلام عليكم يا {name}. وصلنا تقييمك (رمز الطلب {code}) وتم تأكيد وصولك المجاني 🎁\n\nنُعدّ الآن بصيرتك الخاصة بعناية وستصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
  payment_issue:{en:'*One small step to go* 🌿\nHello {name}, we are almost there. We could not yet match the payment for your assessment (order code {code}).{reason}\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 💚\n\n{site}'+SIGEN,
   ar:'*خطوة صغيرة متبقية* 🌿\nمرحباً {name}، نوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك (رمز الطلب {code}).{reason}\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 💚\n\n{site}'+SIGAR},
  delay:{en:'*Your insight is on its way* 🌿\nDear {name}, we are truly sorry. Your {business} insight (order code {code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 💚\n\n{site}'+SIGEN,
@@ -1303,7 +1355,7 @@ function tplVars(s,lang){
   const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
   return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d,newdue:newDue(lang),reason:s.reject_reason?(lang==='ar'?'\nالسبب: ':'\nReason: ')+s.reject_reason:''};
 }
-const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);v.site=location.origin+'/s?m='+key+'&l='+lang;return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
+const tplFill=(key,lang,s)=>{if(key==='received'&&s.is_free)key='received_free';const v=tplVars(s,lang);v.site=location.origin+'/s?m='+key+'&l='+lang+'&v=2';return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
 const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='review'&&!s.review_link?'The review link could not be created. Try again.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
 
 /* ---- message composer in the client drawer ---- */
@@ -1312,11 +1364,11 @@ function mstate(s){
   return st.mc;
 }
 function composer(s){
-  const m=mstate(s),keys=['received','payment_issue','delay','report','report_file','review',...(s.consult_status?['consult','consult_confirm']:[])];
+  const m=mstate(s),keys=['received',...(s.is_free?[]:['payment_issue']),'delay','report','report_file','review',...(s.consult_status?['consult','consult_confirm']:[])];
   const blocked=m.tpl?tplBlocked(m.tpl,s):'',isEmail=s.contact_method==='Email'&&/@/.test(s.contact),B=st.busy?'disabled':'';
   const hasPh=!!normPh(m.phone);
   return `<section class="sec" id="msc"><h3>Message the client</h3>${s.delivered_at&&!s.review_at&&!s.review_requested_at?`<div class="note" style="margin:0 0 10px">✨ The report has been delivered. This is the right moment to ask for a review. <button type="button" class="chip" style="padding:2px 12px" data-do="tpl" data-v="review">Ask for a review</button></div>`:''}${s.review_at?`<p class="hint" style="margin-bottom:8px">⭐ Review received ${fmtD(s.review_at)}. <button type="button" class="chip" style="padding:2px 12px" data-go-reviews>See it</button></p>`:s.review_requested_at?`<p class="hint" style="margin-bottom:8px">Review link created ${fmtD(s.review_requested_at)}. No review yet.</p>`:''}
-   <div class="chips" role="group" aria-label="Message type">${keys.map(k=>`<button type="button" class="chip" data-do="tpl" data-v="${k}" aria-pressed="${m.tpl===k}">${TPL_NAMES[k]}</button>`).join('')}<button type="button" class="chip" data-do="tpl" data-v="custom" aria-pressed="${m.tpl==='custom'}">Write my own</button></div>
+   <div class="chips" role="group" aria-label="Message type">${keys.map(k=>`<button type="button" class="chip" data-do="tpl" data-v="${k}" aria-pressed="${m.tpl===k}">${k==='received'&&s.is_free?'Free order received':TPL_NAMES[k]}</button>`).join('')}<button type="button" class="chip" data-do="tpl" data-v="custom" aria-pressed="${m.tpl==='custom'}">Write my own</button></div>
    <div class="mtop"><span class="hint">Language of the message</span><span class="seg" role="group" aria-label="Message language"><button type="button" data-do="lang" data-v="en" aria-pressed="${m.lang==='en'}">English</button><button type="button" data-do="lang" data-v="ar" aria-pressed="${m.lang==='ar'}">العربية</button></span></div>
    ${m.tpl==='delay'?`<div class="fld" style="margin:10px 0 0"><label for="dlh">New delivery time promised to the client</label><select id="dlh">${[[3,'Within 3 hours'],[6,'Within 6 hours'],[12,'Within 12 hours'],[24,'Within 24 hours'],[48,'Within 48 hours']].map(([h,l])=>`<option value="${h}" ${st.delayH===h?'selected':''}>${l}</option>`).join('')}</select><span class="ph2">Choose a time you can really keep. The message is updated for you.</span></div>`:''}
    <textarea id="mt" dir="auto" aria-label="Message" placeholder="Choose a message type above, or write your own here.">${esc(m.text)}</textarea>
@@ -1335,6 +1387,10 @@ async function drawerAction(e){
   const s=st.detail,m=mstate(s),a=b.dataset.do;
   if(a==='tpl'){if(b.dataset.v==='review')await ensureRv(s);m.tpl=b.dataset.v;m.text=m.tpl==='custom'?m.text:tplFill(m.tpl,m.lang,s);if(m.tpl==='custom'&&!m.text)m.text='';drawer();$('#mt')?.focus({preventScroll:true})}
   else if(a==='cpv'){try{await navigator.clipboard.writeText(String(b.dataset.v));toast('Copied')}catch{toast('Copy isn’t available in this browser',true)}}
+  else if(a==='mkfree'){st.mkf=st.detail.id;st.rej=null;drawer();const r=$('#mfr',dw);if(r)r.focus({preventScroll:true})}
+  else if(a==='mfchip'){const i=$('#mfr');if(i){i.value=b.dataset.v;i.focus({preventScroll:true})}}
+  else if(a==='mfno'){st.mkf=null;drawer()}
+  else if(a==='unfree'){if(await confirmBox({title:'Turn this back into a paid order?',body:'It will return to the amount and payment status it had before, and count as revenue again if it was verified.',ok:'Turn back'}))act({unmark_free:true},'Back to a paid order')}
   else if(a==='rjchip'){const i=$('#rjr');if(i){i.value=b.dataset.v;i.focus({preventScroll:true})}}
   else if(a==='rjno'){st.rej=null;drawer()}
   else if(a==='gother'){openDrawer(b.dataset.v)}
