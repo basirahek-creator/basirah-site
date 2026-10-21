@@ -114,6 +114,7 @@ export async function handleSubmit(req, store) {
     verified_at: null, delivered_at: null, delivery_note: '', notes: '',
     history: [{ at: t, by: 'client', action: 'Assessment submitted' }],
   };
+  rec.pay_flags = await payFlags(store, rec);
   await store.set(keyOf(id), rec);
   return json({ ok: true, id }, 201);
 }
@@ -137,6 +138,32 @@ function tokenOk(env, header) {
 
 let failures = 0, lockedUntil = 0;   // best-effort brute-force slowdown (per running instance)
 
+
+/* ---------------- payment checks: things worth a second look before verifying ---------------- */
+const WEAK_REF = /^(.)\1{3,}$|^(0123|1234|2345|3456|4567|5678|6789|12345|123456|1234567|12345678|123456789|0000|test|xxxx|none|nil|null|paid|done|ok|na|n\/a|payment|transfer)$/i;
+const refKey = (r) => String(r || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+async function payFlags(store, rec) {
+  const flags = [];
+  const fid = /\/api\/file\/([A-Za-z0-9_-]{10,40})/.exec(rec.payment_receipt || '');
+  const claim = async (key, label, code) => {
+    const hit = await store.get(key);
+    if (hit && hit.sub && hit.sub !== rec.id && (await store.get(keyOf(hit.sub)))) {
+      const o = await store.get(keyOf(hit.sub));
+      flags.push({ code, text: label + ' (' + (o.full_name || hit.sub) + ', ' + hit.sub + ')', other: hit.sub });
+    } else await store.set(key, { sub: rec.id, at: now() });
+  };
+  if (rec.source === 'site' && (!fid || /Upload failed/i.test(rec.payment_receipt || ''))) flags.push({ code: 'no_receipt', text: 'No receipt came through. Ask the client to send it again.' });
+  if (fid) {
+    const meta = await store.get('uplmeta/' + fid[1]);
+    if (meta && meta.hash) await claim('rchash/' + meta.hash, 'This exact receipt picture was already used on another order', 'dup_receipt');
+  }
+  const k = refKey(rec.payment_reference);
+  if (k) {
+    if (k.length < 5 || WEAK_REF.test(String(rec.payment_reference).trim()) || WEAK_REF.test(k)) flags.push({ code: 'weak_ref', text: 'The reference looks unusual (“' + rec.payment_reference + '”). Check it against your bank.' });
+    else await claim('refkey/' + createHash('sha256').update(k).digest('hex').slice(0, 24), 'This reference was already used on another order', 'dup_ref');
+  }
+  return flags;
+}
 const summary = (r, withReport = new Set(), withPdf = new Set()) => {
   const { answers, history, ...rest } = r;
   return { ...rest, has_report: withReport.has(r.id), has_pdf: withPdf.has(r.id), answered: answers.filter((a) => a.a && !a.a.startsWith('VOICE ANSWER')).length, voice: answers.filter((a) => a.a.startsWith('VOICE ANSWER')).length };
@@ -197,6 +224,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       verified_at: null, delivered_at: null, delivery_note: '', notes: str(b.notes, 4000),
       history: [{ at: t, by: 'admin', action: 'Added manually' }],
     };
+    rec.pay_flags = await payFlags(store, rec);
     await store.set(keyOf(nid), rec);
     return json({ submission: summary(rec) }, 201);
   }
@@ -255,7 +283,8 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       if (rec.payment_status === 'verified' && rec.report_status !== 'not_started') return fail(409, 'Move the report back to “Not started” before changing a verified payment.');
       next.payment_status = b.payment_status;
       next.verified_at = b.payment_status === 'verified' ? t : null;
-      L({ verified: 'Payment verified', rejected: 'Payment rejected', pending: 'Payment set back to pending' }[b.payment_status]);
+      next.reject_reason = b.payment_status === 'rejected' ? str(b.reject_reason, 300) : '';
+      L(({ verified: 'Payment verified', rejected: 'Payment rejected', pending: 'Payment set back to pending' }[b.payment_status]) + (next.reject_reason ? ': ' + next.reject_reason : ''));
     }
     if (b.report_status !== undefined && b.report_status !== rec.report_status) {
       if (!REPORT.includes(b.report_status)) return fail(400, 'Invalid report status');
@@ -392,8 +421,9 @@ const KINDS = ['stc', 'bank', 'apple', 'qr', 'link', 'other'];
 const TEMPLATE_KEYS = ['received', 'payment_issue', 'delay', 'report', 'report_file', 'consult', 'consult_confirm', 'review'];
 const MAX_SETTINGS = 1_100_000, MAX_QR = 250_000;
 const OLD_GREETING = { en: 'Hello, I would like to ask about the Basirah assessment.', ar: 'السلام عليكم، أرغب في الاستفسار عن تقييم بصيرة.' };
-export const DEFAULT_GREETING = { en: 'Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}', ar: 'السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}' };
-const upGreet = (s) => (s && s.wa_greeting ? { ...s, wa_greeting: { en: s.wa_greeting.en === OLD_GREETING.en ? DEFAULT_GREETING.en : s.wa_greeting.en, ar: s.wa_greeting.ar === OLD_GREETING.ar ? DEFAULT_GREETING.ar : s.wa_greeting.ar } } : s);
+const PREV_GREETING = { en: 'Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}', ar: 'السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}' };
+export const DEFAULT_GREETING = { en: '*Hello Basirah* 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}', ar: '*السلام عليكم بصيرة* 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}' };
+const upGreet = (s) => (s && s.wa_greeting ? { ...s, wa_greeting: { en: [OLD_GREETING.en, PREV_GREETING.en].includes(s.wa_greeting.en) ? DEFAULT_GREETING.en : s.wa_greeting.en, ar: [OLD_GREETING.ar, PREV_GREETING.ar].includes(s.wa_greeting.ar) ? DEFAULT_GREETING.ar : s.wa_greeting.ar } } : s);
 const emptySettings = () => ({ business_name: 'Basirah', whatsapp: [], wa_greeting: { ...DEFAULT_GREETING }, show_default_qr: true, payments: [], templates: {}, questions: null, review_name: 'choose', packages: null, promo: null, info: null, review_questions: null, updated_at: null });
 
 /* Saudi style numbers (05xxxxxxxx, 5xxxxxxxx, +966..., 00966...) become plain international digits for wa.me links. */
@@ -632,7 +662,7 @@ function reportPage(meta, settings, token, origin = '') {
   const waBtns = lines.map((l) => `<a class="b o" target="_blank" rel="noopener" data-l="en" href="${H(wa(l) + encodeURIComponent(msgEn))}">${H(lines.length > 1 ? 'WhatsApp · ' + l.label : 'Message us on WhatsApp')}</a><a class="b o" target="_blank" rel="noopener" data-l="ar" href="${H(wa(l) + encodeURIComponent(msgAr))}">${H(lines.length > 1 ? 'واتساب · ' + (l.label_ar || l.label) : 'راسلنا عبر واتساب')}</a>`).join('');
   return `<!doctype html><html lang="${meta.lang === 'ar' ? 'ar' : 'en'}" dir="${meta.lang === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
 <title>Basirah · ${meta.lang === 'ar' ? 'تقريرك' : 'Your report'}</title>
-<meta property="og:image" content="${H(origin)}/og.png"><meta property="og:type" content="website"><meta property="og:title" content="${meta.lang === 'ar' ? 'تقريرك من بصيرة جاهز' : 'Your Basirah report is ready'}"><meta property="og:description" content="${meta.lang === 'ar' ? 'اضغط لفتح تقريرك وتحميله بصيغة PDF.' : 'Tap to open and download your report as a PDF.'}">
+<meta property="og:image" content="${H(origin)}/og-doc.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:title" content="${meta.lang === 'ar' ? 'تقريرك من بصيرة جاهز' : 'Your Basirah report is ready'}"><meta property="og:description" content="${meta.lang === 'ar' ? 'اضغط لفتح تقريرك وتحميله بصيغة PDF.' : 'Tap to open and download your report as a PDF.'}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FEFAF3;--card:#fff;--teal:#0B4F4C;--sub:#587571;--gold:#B8914A;--line:#DCD3C0;--sage:#E4EDE7}
@@ -704,7 +734,7 @@ export async function handleUpload(req, store) {
   if (buf.length > MAX_FILE) return fail(413, 'The file is too large (limit 5 MB)');
   let id; do { id = randomBytes(12).toString('base64url'); } while (await store.get('uplmeta/' + id));
   await store.setBin('upl/' + id, buf);
-  await store.set('uplmeta/' + id, { type, size: buf.length, at: new Date().toISOString() });
+  await store.set('uplmeta/' + id, { type, size: buf.length, at: new Date().toISOString(), hash: createHash('sha256').update(buf).digest('hex').slice(0, 32) });
   const origin = new URL(req.url).origin;
   return json({ url: origin + '/api/file/' + id + (EXT[type] ? '.' + EXT[type] : '') });
 }
@@ -803,7 +833,7 @@ async function handleAdminReviews(req, store, sid) {
   return json({ review: next });
 }
 
-const OGTAGS = (origin, title, desc, img) => `<meta property="og:image" content="${H(origin)}${H(img || '/og.png')}">${img ? '' : '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'}<meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
+const OGTAGS = (origin, title, desc, img) => `<meta property="og:image" content="${H(origin)}${H(img || '/og.png')}">${img && !/^\/og-/.test(img) ? '' : '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'}<meta property="og:type" content="website"><meta property="og:title" content="${H(title)}"><meta property="og:description" content="${H(desc)}"><meta name="twitter:card" content="summary_large_image">`;
 
 /* a small page that WhatsApp shows with the Basirah logo; people who tap it go to the website */
 /* ---------------- marketing pictures (packages, offers, promo codes) ---------------- */
@@ -834,6 +864,20 @@ export async function handleImage(req, store) {
   return new Response(req.method === 'HEAD' ? null : buf, { status: 200, headers: { 'content-type': meta.type, 'content-length': String(buf.length), 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff', 'content-security-policy': "default-src 'none'; sandbox" } });
 }
 
+
+/* picture cards for WhatsApp messages: every message carries a link whose preview shows the Basirah look */
+const MSG_CARDS = {
+  hello:         { img: '/og-chat.png',  en: ['Basirah · Begin your journey of self-insight', 'A gentle, guided reflection on how you think, decide and grow. About 15 to 20 minutes, at your own pace.'], ar: ['بصيرة · ابدأ رحلتك نحو معرفة نفسك', 'تأمّل هادئ وموجَّه في طريقة تفكيرك وقراراتك ونموّك. نحو ١٥ إلى ٢٠ دقيقة وبالسرعة التي تناسبك.'] },
+  help:          { img: '/og-card.png',  en: ['Basirah · We are here to help with your payment', 'Reply on WhatsApp and we will guide you to the next step.'], ar: ['بصيرة · نحن هنا لمساعدتك في الدفع', 'راسلنا عبر واتساب وسنرشدك إلى الخطوة التالية.'] },
+  done:          { img: '/og-check.png', en: ['Basirah · Your assessment is in', 'We are confirming your payment. Your personal insight reaches you within 24 hours.'], ar: ['بصيرة · وصلنا تقييمك', 'نؤكد الدفع الآن، وتصلك بصيرتك الخاصة خلال ٢٤ ساعة.'] },
+  consult:       { img: '/og-cal.png',   en: ['Basirah · Book your 1-to-1 consultation', 'Where insight becomes a plan. Choose a time that suits you.'], ar: ['بصيرة · احجز استشارتك الفردية', 'حيث تتحول البصيرة إلى خطة. اختر الوقت الذي يناسبك.'] },
+  received:      { img: '/og-check.png', en: ['Basirah · Your journey has begun', 'We have received your assessment. Your personal insight is prepared with care.'], ar: ['بصيرة · بدأت رحلتك', 'وصلنا تقييمك، ونُعدّ بصيرتك الخاصة بعناية.'] },
+  payment_issue: { img: '/og-card.png',  en: ['Basirah · One small step to go', 'We could not yet match your payment. A clear receipt photo will set everything in motion.'], ar: ['بصيرة · خطوة صغيرة متبقية', 'لم نتمكن بعد من مطابقة الدفع. صورة واضحة للإيصال تُسرّع كل شيء.'] },
+  delay:         { img: '/og-clock.png', en: ['Basirah · Your insight is on its way', 'Thank you for your patience. We are giving your report the care it deserves.'], ar: ['بصيرة · بصيرتك في الطريق إليك', 'شكراً لصبرك. نمنح تقريرك العناية التي يستحقها.'] },
+  report_file:   { img: '/og-doc.png',   en: ['Basirah · Your insight is ready', 'Your personal report, prepared with care.'], ar: ['بصيرة · بصيرتك جاهزة', 'تقريرك الخاص، أُعدّ لك بعناية.'] },
+  consult_confirm: { img: '/og-cal.png', en: ['Basirah · Your consultation is confirmed', 'Come as you are, with the questions on your mind.'], ar: ['بصيرة · تم تأكيد استشارتك', 'تعال كما أنت ومعك أسئلتك.'] },
+};
+
 export async function handleShare(req, store) {
   const u = new URL(req.url), origin = u.origin;
   const clean = (v) => String(v || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 24);
@@ -841,7 +885,9 @@ export async function handleShare(req, store) {
   const qs = new URLSearchParams(); if (code) qs.set('code', code); if (pkg) qs.set('pkg', pkg);
   const ann = u.searchParams.get('ann') === '1';
   const dest = ann ? '/#pkgs' : qs.toString() ? '/?' + qs.toString() : '/';
-  let title = 'Basirah · بصيرة', desc = 'A guided personality insight assessment. Know yourself with clarity.', image = '';
+  let title = 'Basirah · بصيرة', desc = 'A guided personality insight assessment. Know yourself with clarity.', image = '', stock = '';
+  const mk = MSG_CARDS[clean(u.searchParams.get('m'))];
+  if (mk) { const ar = u.searchParams.get('l') === 'ar'; [title, desc] = ar ? mk.ar : mk.en; stock = mk.img; }
   try {
     const set = store ? await store.get('settings') : null;
     const c = code && Array.isArray(set?.promo?.codes) ? set.promo.codes.find((x) => x.code === code.toUpperCase()) : null;
@@ -852,7 +898,7 @@ export async function handleShare(req, store) {
     if (!image && p) { title = p.name + ' · Basirah'; desc = (saleOn(p) ? 'Now SAR ' + p.sale_price + ' instead of SAR ' + p.price + '. ' : 'SAR ' + p.price + '. ') + (p.desc || ''); image = p.image || ''; }
     else if (p && !c) { title = p.name + ' · Basirah'; }
   } catch { /* the plain Basirah preview is used */ }
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${H(title)}</title>${OGTAGS(origin, title, desc.slice(0, 200), imgOf(image))}<meta http-equiv="refresh" content="0;url=${H(dest)}"></head><body><a href="${H(dest)}">Basirah</a><script>location.replace(${JSON.stringify(dest).replace(/</g, '\\u003c')})</script></body></html>`;
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${H(title)}</title>${OGTAGS(origin, title, desc.slice(0, 200), imgOf(image) || stock)}<meta http-equiv="refresh" content="0;url=${H(dest)}"></head><body><a href="${H(dest)}">Basirah</a><script>location.replace(${JSON.stringify(dest).replace(/</g, '\\u003c')})</script></body></html>`;
   return new Response(req.method === 'HEAD' ? null : html, { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=120' } });
 }
 
@@ -912,7 +958,7 @@ export async function handleReview(req, store) {
   const nameMode0 = ['first', 'full', 'anon'].includes(settings?.review_name) ? settings.review_name : 'choose';
   const title = ar0 ? 'رأيك يهمنا' : 'Your voice matters';
   const html = `<!doctype html><html lang="${ar0 ? 'ar' : 'en'}" dir="${ar0 ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-<title>Basirah · ${ar0 ? 'تقييمك' : 'Your review'}</title>${OGTAGS(origin, ar0 ? 'شاركنا رأيك في بصيرة' : 'Share your Basirah experience', ar0 ? 'دقيقتان فقط، ورأيك يصنع فرقاً.' : 'It takes two minutes, and it means a lot.')}
+<title>Basirah · ${ar0 ? 'تقييمك' : 'Your review'}</title>${OGTAGS(origin, ar0 ? 'شاركنا رأيك في بصيرة' : 'Share your Basirah experience', ar0 ? 'دقيقتان فقط، ورأيك يصنع فرقاً.' : 'It takes two minutes, and it means a lot.', '/og-star.png')}
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FEFAF3;--card:#fff;--teal:#0B4F4C;--sub:#587571;--gold:#B8914A;--line:#DCD3C0;--sage:#E4EDE7;--red:#b24a3a}

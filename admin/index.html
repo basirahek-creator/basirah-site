@@ -356,6 +356,20 @@ details[open]>summary::after{content:"–"}
  .main{overflow-x:hidden}
 }
 @media(max-width:380px){.cards{grid-template-columns:1fr}}
+
+/* every field type gets the themed background and readable text (number, email, tel, url, time ... were left white) */
+input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=color]):not([type=hidden]):not([type=button]):not([type=submit]),select,textarea{background:var(--card);color:var(--txt);border:1.5px solid var(--line);border-radius:12px}
+input::placeholder,textarea::placeholder{color:var(--sub);opacity:.75}
+:root{color-scheme:light dark}:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+
+/* payment check: client details beside the receipt */
+.pfl{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}.pf{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--amberbg);color:var(--amber);border:1px solid var(--amber);border-radius:12px;padding:10px 12px;font-size:14.5px;font-weight:600}.pf span{flex:1;min-width:200px}
+.pcmp{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start}@media(max-width:620px){.pcmp{grid-template-columns:1fr}}
+.pch{font-size:13px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.pcl .kv2{grid-template-columns:110px 1fr}.amt{font-size:20px}
+.cpb{border:1.5px solid var(--line);background:var(--card);color:var(--teal);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:700;min-height:28px;cursor:pointer;margin-inline-start:6px}.cpb:hover{background:var(--sage)}
+.rcl{display:block;text-decoration:none;color:var(--teal);font-weight:600}.rcpt.big{max-width:100%;width:100%;max-height:420px;object-fit:contain;background:var(--sage)}.rcl span{display:inline-block;margin-top:6px;font-size:14px}
+.rjp{margin-top:14px;background:var(--sage);border-radius:14px;padding:14px}.rjp label{display:block;margin-bottom:10px;font-weight:600}.rjp input{margin-top:10px}
 </style>
 </head>
 <body>
@@ -375,6 +389,8 @@ const CONL={not_scheduled:'Not scheduled',scheduled:'Scheduled',completed:'Compl
 const FLOW=['not_started','in_progress','ready','delivered'];
 const DAY=864e5,HOUR=36e5;
 const badge=(m,k)=>{const [t,c]=m[k]||[k,'grey'];return `<span class="bd ${c}"><i></i>${esc(t)}</span>`};
+const WAMOB=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||'');
+const waLink=(ph,txt)=>WAMOB?'https://wa.me/'+(ph||'')+(txt?(ph?'?':'?')+'text='+encodeURIComponent(txt):''):'https://web.whatsapp.com/send?'+(ph?'phone='+ph+'&':'')+(txt?'text='+encodeURIComponent(txt):'');
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
 const dtf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
 const dyf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric'});
@@ -492,16 +508,18 @@ function vOverview(m){
 const SORTS={new:['Newest first',(a,b)=>b.created_at.localeCompare(a.created_at)],old:['Oldest first',(a,b)=>a.created_at.localeCompare(b.created_at)],name:['Name A–Z',(a,b)=>a.full_name.localeCompare(b.full_name)],amt:['Amount, high to low',(a,b)=>b.price_sar-a.price_sar||b.created_at.localeCompare(a.created_at)]};
 function filtered(){
   const q=st.q.trim().toLowerCase();
-  return st.subs.filter(s=>(!st.fPay||s.payment_status===st.fPay)&&(!st.fRep||s.report_status===st.fRep)&&(!st.fPkg||s.package===st.fPkg)&&
+  return st.subs.filter(s=>(!st.fPay||(st.fPay==='flag'?(s.payment_status==='pending'&&hasFlags(s)):s.payment_status===st.fPay))&&(!st.fRep||s.report_status===st.fRep)&&(!st.fPkg||s.package===st.fPkg)&&
     (!q||[s.full_name,s.contact,s.payment_reference,s.id].some(v=>String(v||'').toLowerCase().includes(q)))).sort(SORTS[st.sort][1]);
 }
+const hasFlags=s=>Array.isArray(s.pay_flags)&&s.pay_flags.length>0;
+const flagChip=s=>s.payment_status==='pending'&&hasFlags(s)?` <span class="bd amber" title="${esc(s.pay_flags.map(f=>f.text).join(' | '))}"><i></i>Check</span>`:'';
 const opts=(o,cur,all)=>`<option value="">${all}</option>`+Object.entries(o).map(([k,v])=>`<option value="${k}" ${cur===k?'selected':''}>${esc(Array.isArray(v)?v[0]:v)}</option>`).join('');
 function vSubs(m){
   if(!st.loaded&&!st.error){m.innerHTML=head('Submissions','Loading…')+loadingRows();return}
   if(!st.loaded){m.innerHTML=head('Submissions','')+errBanner();return}
   m.innerHTML=head('Submissions','Search, filter and open any client record.',`<button class="btn sm o" id="csv">Export CSV</button><button class="btn sm" data-add>Record manual order</button>`)+errBanner()+
   `<div class="tb"><div class="fld sr"><label for="q">Search</label><input id="q" type="search" placeholder="Name, contact, payment reference or code" value="${esc(st.q)}"></div>
-   <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}</select></div>
+   <div class="fld"><label for="fp">Payment</label><select id="fp">${opts(PAYL,st.fPay,'All payments')}<option value="flag" ${st.fPay==='flag'?'selected':''}>Needs a closer look</option></select></div>
    <div class="fld"><label for="fr">Report</label><select id="fr">${opts(REPL,st.fRep,'All reports')}</select></div>
    <div class="fld"><label for="fk">Package</label><select id="fk">${opts(Object.fromEntries(Object.entries(PK).map(([k,v])=>[k,v.name])),st.fPkg,'All packages')}</select></div>
    <div class="fld"><label for="so2">Sort by</label><select id="so2">${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${st.sort===k?'selected':''}>${v[0]}</option>`).join('')}</select></div></div>
@@ -519,7 +537,7 @@ function renderResults(){
    <tr data-open="${esc(s.id)}" tabindex="0"><td data-l="Received">${fmtD(s.created_at)}</td>
    <td class="main-c"><span class="nm" dir="auto">${esc(s.full_name)}</span><span class="sm2">${esc(s.id)}${s.source==='manual'?' · added manually':''}${s.has_report?' · report drafted':''}</span></td>
    <td data-l="Package">${esc(PK[s.package].name)}</td><td class="num" data-l="Amount">${money(s.price_sar)}</td>
-   <td data-l="Payment">${badge(PAYL,s.payment_status)}${s.payment_status==='verified'&&isOverdue(s)?' <span class="bd red"><i></i>Overdue</span>':''}</td><td data-l="Report">${badge(REPL,s.report_status)}</td>
+   <td data-l="Payment">${badge(PAYL,s.payment_status)}${flagChip(s)}${s.payment_status==='verified'&&isOverdue(s)?' <span class="bd red"><i></i>Overdue</span>':''}</td><td data-l="Report">${badge(REPL,s.report_status)}</td>
    <td data-l="Contact"><span dir="ltr">${esc(s.contact)}</span><span class="sm2">${esc(s.contact_method)}</span></td></tr>`).join('')}</tbody></table></div>
    <div class="pg"><span>Showing ${from+1}–${from+rows.length} of ${all.length}${all.length!==st.subs.length?` (filtered from ${st.subs.length})`:''}</span>
    <span class="b"><label class="hint" for="ps">Rows</label><select id="ps" style="width:auto">${[10,25,50,100].map(n=>`<option ${n===st.size?'selected':''}>${n}</option>`).join('')}</select>
@@ -992,7 +1010,7 @@ function shareDialog(kind,it){
     if(e.target===o||e.target.closest('[data-r]'))return done();
     const b=e.target.closest('button');if(!b)return;
     if(b.id==='shc'){try{await navigator.clipboard.writeText(ta.value);toast('Message copied')}catch(er){ta.select();toast('Press copy on your keyboard',true)}}
-    if(b.id==='shw'){const ph=normPh($('#shph',o).value),u=ph?'https://wa.me/'+ph+'?text=':'https://wa.me/?text=';window.open(u+encodeURIComponent(ta.value),'_blank','noopener')}};
+    if(b.id==='shw'){const ph=normPh($('#shph',o).value);window.open(waLink(ph,ta.value),'_blank','noopener')}};
   document.body.appendChild(o);$('#shn',o).focus();
 }
 
@@ -1026,14 +1044,14 @@ function addDialog(){
 
 /* ============ detail drawer ============ */
 async function openDrawer(id,tpl){
-  st.openId=id;st.detail=null;st.focused=false;drawer();
+  st.rej=null;st.openId=id;st.detail=null;st.focused=false;drawer();
   try{const [j]=await Promise.all([api('GET','/submissions/'+encodeURIComponent(id)),loadCfg().catch(e=>{if(e.handled)throw e})]);if(st.openId!==id)return;st.detail=j.submission;st.detail.report_link=j.report_link;st.detail.pdf_link=j.pdf_link;st.detail.review_link=j.review_link;
     if(tpl==='review')await ensureRv(st.detail);
     if(tpl&&DEF_TPL[tpl]){const m=mstate(st.detail);m.tpl=tpl;m.text=tplFill(tpl,m.lang,st.detail)}
     drawer();if(tpl)setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}
   catch(e){if(e.handled)return;if(st.openId===id){st.detail={error:e.message};drawer()}}
 }
-function closeDrawer(){st.openId=null;st.detail=null;$('#dw')?.remove();$('#dov')?.remove();document.removeEventListener('keydown',dkd);if(st.opener&&st.opener.isConnected)st.opener.focus()}
+function closeDrawer(){st.rej=null;st.openId=null;st.detail=null;$('#dw')?.remove();$('#dov')?.remove();document.removeEventListener('keydown',dkd);if(st.opener&&st.opener.isConnected)st.opener.focus()}
 const dkd=e=>{if(e.key==='Escape'&&!$('.cf'))closeDrawer()};
 function patchLocal(sub){const i=st.subs.findIndex(x=>x.id===sub.id);if(i>=0){const{answers,history,...rest}=sub;st.subs[i]={...st.subs[i],...rest}}if(st.detail&&st.detail.id===sub.id){sub.report_link=st.detail.report_link;sub.pdf_link=st.detail.pdf_link;st.detail=sub}}
 async function patchById(id,fields,okMsg){
@@ -1066,14 +1084,26 @@ function drawer(){
    <section class="sec"><h3>Client</h3><dl class="kv2"><dt>${esc(s.contact_method)}</dt><dd dir="ltr">${contactLink(s)}</dd><dt>Language</dt><dd>${s.language==='ar'?'Arabic':'English'}</dd><dt>Consent</dt><dd>${s.consent_at?`Given ${fmtD(s.consent_at)} (${s.consent_language==='ar'?'Arabic':'English'} text)`:'<span class="hint">Not recorded</span>'}</dd></dl></section>
    ${composer(s)}
    <section class="sec"><h3>Payment ${badge(PAYL,s.payment_status)}</h3>
-    <dl class="kv2"><dt>Package</dt><dd>${esc(pk.name)}</dd><dt>Amount due</dt><dd><b>${money(s.price_sar)}</b></dd><dt>Paid with</dt><dd>${esc(s.payment_method)||'<span class="hint">Not recorded</span>'}</dd><dt>Reference</dt><dd dir="ltr">${esc(s.payment_reference)||'—'}</dd>
-    <dt>Receipt</dt><dd>${rc?`<a href="${esc(rc)}" target="_blank" rel="noopener">Open receipt</a><img class="rcpt" data-hide src="${esc(rc)}" alt="Payment receipt preview" loading="lazy">`:'<span class="hint">No receipt link</span>'}</dd>
-    ${s.verified_at?`<dt>Verified</dt><dd>${fmtD(s.verified_at)}</dd>`:''}</dl>
-    <div class="row" style="margin-top:14px">
+    ${(s.pay_flags||[]).length?`<div class="pfl" role="alert">${s.pay_flags.map(f=>`<div class="pf"><span>⚠ ${esc(f.text)}</span>${f.other?`<button type="button" class="btn sm o" data-do="gother" data-v="${esc(f.other)}">Open that order</button>`:''}${f.code==='no_receipt'?`<button type="button" class="btn sm o" data-do="askrc">Ask for the receipt</button>`:''}</div>`).join('')}</div>`:''}
+    <div class="pcmp">
+     <div class="pcl"><div class="pch">What the client entered</div>
+      <dl class="kv2"><dt>Package</dt><dd>${esc(pk.name)}${s.promo_code?` <span class="bd green"><i></i>${esc(s.promo_code)}</span>`:''}</dd>
+      <dt>Amount due</dt><dd><b class="amt">${money(s.price_sar)}</b> <button type="button" class="cpb" data-do="cpv" data-v="${esc(s.price_sar)}">Copy</button>${s.list_price&&s.list_price!==s.price_sar?`<span class="hint"> list ${money(s.list_price)}</span>`:''}</dd>
+      <dt>Order code</dt><dd dir="ltr"><b>${esc(s.id)}</b> <button type="button" class="cpb" data-do="cpv" data-v="${esc(s.id)}">Copy</button><span class="hint" style="display:block">Look for this in the transfer note.</span></dd>
+      <dt>Paid with</dt><dd>${esc(s.payment_method)||'<span class="hint">Not recorded</span>'}</dd>
+      <dt>Reference</dt><dd dir="ltr">${s.payment_reference?`${esc(s.payment_reference)} <button type="button" class="cpb" data-do="cpv" data-v="${esc(s.payment_reference)}">Copy</button>`:'<span class="hint">None given (read it from the receipt)</span>'}</dd>
+      ${s.verified_at?`<dt>Verified</dt><dd>${fmtD(s.verified_at)}</dd>`:''}${s.reject_reason&&s.payment_status==='rejected'?`<dt>Reject reason</dt><dd>${esc(s.reject_reason)}</dd>`:''}</dl></div>
+     <div class="pcr"><div class="pch">Receipt</div>${rc?`<a href="${esc(rc)}" target="_blank" rel="noopener" class="rcl"><img class="rcpt big" data-hide src="${esc(rc)}" alt="Payment receipt" loading="lazy"><span>Open full size</span></a>`:'<p class="hint">No receipt link.</p>'}</div>
+    </div>
+    ${st.rej===s.id?`<div class="rjp"><label for="rjr">Why is it being rejected? The client will get a kind message with this reason.</label>
+      <div class="chips">${['The amount is less than the price','The receipt is not clear','We could not find the payment','The payment went to a different account'].map(x=>`<button type="button" class="chip" data-do="rjchip" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+      <input id="rjr" type="text" maxlength="300" placeholder="Reason (optional, but helpful)">
+      <div class="row" style="margin-top:10px"><button class="btn dg" id="rjgo" ${B}>Reject and write to the client</button><button class="btn o" data-do="rjno">Cancel</button></div></div>`
+    :`<div class="row" style="margin-top:14px">
      ${s.payment_status!=='verified'?`<button class="btn" id="pv" ${B}>Verify payment</button>`:''}
      ${s.payment_status==='pending'?`<button class="btn dgo" id="pr" ${B}>Reject</button>`:''}
-     ${s.payment_status!=='pending'?`<button class="btn o" id="pp" ${B} ${verified&&s.report_status!=='not_started'?'disabled title="Move the report back to Not started first"':''}>Set back to pending</button>`:''}</div>
-    ${s.payment_status==='pending'?'<p class="hint" style="margin-top:8px">Check the amount and reference against your bank, then verify. Verifying starts the 24-hour delivery clock.</p>':''}</section>
+     ${s.payment_status!=='pending'?`<button class="btn o" id="pp" ${B} ${verified&&s.report_status!=='not_started'?'disabled title="Move the report back to Not started first"':''}>Set back to pending</button>`:''}</div>`}
+    ${s.payment_status==='pending'&&st.rej!==s.id?'<p class="hint" style="margin-top:8px">Compare the amount and reference with your bank, then verify. Verifying starts the 24-hour delivery clock.</p>':''}</section>
    <section class="sec"><h3>Report delivery ${badge(REPL,s.report_status)}</h3>
     <ol class="steps" aria-label="Report progress">${FLOW.map((k,i)=>`<li class="${i<idx?'dn':i===idx?'cu':''}">${REPL[k][0]}</li>`).join('')}</ol>
     ${due?`<p style="margin-bottom:10px;font-weight:700" class="r ${due<Date.now()?'late':''}">${due<Date.now()?'Overdue by '+span(Date.now()-due):'Due in '+span(due-Date.now())} <span class="hint" style="font-weight:400">(${fmtD(new Date(due))})</span></p>`:''}
@@ -1097,7 +1127,8 @@ function drawer(){
   $$('img[data-hide]',dw).forEach(i=>i.onerror=()=>i.remove());
   g('dx').onclick=closeDrawer;
   if(g('pv'))g('pv').onclick=()=>act({payment_status:'verified'},'Payment verified');
-  if(g('pr'))g('pr').onclick=async()=>{if(await confirmBox({title:'Reject this payment?',body:`${s.full_name} will stay in the list as rejected and no report will be prepared. You can set it back to pending later.`,ok:'Reject payment',danger:true}))act({payment_status:'rejected'},'Payment rejected')};
+  if(g('pr'))g('pr').onclick=()=>{st.rej=s.id;drawer();const r=$('#rjr',dw);if(r)r.focus({preventScroll:true})};
+  if(g('rjgo'))g('rjgo').onclick=async()=>{const why=(g('rjr').value||'').trim();st.rej=null;const ok=await act({payment_status:'rejected',reject_reason:why},'Payment rejected');if(ok!==false&&st.detail&&st.detail.id===s.id){const d2=st.detail,m=mstate(d2);m.tpl='payment_issue';m.text=tplFill('payment_issue',m.lang,d2);drawer();setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}};
   if(g('pp'))g('pp').onclick=()=>act({payment_status:'pending'},'Payment set back to pending');
   if(g('rn'))g('rn').onclick=async()=>{const to=NEXT[s.report_status]?.[1];if(!to)return;
     if(to==='delivered'&&!await confirmBox({title:'Mark as delivered?',body:`Only do this once the report has been sent to ${s.full_name} (${s.contact_method}: ${s.contact}).`,ok:'Yes, it was sent'}))return;
@@ -1233,22 +1264,22 @@ const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(r
 const showPh=d=>{if(!d)return '';if(/^966\d{9}$/.test(d))return '+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4');const sp=ccSplit('+'+d);return '+'+sp.dial+' '+sp.nat};
 const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {business} 🌿\nبصيرة… لترى نفسك بوضوح.';
 const DEF_TPL={
- received:{en:'Peace be upon you, {name} 🌿\nYour journey with {business} has begun. We have received your assessment ({code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
-  ar:'السلام عليكم يا {name} 🌿\nبدأت رحلتك مع {business}. وصلنا تقييمك ({code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
- payment_issue:{en:'Hello {name} 🌿\nWe are almost there. We could not yet match the payment for your assessment ({code}).\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 🤍\n\n{site}'+SIGEN,
-  ar:'مرحباً {name} 🌿\nنوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك ({code}).\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 🤍\n\n{site}'+SIGAR},
- delay:{en:'Dear {name} 🌿\nWe are truly sorry. Your {business} insight ({code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 🤍\n\n{site}'+SIGEN,
-  ar:'عزيزي {name} 🌿\nنعتذر منك من القلب. تأخّرت بصيرتك من {business} ({code}) عن الموعد الذي وعدناك به، ونقدّر وقتك وثقتك كثيراً.\n\nنمنح تقريرك العناية التي يستحقها، وسيصلك {newdue}. شكراً لصبرك وتفهّمك. وإن كان لديك أمر عاجل فراسلنا هنا ونحن بجانبك مباشرة 🤍\n\n{site}'+SIGAR},
- report:{en:'{name}, your insight is ready ✨\nA mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
-  ar:'{name}، بصيرتك جاهزة ✨\nمرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
- report_file:{en:'{name}, your insight is ready ✨\nYour {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
-  ar:'{name}، بصيرتك جاهزة ✨\nتقريرك من {business} مرفق بصيغة PDF. اقرأه على مهل، صفحة بعد صفحة، وراسلنا متى شئت لنتحدث عنه معاً 🌿\n\n{site}'+SIGAR},
- consult:{en:'Hello {name} 🌿\nThank you for choosing a one-to-one conversation with your assessment ({code}). It is where the insight becomes a plan.\n\nWhich days and times suit you this week? We will confirm a time that works for you ✨\n\n{site}'+SIGEN,
-  ar:'مرحباً {name} 🌿\nشكراً لاختيارك جلسة فردية مع تقييمك ({code}). هناك تتحول البصيرة إلى خطة.\n\nما الأيام والأوقات المناسبة لك هذا الأسبوع؟ سنؤكد لك موعداً يناسبك ✨\n\n{site}'+SIGAR},
- consult_confirm:{en:'{name}, your consultation is confirmed ✨\n📅 {date}\n\nCome as you are, with any questions on your mind. If the time no longer suits you, reply here and we will find another 🌿\n\n{site}'+SIGEN,
-  ar:'{name}، تم تأكيد استشارتك ✨\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
- review:{en:'{name}, we hope your insight brought you clarity 🌟\nYour honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 🤍'+SIGEN,
-  ar:'{name}، نأمل أن بصيرتك قد منحتك وضوحاً 🌟\nكلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 🤍'+SIGAR}};
+ received:{en:'*Your journey has begun* 🌿\nPeace be upon you, {name}. We have received your assessment (order code {code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
+  ar:'*بدأت رحلتك* 🌿\nالسلام عليكم يا {name}. وصلنا تقييمك (رمز الطلب {code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
+ payment_issue:{en:'*One small step to go* 🌿\nHello {name}, we are almost there. We could not yet match the payment for your assessment (order code {code}).{reason}\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 💚\n\n{site}'+SIGEN,
+  ar:'*خطوة صغيرة متبقية* 🌿\nمرحباً {name}، نوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك (رمز الطلب {code}).{reason}\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 💚\n\n{site}'+SIGAR},
+ delay:{en:'*Your insight is on its way* 🌿\nDear {name}, we are truly sorry. Your {business} insight (order code {code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 💚\n\n{site}'+SIGEN,
+  ar:'*بصيرتك في الطريق إليك* 🌿\nعزيزي {name}، نعتذر منك من القلب. تأخّرت بصيرتك من {business} (رمز الطلب {code}) عن الموعد الذي وعدناك به، ونقدّر وقتك وثقتك كثيراً.\n\nنمنح تقريرك العناية التي يستحقها، وسيصلك {newdue}. شكراً لصبرك وتفهّمك. وإن كان لديك أمر عاجل فراسلنا هنا ونحن بجانبك مباشرة 💚\n\n{site}'+SIGAR},
+ report:{en:'*Your insight is ready* ✨\n{name}, a mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
+  ar:'*بصيرتك جاهزة* ✨\n{name}، مرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
+ report_file:{en:'*Your insight is ready* ✨\n{name}, your {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
+  ar:'*بصيرتك جاهزة* ✨\n{name}، تقريرك من {business} مرفق بصيغة PDF. اقرأه على مهل، صفحة بعد صفحة، وراسلنا متى شئت لنتحدث عنه معاً 🌿\n\n{site}'+SIGAR},
+ consult:{en:'*Let us turn insight into a plan* 🌿\nHello {name}, thank you for choosing a one-to-one conversation with your assessment (order code {code}).\n\nWhich days and times suit you this week? We will confirm a time that works for you ✨\n\n{site}'+SIGEN,
+  ar:'*لنحوّل البصيرة إلى خطة* 🌿\nمرحباً {name}، شكراً لاختيارك جلسة فردية مع تقييمك (رمز الطلب {code}).\n\nما الأيام والأوقات المناسبة لك هذا الأسبوع؟ سنؤكد لك موعداً يناسبك ✨\n\n{site}'+SIGAR},
+ consult_confirm:{en:'*Your consultation is confirmed* ✨\n{name}, we look forward to seeing you.\n📅 {date}\n\nCome as you are, with any questions on your mind. If the time no longer suits you, reply here and we will find another 🌿\n\n{site}'+SIGEN,
+  ar:'*تم تأكيد استشارتك* ✨\n{name}، يسعدنا لقاؤك.\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
+ review:{en:'*How was your insight?* 🌟\n{name}, we hope it brought you clarity. Your honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 💚'+SIGEN,
+  ar:'*كيف وجدت بصيرتك؟* 🌟\n{name}، نأمل أن تكون قد منحتك وضوحاً. كلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 💚'+SIGAR}};
 const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',delay:'Report delay (apology)',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time',review:'Ask for a review'};
 const KIND_PRESETS={stc:['STC Pay','STC Pay'],bank:['Bank transfer (IBAN)','تحويل بنكي (IBAN)'],apple:['Apple Pay','Apple Pay'],qr:['QR code','رمز QR'],link:['Pay online','الدفع عبر الإنترنت'],other:['Other','أخرى']};
 const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR code',link:'Payment link',other:'Other'};
@@ -1270,9 +1301,9 @@ function newDue(lang){const t=new Date(Date.now()+st.delayH*HOUR);const day=new 
   return lang==='ar'?'بإذن الله '+dd+' قبل الساعة '+tm:'by '+dd+' at '+tm}
 function tplVars(s,lang){
   const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
-  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d,newdue:newDue(lang)};
+  return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d,newdue:newDue(lang),reason:s.reject_reason?(lang==='ar'?'\nالسبب: ':'\nReason: ')+s.reject_reason:''};
 }
-const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
+const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);v.site=location.origin+'/s?m='+key+'&l='+lang;return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
 const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='review'&&!s.review_link?'The review link could not be created. Try again.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
 
 /* ---- message composer in the client drawer ---- */
@@ -1303,8 +1334,13 @@ async function drawerAction(e){
   const b=e.target.closest('[data-do]');if(!b||!st.detail||st.detail.error)return;
   const s=st.detail,m=mstate(s),a=b.dataset.do;
   if(a==='tpl'){if(b.dataset.v==='review')await ensureRv(s);m.tpl=b.dataset.v;m.text=m.tpl==='custom'?m.text:tplFill(m.tpl,m.lang,s);if(m.tpl==='custom'&&!m.text)m.text='';drawer();$('#mt')?.focus({preventScroll:true})}
+  else if(a==='cpv'){try{await navigator.clipboard.writeText(String(b.dataset.v));toast('Copied')}catch{toast('Copy isn’t available in this browser',true)}}
+  else if(a==='rjchip'){const i=$('#rjr');if(i){i.value=b.dataset.v;i.focus({preventScroll:true})}}
+  else if(a==='rjno'){st.rej=null;drawer()}
+  else if(a==='gother'){openDrawer(b.dataset.v)}
+  else if(a==='askrc'){m.tpl='payment_issue';m.text=tplFill('payment_issue',m.lang,s);drawer();setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}
   else if(a==='lang'){m.lang=b.dataset.v;if(m.tpl&&m.tpl!=='custom')m.text=tplFill(m.tpl,m.lang,s);drawer()}
-  else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(m.text),'_blank','noopener');logContact(s,'whatsapp')}
+  else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open(waLink(ph,m.text),'_blank','noopener');logContact(s,'whatsapp')}
   else if(a==='mail'){window.open('mailto:'+encodeURIComponent(s.contact).replace('%40','@')+'?subject='+encodeURIComponent(((st.cfg&&st.cfg.business_name)||'Basirah')+(m.lang==='ar'?' – تقييمك':' – your assessment'))+'&body='+encodeURIComponent(m.text),'_self');logContact(s,'email')}
   else if(a==='copy'){try{await navigator.clipboard.writeText(m.text);toast('Message copied');logContact(s,'copy')}catch{toast('Copy isn’t available in this browser',true)}}
   else if(a==='copylink'){try{await navigator.clipboard.writeText(location.origin+s.pdf_link.path);toast('Link copied')}catch{toast('Copy isn’t available in this browser',true)}}
@@ -1380,7 +1416,7 @@ function vSettings(m){
   m.onclick=async e=>{
     const b=e.target.closest('button,a');if(!b)return;
     if(b.dataset.copy){try{await navigator.clipboard.writeText(b.dataset.copy);toast('Link copied')}catch{toast('Could not copy. Select the link and copy it by hand.',true)}return}
-    if(b.dataset.test!==undefined){e.preventDefault();const n=normPh(d.whatsapp[+b.dataset.test].number);if(!n)return toast('Enter a valid number first',true);window.open('https://wa.me/'+n,'_blank','noopener');return}
+    if(b.dataset.test!==undefined){e.preventDefault();const n=normPh(d.whatsapp[+b.dataset.test].number);if(!n)return toast('Enter a valid number first',true);window.open(waLink(n,''),'_blank','noopener');return}
     if(b.id==='addwa'){d.whatsapp.push({id:uid(),label:'',label_ar:'',number:''});markDirty();rerender();return}
     if(b.dataset.addpm){const k=b.dataset.addpm;d.payments.push({id:uid(),kind:k,label:KIND_PRESETS[k][0],label_ar:KIND_PRESETS[k][1],value:'',holder:'',bank:'',url:'',note:'',note_ar:'',qr:[]});markDirty();rerender();return}
     if(b.dataset.rm){const ks=b.dataset.rm.split('.'),idx=+ks.pop();let arr=d;ks.forEach(k=>arr=arr[k]);arr.splice(idx,1);markDirty();rerender();return}

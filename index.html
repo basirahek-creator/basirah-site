@@ -537,6 +537,15 @@ html[lang=ar] .pkg .p .off,html[lang=ar] .opt .pp .off{font-family:'Tajawal',san
  .nav-top button{padding-inline:16px}
  footer .adm{display:flex;align-items:center;justify-content:center;min-height:44px}
 }
+
+/* ---- payment step: order code, big receipt button ---- */
+.ocd{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:2px 18px 14px;margin:14px 0 6px;box-shadow:var(--sh1)}
+.ocd .pmr:first-child{border-top:0}.ocd .sub{font-size:14.5px;margin:10px 0 0}
+.rcv{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden;pointer-events:none}
+.fld label.drop,.drop{display:flex !important;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:22px 16px;border:2px dashed var(--teal2);border-radius:16px;background:color-mix(in srgb,var(--sage) 70%,transparent);color:var(--teal);cursor:pointer;transition:border-color .2s,background .2s}
+.drop:hover,.fld:has(.rcv:focus-visible) .drop{border-color:var(--gold);background:var(--sage)}
+.drop svg{width:34px;height:34px;color:var(--gold)}
+.drop b{font-size:17px}.drop small{color:var(--sub);font-size:14px}
 </style>
 </head>
 <body>
@@ -840,7 +849,7 @@ paras:[
 "يهدف هذا التقييم إلى مساعدتك على فهم ذاتك بصورة أعمق، من خلال استكشاف أنماطك السلوكية، وسماتك الشخصية، وقيمك ومبادئك، ومهاراتك، وجوانب قوتك، والتحديات التي قد تواجهها، بما يدعم الوعي بالذات والنمو الشخصي.",
 "**مشاركتك اختيارية تماماً، والقرار يعود إليك بكل حرية.** يسعدنا أن تشارك في هذه الرحلة الاستكشافية متى شعرت بالارتياح والرغبة في ذلك، دون أي إلزام أو ضغط. ولن يؤثر قرارك بالمشاركة أو عدمها على حقوقك أو مكانتك أو علاقتك بالجهة المقدمة للتقييم.",
 "إذا رغبت في المتابعة، فنشجعك على الإجابة بصدق وعفوية، والتعبير عن أفكارك ومشاعرك وتجاربك كما هي، دون الحاجة إلى تقديم إجابات مثالية أو محاولة إظهار صورة معينة عن نفسك. فكلما كانت إجاباتك صادقة وواضحة، كان التحليل أكثر تعبيراً عن وجهة نظرك وتجربتك الشخصية.",
-"قد تتناول بعض الأسئلة جوانب شخصية أو حساسة. وقد صُممت هذه الأسئلة لفهم إجاباتك في سياق التقييم، وليس للحكم عليك أو تصنيفك. ويمكنك الامتناع عن الإجابة عن أي سؤال لا تشعر بالارتياح تجاهه، كما يمكنك التوقف عن المشاركة في أي وقت.",
+"قد تتناول بعض الأسئلة جوانب شخصية أو حساسة. وقد صُممت هذه الأسئلة لفهم إجاباتك في سياق التقييم، وليس للحكم عليك أو تصنيفك. ونرجو منك الإجابة عن جميع الأسئلة، وإن بدا لك سؤال صعبًا فخذ وقتك وأجب بالطريقة التي تراها صادقة ومريحة لك. ويمكنك التوقف في أي وقت، وسيُحفظ تقدمك لتعود إليه حين تكون مستعدًا.",
 "نود التأكيد على أن نتائج التقييم تمثل قراءة تفسيرية تستند إلى إجاباتك، وتهدف إلى دعم التأمل الذاتي والتطوير الشخصي. وهي لا تُعد تشخيصاً طبياً أو نفسياً، ولا تمثل حكماً نهائياً على شخصيتك أو قدراتك أو إمكاناتك المستقبلية.",
 "نحترم قرارك أياً كان، ونقدّر وقتك وثقتك. إذا رغبت في المشاركة، فإن موافقتك أدناه تعني أنك قرأت المعلومات السابقة وفهمتها، وأنك تختار المشاركة بإرادتك الحرة."
 ],
@@ -855,7 +864,7 @@ paras:[
 "This assessment is designed to help you gain a deeper understanding of yourself by exploring your behavioral patterns, personality traits, values, principles, skills, strengths, and potential challenges, with the aim of supporting self-awareness and personal growth.",
 "**Your participation is entirely voluntary, and the decision is yours to make freely.** You are welcome to take part in this journey of self-discovery whenever you feel comfortable and willing to do so, without any obligation or pressure. Your decision to participate or decline will not affect your rights, standing, or relationship with the organization providing the assessment.",
 "If you choose to proceed, we encourage you to answer honestly and naturally, expressing your genuine thoughts, feelings, and experiences without feeling the need to provide ideal answers or present yourself in a particular way. Honest and clear responses help make the interpretation more reflective of your personal perspective and experiences.",
-"Some questions may explore personal or sensitive aspects of your life. These questions are intended to help interpret your responses within the context of the assessment, not to judge or label you. You may decline to answer any question that makes you uncomfortable, and you may discontinue your participation at any time.",
+"Some questions may explore personal or sensitive aspects of your life. These questions are intended to help interpret your responses within the context of the assessment, not to judge or label you. We kindly ask that you answer every question. If one feels difficult, take your time and respond in whatever way feels honest and comfortable to you. You may pause at any time, and your progress is saved so you can return when you are ready.",
 "Please note that the assessment results provide an interpretive perspective based on your responses, intended to support self-reflection and personal development. They do not constitute a medical or psychological diagnosis and should not be considered a definitive judgment of your personality, abilities, or future potential.",
 "We respect your decision, whatever you choose, and appreciate your time and trust. If you wish to participate, your consent below confirms that you have read and understood the information provided and voluntarily choose to take part."
 ],
@@ -865,6 +874,7 @@ thanks:"Thank you, whether or not you choose to participate. Your comfort and fr
 }};
 /* ---------- added interface strings (existing keys above are untouched) ---------- */
 Object.assign(T.en,{
+payRc:"Attach your payment receipt",payRcBtn:"Take a photo or choose a screenshot",payRcHint:"A screenshot or PDF from your bank app is perfect.",payRef:"Payment reference (optional)",payRefPh:"Optional. We can read it from your receipt",payAmt:"Amount to pay",payOc:"Your order code",payOcN:"If your bank allows a note, please write this code in it. It helps us match your payment quickly.",
 sCo:"Consent",sRv:"Review",conBoth:"Show Arabic and English side by side",conOne:"Show one language only",conGo:"I agree, continue",conNo:"I’d rather not participate",
 skBtn:"Prefer not to answer this question",reqTag:"Required: please answer this question",skNote:"You chose not to answer this question. Type or record an answer if you change your mind.",
 rvH:"Review your answers",rvP:"Check everything before you continue. You can edit any answer.",rvAns:"{a} of {n} answered",rvT:"Typed",rvV:"Voice",rvS:"Skipped",
@@ -884,10 +894,11 @@ eP:"Please enter a valid phone number for the country you chose, or type the ful
 rcPrep:"Preparing your receipt…",rmv:"Remove",qrAlt:"Payment QR code",
 eSend2:"We couldn’t send your submission. Check your connection and try again. Your answers and receipt are still here.",
 eOff:"You appear to be offline. Reconnect, then press the button again. Nothing has been lost.",
-sName:"Name",sCt:"Contact",sRf:"Payment reference",sId:"Confirmation code",
+sName:"Name",sCt:"Contact",sRf:"Payment reference",sId:"Order code",
 whatNext:"What happens next",nx1:"We verify your payment.",nx2:"We prepare your personal report.",nx3:"You receive it at your chosen contact: {del}."
 });
 Object.assign(T.ar,{
+payRc:"أرفق إيصال الدفع",payRcBtn:"التقط صورة أو اختر لقطة شاشة",payRcHint:"لقطة شاشة أو ملف PDF من تطبيق البنك تكفي.",payRef:"مرجع الدفع (اختياري)",payRefPh:"اختياري، يمكننا قراءته من الإيصال",payAmt:"المبلغ المطلوب",payOc:"رمز طلبك",payOcN:"إن سمح بنكك بإضافة ملاحظة، فاكتب هذا الرمز فيها. يساعدنا على مطابقة دفعتك بسرعة.",
 sCo:"الموافقة",sRv:"المراجعة",conBoth:"عرض العربية والإنجليزية جنبًا إلى جنب",conOne:"عرض لغة واحدة فقط",conGo:"أوافق، متابعة",conNo:"أفضّل عدم المشاركة",
 skBtn:"أفضّل عدم الإجابة عن هذا السؤال",reqTag:"مطلوب: يرجى الإجابة عن هذا السؤال",skNote:"اخترت عدم الإجابة عن هذا السؤال. اكتب إجابة أو سجّلها إذا غيّرت رأيك.",
 rvH:"راجع إجاباتك",rvP:"تحقق من كل شيء قبل المتابعة، ويمكنك تعديل أي إجابة.",rvAns:"تمت الإجابة عن {a} من {n}",rvT:"مكتوبة",rvV:"صوتية",rvS:"متجاوزة",
@@ -907,7 +918,7 @@ eP:"يرجى إدخال رقم جوال صحيح للدولة المختارة،
 rcPrep:"جارٍ تجهيز الإيصال…",rmv:"إزالة",qrAlt:"رمز QR للدفع",
 eSend2:"تعذّر إرسال طلبك. تحقق من اتصالك وحاول مجددًا. إجاباتك وإيصالك ما زالت هنا.",
 eOff:"يبدو أنك غير متصل بالإنترنت. أعد الاتصال ثم اضغط الزر مرة أخرى. لم يضع أي شيء.",
-sName:"الاسم",sCt:"وسيلة التواصل",sRf:"مرجع الدفع",sId:"رمز التأكيد",
+sName:"الاسم",sCt:"وسيلة التواصل",sRf:"مرجع الدفع",sId:"رمز الطلب",
 whatNext:"ما الذي سيحدث بعد ذلك",nx1:"نتحقق من دفعتك.",nx2:"نُعدّ تقريرك الشخصي.",nx3:"تستلمه عبر وسيلة التواصل التي اخترتها: {del}."
 });
 
@@ -916,20 +927,20 @@ ccSearch:"Search country or code",ccNone:"No country found",
 pkOff:"Save {n}%",pkEnds:"Offer ends in {t}",cdD:"d",cdH:"h",cdM:"m",cdS:"s",annL:"Announcement",annGo:"See packages",annX:"Close announcement",
 promoQ:"Have a promo code?",promoPh:"Enter your code",promoGo:"Apply",promoRm:"Remove",promoOk:"Code {c} applied: you save {d}",
 promoE_invalid:"We couldn’t find that code. Please check it and try again.",promoE_expired:"This code has expired.",promoE_used_up:"This code has reached its limit.",promoE_wrong_package:"This code doesn’t apply to the package you chose.",promoE_soon:"This code isn’t active yet.",promoE_no_combine:"This code can’t be combined with the current offer.",promoE_net:"We couldn’t check the code. Please check your connection and try again.",
-waChat:"Chat on WhatsApp",waPick:"Who would you like to message?",waWord:"WhatsApp",waHello:"Hello Basirah 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}",
+waChat:"Chat on WhatsApp",waPick:"Who would you like to message?",waWord:"WhatsApp",waHello:"*Hello Basirah* 🌿\nI would like to begin my journey of self-insight. Could you tell me more about the assessment?\n\n✨ Basirah by EhsanKey\n{site}",
 payH2:"Choose how to pay",payS2:"Pay {p} using the details below, then upload your receipt. Your assessment is only accepted after payment is secured.",
 pNum:"Number",pMob:"Mobile number",pIban:"IBAN",pBank:"Bank",pHold:"Account name",pLink:"Open payment page",cpy:"Copy",cpd:"Copied",qrTap:"Tap to enlarge",
-payHelp:"Need help paying?",payHelpA:"Ask on WhatsApp",doneWaH:"Questions? Message us on WhatsApp",doneWaP:"Mention your confirmation code and we will help you straight away.",doneMsg:"Message us on WhatsApp",doneConsult:"Book my consultation"
+payHelp:"Need help paying?",payHelpA:"Ask on WhatsApp",doneWaH:"Questions? Message us on WhatsApp",doneWaP:"Mention your order code and we will help you straight away.",doneMsg:"Message us on WhatsApp",doneConsult:"Book my consultation"
 });
 Object.assign(T.ar,{
 ccSearch:"ابحث عن الدولة أو الرمز",ccNone:"لا توجد دولة مطابقة",
 pkOff:"وفّر {n}٪",pkEnds:"ينتهي العرض خلال {t}",cdD:"ي",cdH:"س",cdM:"د",cdS:"ث",annL:"إعلان",annGo:"شاهد الباقات",annX:"إغلاق الإعلان",
 promoQ:"هل لديك كود خصم؟",promoPh:"أدخل الكود",promoGo:"تطبيق",promoRm:"إزالة",promoOk:"تم تطبيق الكود {c}: وفّرت {d}",
 promoE_invalid:"لم نتمكن من العثور على هذا الكود. يرجى التأكد منه والمحاولة مجدداً.",promoE_expired:"انتهت صلاحية هذا الكود.",promoE_used_up:"بلغ هذا الكود حدّه الأقصى من الاستخدام.",promoE_wrong_package:"هذا الكود لا ينطبق على الباقة التي اخترتها.",promoE_soon:"هذا الكود غير مفعّل بعد.",promoE_no_combine:"لا يمكن جمع هذا الكود مع العرض الحالي.",promoE_net:"تعذّر التحقق من الكود. تأكد من اتصالك بالإنترنت وحاول مجدداً.",
-waChat:"تواصل عبر واتساب",waPick:"من تريد أن تراسل؟",waWord:"واتساب",waHello:"السلام عليكم بصيرة 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}",
+waChat:"تواصل عبر واتساب",waPick:"من تريد أن تراسل؟",waWord:"واتساب",waHello:"*السلام عليكم بصيرة* 🌿\nأرغب في بدء رحلتي نحو معرفة نفسي، هلّا زوّدتموني بالمزيد عن التقييم؟\n\n✨ بصيرة من إحسان\n{site}",
 payH2:"اختر طريقة الدفع",payS2:"ادفع {p} باستخدام البيانات أدناه، ثم ارفع إيصال الدفع. لا يُقبل تقييمك إلا بعد تأكيد الدفع.",
 pNum:"الرقم",pMob:"رقم الجوال",pIban:"رقم الآيبان",pBank:"البنك",pHold:"اسم الحساب",pLink:"فتح صفحة الدفع",cpy:"نسخ",cpd:"تم النسخ",qrTap:"اضغط للتكبير",
-payHelp:"تحتاج مساعدة في الدفع؟",payHelpA:"اسألنا عبر واتساب",doneWaH:"لديك سؤال؟ راسلنا عبر واتساب",doneWaP:"اذكر رمز التأكيد وسنساعدك فوراً.",doneMsg:"راسلنا عبر واتساب",doneConsult:"احجز استشارتي"
+payHelp:"تحتاج مساعدة في الدفع؟",payHelpA:"اسألنا عبر واتساب",doneWaH:"لديك سؤال؟ راسلنا عبر واتساب",doneWaP:"اذكر رمز الطلب وسنساعدك فوراً.",doneMsg:"راسلنا عبر واتساب",doneConsult:"احجز استشارتي"
 });
 const PK=[{id:"profile",p:200,i:1,list:200,badge:{en:"",ar:""},feats:[]},{id:"consultation",p:400,i:2,f:1,list:400,badge:{en:"",ar:""},feats:[]}];
 let lang="en";
@@ -1081,18 +1092,21 @@ window.addEventListener('resize',ccClose);document.addEventListener('scroll',e=>
 /* ---------- WhatsApp and ways to pay (the admin sets these in Settings; if none are set the original QR code is used) ---------- */
 let BS=null;
 const safeHref=u=>/^https?:\/\//i.test(u||'')?u:'';
-const waUrl=(n,txt)=>'https://wa.me/'+n+(txt?'?text='+encodeURIComponent(txt):'');
+// phones open the WhatsApp app; computers go straight to WhatsApp Web (the desktop app can scramble emoji when opened from a link)
+const WAMOB=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||'');
+const waUrl=(n,txt)=>WAMOB?'https://wa.me/'+n+(txt?'?text='+encodeURIComponent(txt):''):'https://web.whatsapp.com/send?phone='+n+(txt?'&text='+encodeURIComponent(txt):'');
 const waLines=()=>BS&&Array.isArray(BS.whatsapp)?BS.whatsapp:[];
 const waName=w=>lang==='ar'?(w.label_ar||w.label):w.label;
 const waNum=n=>'+'+String(n).replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4');
-const SIGW=()=>'\n\n✨ Basirah by EhsanKey\n'+location.origin+'/s';
+// every message ends with a branded link: WhatsApp turns it into a card with the Basirah picture
+const SIGW=k=>(lang==='ar'?'\n\n✨ بصيرة من إحسان\n':'\n\n✨ Basirah by EhsanKey\n')+location.origin+'/s?m='+k+'&l='+lang;
 const WAMSG={
   help:s=>{const p=PK.find(x=>x.id===S.pk),pk=p?(t('n'+p.i)+' · '+t('cur',{p:pkp(p)})):'';return lang==='ar'
-    ?'السلام عليكم بصيرة 🌿\nأحتاج إلى مساعدة بسيطة في الدفع 💳\n\n🔖 رمز التأكيد: '+s+(pk?'\n📦 الباقة: '+pk:'')+'\n\nهل تتفضلون بإرشادي إلى الخطوة التالية؟ شكراً لكم 🙏'+SIGW()
-    :'Hello Basirah 🌿\nI need a little help with my payment 💳\n\n🔖 Confirmation code: '+s+(pk?'\n📦 Package: '+pk:'')+'\n\nCould you please guide me to the next step? Thank you 🙏'+SIGW()},
-  done:s=>lang==='ar'?'السلام عليكم بصيرة 🌿\nأرسلت للتو تقييمي ✨\n\n🔖 رمز التأكيد: '+s+'\n\nبانتظار تأكيد الدفع، وشكراً لكم 🙏'+SIGW():'Hello Basirah 🌿\nI have just submitted my assessment ✨\n\n🔖 Confirmation code: '+s+'\n\nI look forward to your payment confirmation. Thank you 🙏'+SIGW(),
-  consult:s=>lang==='ar'?'السلام عليكم بصيرة 🌿\nأرغب في حجز موعد استشارتي الفردية 📞\n\n🔖 رمز التأكيد: '+s+'\n\nما الأوقات المتاحة لديكم؟ شكراً 🙏'+SIGW():'Hello Basirah 🌿\nI would like to book my 1-to-1 consultation 📞\n\n🔖 Confirmation code: '+s+'\n\nWhat times do you have available? Thank you 🙏'+SIGW(),
-  hello:()=>((BS&&BS.wa_greeting&&BS.wa_greeting[lang])||t('waHello')).replace(/\{site\}/g,location.origin+'/s')};
+    ?'*السلام عليكم بصيرة* 🌿\nأحتاج إلى مساعدة بسيطة في الدفع 💳\n\n🔖 رمز الطلب: '+s+(pk?'\n📦 الباقة: '+pk:'')+'\n\nهل تتفضلون بإرشادي إلى الخطوة التالية؟ شكراً لكم 🙏'+SIGW('help')
+    :'*Hello Basirah* 🌿\nI need a little help with my payment 💳\n\n🔖 Order code: '+s+(pk?'\n📦 Package: '+pk:'')+'\n\nCould you please guide me to the next step? Thank you 🙏'+SIGW('help')},
+  done:s=>lang==='ar'?'*السلام عليكم بصيرة* 🌿\nأرسلت للتو تقييمي ✨\n\n🔖 رمز الطلب: '+s+'\n\nبانتظار تأكيد الدفع، وشكراً لكم 🙏'+SIGW('done'):'*Hello Basirah* 🌿\nI have just submitted my assessment ✨\n\n🔖 Order code: '+s+'\n\nI look forward to your payment confirmation. Thank you 🙏'+SIGW('done'),
+  consult:s=>lang==='ar'?'*السلام عليكم بصيرة* 🌿\nأرغب في حجز موعد استشارتي الفردية 📞\n\n🔖 رمز الطلب: '+s+'\n\nما الأوقات المتاحة لديكم؟ شكراً 🙏'+SIGW('consult'):'*Hello Basirah* 🌿\nI would like to book my 1-to-1 consultation 📞\n\n🔖 Order code: '+s+'\n\nWhat times do you have available? Thank you 🙏'+SIGW('consult'),
+  hello:()=>((BS&&BS.wa_greeting&&BS.wa_greeting[lang])||t('waHello')).replace(/\{site\}/g,location.origin+'/s?m=hello&l='+lang)};
 const WAICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.1 8.4c-.5 0-1 .5-1 1.3 0 1.7 2.7 5 5.3 5.5.9.2 1.6-.4 1.7-1l.1-.5-1.7-.8-.8.7c-1.1-.4-2.2-1.5-2.6-2.6l.7-.8-.7-1.6z" fill="currentColor"/></svg>';
 
 /* round button that stays on every page; one number opens WhatsApp, several open a small list */
@@ -1416,8 +1430,9 @@ function draw(){
   }else if(S.step==="pay"){
     const p=PK.find(x=>x.id===S.pk),pr=t('cur',{p:pkp(p)}),PML=payMethods(),plain=isPlainQr(PML);
     h+=`<h2 class="q" id="qh">${t(plain?'payH':'payH2')}</h2><div class="sumbar"><span>${t('n'+p.i)}${S.promo&&S.promo.pk===p.id?` <small class="pcb">${esc(S.promo.code)}</small>`:''}</span><strong>${prHtml(p)}</strong></div>${plain?`<div class="qr">${CONFIG.qrSrc?`<img src="${CONFIG.qrSrc}" alt="${t('qrAlt')}">`:t('qrPh')}</div><p class="sub" style="text-align:center">${t('payS',{p:pr})}</p>`:payBlock()+`<p class="sub" style="text-align:center">${t('payS2',{p:pr})}</p>`}`+(waLines().length?`<p class="payhelp"><span>${t('payHelp')}</span>${waBtns('help','o sm')}</p>`:'')+
-    `<div class="fld" style="margin-top:20px"><label for="rf">${t('payRef')}</label><input id="rf" type="text" dir="ltr" style="text-align:start" autocomplete="off" placeholder="${t('payRefPh')}" value="${esc(S.ref)}"></div>`+
-    `<div class="fld"><label for="rcf">${t('payRc')}</label><input id="rcf" type="file" accept="image/*,application/pdf"><div id="rcs" aria-live="polite">${rcHTML()}</div></div>`+
+    `<div class="ocd"><div class="pmr"><span>${t('payAmt')}</span><b dir="ltr">${esc(t('cur',{p:pkp(p)}))}</b><button class="cp" type="button" data-cp="${pkp(p)}">${t('cpy')}</button></div><div class="pmr"><span>${t('payOc')}</span><b dir="ltr">${esc(S.sid)}</b><button class="cp" type="button" data-cp="${esc(S.sid)}">${t('cpy')}</button></div><p class="sub">${t('payOcN')}</p></div>`+
+    `<div class="fld" style="margin-top:20px"><label for="rcf">${t('payRc')}</label><label class="drop" for="rcf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H8l1.2-1.6h5.6L16 6h1.5A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.2"/></svg><b>${t('payRcBtn')}</b><small>${t('payRcHint')}</small></label><input id="rcf" class="rcv" type="file" accept="image/*,application/pdf"><div id="rcs" aria-live="polite">${rcHTML()}</div></div>`+
+    `<div class="fld"><label for="rf">${t('payRef')}</label><input id="rf" type="text" dir="ltr" style="text-align:start" autocomplete="off" placeholder="${t('payRefPh')}" value="${esc(S.ref)}"></div>`+
     `<div class="err" id="er" role="alert"></div><div class="nav"><button class="btn o" id="pv">${t('prev')}</button><button class="btn" id="nx" ${S.busy?'disabled':''}>${S.busy?'<span class="sp"></span>'+t(S.ans.some(x=>x.mode==='voice'&&x.blob)?'upl':'sending'):t('paid')}</button></div>`;
   }else{
     const p=PK.find(x=>x.id===S.pk),cmL=t({email:'cEm',whatsapp:'cWa',mobile:'cMo'}[S.cm]);
@@ -1582,8 +1597,8 @@ function wire(){
       S.step='pack';
     }else if(S.step==='pack')S.step='pay';else if(S.step==='pay'){
       S.ref=g('rf').value.trim();
-      if(S.ref.length<4)return er(t('ePay'),'rf');
       if(!S.rc)return er(t('eRc'),'rcf');
+      if(S.ref&&S.ref.length<4)return er(t('ePay'),'rf');
       return submit();
     }
     draw();ov.scrollTo(0,0)};
