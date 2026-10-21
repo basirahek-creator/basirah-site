@@ -537,6 +537,15 @@ html[lang=ar] .pkg .p .off,html[lang=ar] .opt .pp .off{font-family:'Tajawal',san
  .nav-top button{padding-inline:16px}
  footer .adm{display:flex;align-items:center;justify-content:center;min-height:44px}
 }
+
+/* ---- payment step: order code, big receipt button ---- */
+.ocd{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:2px 18px 14px;margin:14px 0 6px;box-shadow:var(--sh1)}
+.ocd .pmr:first-child{border-top:0}.ocd .sub{font-size:14.5px;margin:10px 0 0}
+.rcv{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden;pointer-events:none}
+.fld label.drop,.drop{display:flex !important;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:22px 16px;border:2px dashed var(--teal2);border-radius:16px;background:color-mix(in srgb,var(--sage) 70%,transparent);color:var(--teal);cursor:pointer;transition:border-color .2s,background .2s}
+.drop:hover,.fld:has(.rcv:focus-visible) .drop{border-color:var(--gold);background:var(--sage)}
+.drop svg{width:34px;height:34px;color:var(--gold)}
+.drop b{font-size:17px}.drop small{color:var(--sub);font-size:14px}
 </style>
 </head>
 <body>
@@ -840,7 +849,7 @@ paras:[
 "يهدف هذا التقييم إلى مساعدتك على فهم ذاتك بصورة أعمق، من خلال استكشاف أنماطك السلوكية، وسماتك الشخصية، وقيمك ومبادئك، ومهاراتك، وجوانب قوتك، والتحديات التي قد تواجهها، بما يدعم الوعي بالذات والنمو الشخصي.",
 "**مشاركتك اختيارية تماماً، والقرار يعود إليك بكل حرية.** يسعدنا أن تشارك في هذه الرحلة الاستكشافية متى شعرت بالارتياح والرغبة في ذلك، دون أي إلزام أو ضغط. ولن يؤثر قرارك بالمشاركة أو عدمها على حقوقك أو مكانتك أو علاقتك بالجهة المقدمة للتقييم.",
 "إذا رغبت في المتابعة، فنشجعك على الإجابة بصدق وعفوية، والتعبير عن أفكارك ومشاعرك وتجاربك كما هي، دون الحاجة إلى تقديم إجابات مثالية أو محاولة إظهار صورة معينة عن نفسك. فكلما كانت إجاباتك صادقة وواضحة، كان التحليل أكثر تعبيراً عن وجهة نظرك وتجربتك الشخصية.",
-"قد تتناول بعض الأسئلة جوانب شخصية أو حساسة. وقد صُممت هذه الأسئلة لفهم إجاباتك في سياق التقييم، وليس للحكم عليك أو تصنيفك. ويمكنك الامتناع عن الإجابة عن أي سؤال لا تشعر بالارتياح تجاهه، كما يمكنك التوقف عن المشاركة في أي وقت.",
+"قد تتناول بعض الأسئلة جوانب شخصية أو حساسة. وقد صُممت هذه الأسئلة لفهم إجاباتك في سياق التقييم، وليس للحكم عليك أو تصنيفك. ونرجو منك الإجابة عن جميع الأسئلة، وإن بدا لك سؤال صعبًا فخذ وقتك وأجب بالطريقة التي تراها صادقة ومريحة لك. ويمكنك التوقف في أي وقت، وسيُحفظ تقدمك لتعود إليه حين تكون مستعدًا.",
 "نود التأكيد على أن نتائج التقييم تمثل قراءة تفسيرية تستند إلى إجاباتك، وتهدف إلى دعم التأمل الذاتي والتطوير الشخصي. وهي لا تُعد تشخيصاً طبياً أو نفسياً، ولا تمثل حكماً نهائياً على شخصيتك أو قدراتك أو إمكاناتك المستقبلية.",
 "نحترم قرارك أياً كان، ونقدّر وقتك وثقتك. إذا رغبت في المشاركة، فإن موافقتك أدناه تعني أنك قرأت المعلومات السابقة وفهمتها، وأنك تختار المشاركة بإرادتك الحرة."
 ],
@@ -855,7 +864,7 @@ paras:[
 "This assessment is designed to help you gain a deeper understanding of yourself by exploring your behavioral patterns, personality traits, values, principles, skills, strengths, and potential challenges, with the aim of supporting self-awareness and personal growth.",
 "**Your participation is entirely voluntary, and the decision is yours to make freely.** You are welcome to take part in this journey of self-discovery whenever you feel comfortable and willing to do so, without any obligation or pressure. Your decision to participate or decline will not affect your rights, standing, or relationship with the organization providing the assessment.",
 "If you choose to proceed, we encourage you to answer honestly and naturally, expressing your genuine thoughts, feelings, and experiences without feeling the need to provide ideal answers or present yourself in a particular way. Honest and clear responses help make the interpretation more reflective of your personal perspective and experiences.",
-"Some questions may explore personal or sensitive aspects of your life. These questions are intended to help interpret your responses within the context of the assessment, not to judge or label you. You may decline to answer any question that makes you uncomfortable, and you may discontinue your participation at any time.",
+"Some questions may explore personal or sensitive aspects of your life. These questions are intended to help interpret your responses within the context of the assessment, not to judge or label you. We kindly ask that you answer every question. If one feels difficult, take your time and respond in whatever way feels honest and comfortable to you. You may pause at any time, and your progress is saved so you can return when you are ready.",
 "Please note that the assessment results provide an interpretive perspective based on your responses, intended to support self-reflection and personal development. They do not constitute a medical or psychological diagnosis and should not be considered a definitive judgment of your personality, abilities, or future potential.",
 "We respect your decision, whatever you choose, and appreciate your time and trust. If you wish to participate, your consent below confirms that you have read and understood the information provided and voluntarily choose to take part."
 ],
@@ -865,6 +874,7 @@ thanks:"Thank you, whether or not you choose to participate. Your comfort and fr
 }};
 /* ---------- added interface strings (existing keys above are untouched) ---------- */
 Object.assign(T.en,{
+payRc:"Attach your payment receipt",payRcBtn:"Take a photo or choose a screenshot",payRcHint:"A screenshot or PDF from your bank app is perfect.",payRef:"Payment reference (optional)",payRefPh:"Optional. We can read it from your receipt",payAmt:"Amount to pay",payOc:"Your order code",payOcN:"If your bank allows a note, please write this code in it. It helps us match your payment quickly.",
 sCo:"Consent",sRv:"Review",conBoth:"Show Arabic and English side by side",conOne:"Show one language only",conGo:"I agree, continue",conNo:"I’d rather not participate",
 skBtn:"Prefer not to answer this question",reqTag:"Required: please answer this question",skNote:"You chose not to answer this question. Type or record an answer if you change your mind.",
 rvH:"Review your answers",rvP:"Check everything before you continue. You can edit any answer.",rvAns:"{a} of {n} answered",rvT:"Typed",rvV:"Voice",rvS:"Skipped",
@@ -888,6 +898,7 @@ sName:"Name",sCt:"Contact",sRf:"Payment reference",sId:"Confirmation code",
 whatNext:"What happens next",nx1:"We verify your payment.",nx2:"We prepare your personal report.",nx3:"You receive it at your chosen contact: {del}."
 });
 Object.assign(T.ar,{
+payRc:"أرفق إيصال الدفع",payRcBtn:"التقط صورة أو اختر لقطة شاشة",payRcHint:"لقطة شاشة أو ملف PDF من تطبيق البنك تكفي.",payRef:"مرجع الدفع (اختياري)",payRefPh:"اختياري، يمكننا قراءته من الإيصال",payAmt:"المبلغ المطلوب",payOc:"رمز طلبك",payOcN:"إن سمح بنكك بإضافة ملاحظة، فاكتب هذا الرمز فيها. يساعدنا على مطابقة دفعتك بسرعة.",
 sCo:"الموافقة",sRv:"المراجعة",conBoth:"عرض العربية والإنجليزية جنبًا إلى جنب",conOne:"عرض لغة واحدة فقط",conGo:"أوافق، متابعة",conNo:"أفضّل عدم المشاركة",
 skBtn:"أفضّل عدم الإجابة عن هذا السؤال",reqTag:"مطلوب: يرجى الإجابة عن هذا السؤال",skNote:"اخترت عدم الإجابة عن هذا السؤال. اكتب إجابة أو سجّلها إذا غيّرت رأيك.",
 rvH:"راجع إجاباتك",rvP:"تحقق من كل شيء قبل المتابعة، ويمكنك تعديل أي إجابة.",rvAns:"تمت الإجابة عن {a} من {n}",rvT:"مكتوبة",rvV:"صوتية",rvS:"متجاوزة",
@@ -1416,8 +1427,9 @@ function draw(){
   }else if(S.step==="pay"){
     const p=PK.find(x=>x.id===S.pk),pr=t('cur',{p:pkp(p)}),PML=payMethods(),plain=isPlainQr(PML);
     h+=`<h2 class="q" id="qh">${t(plain?'payH':'payH2')}</h2><div class="sumbar"><span>${t('n'+p.i)}${S.promo&&S.promo.pk===p.id?` <small class="pcb">${esc(S.promo.code)}</small>`:''}</span><strong>${prHtml(p)}</strong></div>${plain?`<div class="qr">${CONFIG.qrSrc?`<img src="${CONFIG.qrSrc}" alt="${t('qrAlt')}">`:t('qrPh')}</div><p class="sub" style="text-align:center">${t('payS',{p:pr})}</p>`:payBlock()+`<p class="sub" style="text-align:center">${t('payS2',{p:pr})}</p>`}`+(waLines().length?`<p class="payhelp"><span>${t('payHelp')}</span>${waBtns('help','o sm')}</p>`:'')+
-    `<div class="fld" style="margin-top:20px"><label for="rf">${t('payRef')}</label><input id="rf" type="text" dir="ltr" style="text-align:start" autocomplete="off" placeholder="${t('payRefPh')}" value="${esc(S.ref)}"></div>`+
-    `<div class="fld"><label for="rcf">${t('payRc')}</label><input id="rcf" type="file" accept="image/*,application/pdf"><div id="rcs" aria-live="polite">${rcHTML()}</div></div>`+
+    `<div class="ocd"><div class="pmr"><span>${t('payAmt')}</span><b dir="ltr">${esc(t('cur',{p:pkp(p)}))}</b><button class="cp" type="button" data-cp="${pkp(p)}">${t('cpy')}</button></div><div class="pmr"><span>${t('payOc')}</span><b dir="ltr">${esc(S.sid)}</b><button class="cp" type="button" data-cp="${esc(S.sid)}">${t('cpy')}</button></div><p class="sub">${t('payOcN')}</p></div>`+
+    `<div class="fld" style="margin-top:20px"><label for="rcf">${t('payRc')}</label><label class="drop" for="rcf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H8l1.2-1.6h5.6L16 6h1.5A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.2"/></svg><b>${t('payRcBtn')}</b><small>${t('payRcHint')}</small></label><input id="rcf" class="rcv" type="file" accept="image/*,application/pdf"><div id="rcs" aria-live="polite">${rcHTML()}</div></div>`+
+    `<div class="fld"><label for="rf">${t('payRef')}</label><input id="rf" type="text" dir="ltr" style="text-align:start" autocomplete="off" placeholder="${t('payRefPh')}" value="${esc(S.ref)}"></div>`+
     `<div class="err" id="er" role="alert"></div><div class="nav"><button class="btn o" id="pv">${t('prev')}</button><button class="btn" id="nx" ${S.busy?'disabled':''}>${S.busy?'<span class="sp"></span>'+t(S.ans.some(x=>x.mode==='voice'&&x.blob)?'upl':'sending'):t('paid')}</button></div>`;
   }else{
     const p=PK.find(x=>x.id===S.pk),cmL=t({email:'cEm',whatsapp:'cWa',mobile:'cMo'}[S.cm]);
@@ -1582,8 +1594,8 @@ function wire(){
       S.step='pack';
     }else if(S.step==='pack')S.step='pay';else if(S.step==='pay'){
       S.ref=g('rf').value.trim();
-      if(S.ref.length<4)return er(t('ePay'),'rf');
       if(!S.rc)return er(t('eRc'),'rcf');
+      if(S.ref&&S.ref.length<4)return er(t('ePay'),'rf');
       return submit();
     }
     draw();ov.scrollTo(0,0)};

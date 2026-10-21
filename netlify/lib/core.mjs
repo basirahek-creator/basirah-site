@@ -114,6 +114,7 @@ export async function handleSubmit(req, store) {
     verified_at: null, delivered_at: null, delivery_note: '', notes: '',
     history: [{ at: t, by: 'client', action: 'Assessment submitted' }],
   };
+  rec.pay_flags = await payFlags(store, rec);
   await store.set(keyOf(id), rec);
   return json({ ok: true, id }, 201);
 }
@@ -137,6 +138,32 @@ function tokenOk(env, header) {
 
 let failures = 0, lockedUntil = 0;   // best-effort brute-force slowdown (per running instance)
 
+
+/* ---------------- payment checks: things worth a second look before verifying ---------------- */
+const WEAK_REF = /^(.)\1{3,}$|^(0123|1234|2345|3456|4567|5678|6789|12345|123456|1234567|12345678|123456789|0000|test|xxxx|none|nil|null|paid|done|ok|na|n\/a|payment|transfer)$/i;
+const refKey = (r) => String(r || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+async function payFlags(store, rec) {
+  const flags = [];
+  const fid = /\/api\/file\/([A-Za-z0-9_-]{10,40})/.exec(rec.payment_receipt || '');
+  const claim = async (key, label, code) => {
+    const hit = await store.get(key);
+    if (hit && hit.sub && hit.sub !== rec.id && (await store.get(keyOf(hit.sub)))) {
+      const o = await store.get(keyOf(hit.sub));
+      flags.push({ code, text: label + ' (' + (o.full_name || hit.sub) + ', ' + hit.sub + ')', other: hit.sub });
+    } else await store.set(key, { sub: rec.id, at: now() });
+  };
+  if (rec.source === 'site' && (!fid || /Upload failed/i.test(rec.payment_receipt || ''))) flags.push({ code: 'no_receipt', text: 'No receipt came through. Ask the client to send it again.' });
+  if (fid) {
+    const meta = await store.get('uplmeta/' + fid[1]);
+    if (meta && meta.hash) await claim('rchash/' + meta.hash, 'This exact receipt picture was already used on another order', 'dup_receipt');
+  }
+  const k = refKey(rec.payment_reference);
+  if (k) {
+    if (k.length < 5 || WEAK_REF.test(String(rec.payment_reference).trim()) || WEAK_REF.test(k)) flags.push({ code: 'weak_ref', text: 'The reference looks unusual (“' + rec.payment_reference + '”). Check it against your bank.' });
+    else await claim('refkey/' + createHash('sha256').update(k).digest('hex').slice(0, 24), 'This reference was already used on another order', 'dup_ref');
+  }
+  return flags;
+}
 const summary = (r, withReport = new Set(), withPdf = new Set()) => {
   const { answers, history, ...rest } = r;
   return { ...rest, has_report: withReport.has(r.id), has_pdf: withPdf.has(r.id), answered: answers.filter((a) => a.a && !a.a.startsWith('VOICE ANSWER')).length, voice: answers.filter((a) => a.a.startsWith('VOICE ANSWER')).length };
@@ -197,6 +224,7 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       verified_at: null, delivered_at: null, delivery_note: '', notes: str(b.notes, 4000),
       history: [{ at: t, by: 'admin', action: 'Added manually' }],
     };
+    rec.pay_flags = await payFlags(store, rec);
     await store.set(keyOf(nid), rec);
     return json({ submission: summary(rec) }, 201);
   }
@@ -255,7 +283,8 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
       if (rec.payment_status === 'verified' && rec.report_status !== 'not_started') return fail(409, 'Move the report back to “Not started” before changing a verified payment.');
       next.payment_status = b.payment_status;
       next.verified_at = b.payment_status === 'verified' ? t : null;
-      L({ verified: 'Payment verified', rejected: 'Payment rejected', pending: 'Payment set back to pending' }[b.payment_status]);
+      next.reject_reason = b.payment_status === 'rejected' ? str(b.reject_reason, 300) : '';
+      L(({ verified: 'Payment verified', rejected: 'Payment rejected', pending: 'Payment set back to pending' }[b.payment_status]) + (next.reject_reason ? ': ' + next.reject_reason : ''));
     }
     if (b.report_status !== undefined && b.report_status !== rec.report_status) {
       if (!REPORT.includes(b.report_status)) return fail(400, 'Invalid report status');
@@ -704,7 +733,7 @@ export async function handleUpload(req, store) {
   if (buf.length > MAX_FILE) return fail(413, 'The file is too large (limit 5 MB)');
   let id; do { id = randomBytes(12).toString('base64url'); } while (await store.get('uplmeta/' + id));
   await store.setBin('upl/' + id, buf);
-  await store.set('uplmeta/' + id, { type, size: buf.length, at: new Date().toISOString() });
+  await store.set('uplmeta/' + id, { type, size: buf.length, at: new Date().toISOString(), hash: createHash('sha256').update(buf).digest('hex').slice(0, 32) });
   const origin = new URL(req.url).origin;
   return json({ url: origin + '/api/file/' + id + (EXT[type] ? '.' + EXT[type] : '') });
 }
