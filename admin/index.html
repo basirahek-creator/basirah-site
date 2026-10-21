@@ -389,6 +389,8 @@ const CONL={not_scheduled:'Not scheduled',scheduled:'Scheduled',completed:'Compl
 const FLOW=['not_started','in_progress','ready','delivered'];
 const DAY=864e5,HOUR=36e5;
 const badge=(m,k)=>{const [t,c]=m[k]||[k,'grey'];return `<span class="bd ${c}"><i></i>${esc(t)}</span>`};
+const WAMOB=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||'');
+const waLink=(ph,txt)=>WAMOB?'https://wa.me/'+(ph||'')+(txt?(ph?'?':'?')+'text='+encodeURIComponent(txt):''):'https://web.whatsapp.com/send?'+(ph?'phone='+ph+'&':'')+(txt?'text='+encodeURIComponent(txt):'');
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
 const dtf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
 const dyf=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric'});
@@ -1008,7 +1010,7 @@ function shareDialog(kind,it){
     if(e.target===o||e.target.closest('[data-r]'))return done();
     const b=e.target.closest('button');if(!b)return;
     if(b.id==='shc'){try{await navigator.clipboard.writeText(ta.value);toast('Message copied')}catch(er){ta.select();toast('Press copy on your keyboard',true)}}
-    if(b.id==='shw'){const ph=normPh($('#shph',o).value),u=ph?'https://wa.me/'+ph+'?text=':'https://wa.me/?text=';window.open(u+encodeURIComponent(ta.value),'_blank','noopener')}};
+    if(b.id==='shw'){const ph=normPh($('#shph',o).value);window.open(waLink(ph,ta.value),'_blank','noopener')}};
   document.body.appendChild(o);$('#shn',o).focus();
 }
 
@@ -1262,22 +1264,22 @@ const normPh=v=>{const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');if(r
 const showPh=d=>{if(!d)return '';if(/^966\d{9}$/.test(d))return '+'+d.replace(/^(966)(\d{2})(\d{3})(\d{4})$/,'$1 $2 $3 $4');const sp=ccSplit('+'+d);return '+'+sp.dial+' '+sp.nat};
 const SIGEN='\n\n— {business} 🌿\nSee yourself clearly.',SIGAR='\n\n— {business} 🌿\nبصيرة… لترى نفسك بوضوح.';
 const DEF_TPL={
- received:{en:'Peace be upon you, {name} 🌿\nYour journey with {business} has begun. We have received your assessment ({code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
-  ar:'السلام عليكم يا {name} 🌿\nبدأت رحلتك مع {business}. وصلنا تقييمك ({code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
- payment_issue:{en:'Hello {name} 🌿\nWe are almost there. We could not yet match the payment for your assessment ({code}).{reason}\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 🤍\n\n{site}'+SIGEN,
-  ar:'مرحباً {name} 🌿\nنوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك ({code}).{reason}\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 🤍\n\n{site}'+SIGAR},
- delay:{en:'Dear {name} 🌿\nWe are truly sorry. Your {business} insight ({code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 🤍\n\n{site}'+SIGEN,
-  ar:'عزيزي {name} 🌿\nنعتذر منك من القلب. تأخّرت بصيرتك من {business} ({code}) عن الموعد الذي وعدناك به، ونقدّر وقتك وثقتك كثيراً.\n\nنمنح تقريرك العناية التي يستحقها، وسيصلك {newdue}. شكراً لصبرك وتفهّمك. وإن كان لديك أمر عاجل فراسلنا هنا ونحن بجانبك مباشرة 🤍\n\n{site}'+SIGAR},
- report:{en:'{name}, your insight is ready ✨\nA mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
-  ar:'{name}، بصيرتك جاهزة ✨\nمرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
- report_file:{en:'{name}, your insight is ready ✨\nYour {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
-  ar:'{name}، بصيرتك جاهزة ✨\nتقريرك من {business} مرفق بصيغة PDF. اقرأه على مهل، صفحة بعد صفحة، وراسلنا متى شئت لنتحدث عنه معاً 🌿\n\n{site}'+SIGAR},
- consult:{en:'Hello {name} 🌿\nThank you for choosing a one-to-one conversation with your assessment ({code}). It is where the insight becomes a plan.\n\nWhich days and times suit you this week? We will confirm a time that works for you ✨\n\n{site}'+SIGEN,
-  ar:'مرحباً {name} 🌿\nشكراً لاختيارك جلسة فردية مع تقييمك ({code}). هناك تتحول البصيرة إلى خطة.\n\nما الأيام والأوقات المناسبة لك هذا الأسبوع؟ سنؤكد لك موعداً يناسبك ✨\n\n{site}'+SIGAR},
- consult_confirm:{en:'{name}, your consultation is confirmed ✨\n📅 {date}\n\nCome as you are, with any questions on your mind. If the time no longer suits you, reply here and we will find another 🌿\n\n{site}'+SIGEN,
-  ar:'{name}، تم تأكيد استشارتك ✨\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
- review:{en:'{name}, we hope your insight brought you clarity 🌟\nYour honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 🤍'+SIGEN,
-  ar:'{name}، نأمل أن بصيرتك قد منحتك وضوحاً 🌟\nكلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 🤍'+SIGAR}};
+ received:{en:'*Your journey has begun* 🌿\nPeace be upon you, {name}. We have received your assessment (order code {code}) and are confirming your payment now.\n\nOnce it is confirmed, your personal insight is prepared with care and reaches you within 24 hours ✨\n\n{site}'+SIGEN,
+  ar:'*بدأت رحلتك* 🌿\nالسلام عليكم يا {name}. وصلنا تقييمك (رمز الطلب {code}) ونراجع الدفع الآن.\n\nبعد التأكيد نُعدّ بصيرتك الخاصة بعناية وتصلك خلال 24 ساعة ✨\n\n{site}'+SIGAR},
+ payment_issue:{en:'*One small step to go* 🌿\nHello {name}, we are almost there. We could not yet match the payment for your assessment (order code {code}).{reason}\n\nCould you send a clear photo of the receipt, or the transfer reference? Then we will set your insight in motion right away. Thank you for your patience 💚\n\n{site}'+SIGEN,
+  ar:'*خطوة صغيرة متبقية* 🌿\nمرحباً {name}، نوشك على البدء. لم نتمكن بعد من مطابقة الدفع الخاص بتقييمك (رمز الطلب {code}).{reason}\n\nهل تتفضل بإرسال صورة واضحة من الإيصال أو رقم العملية؟ وسنبدأ بإعداد بصيرتك فوراً. شكراً لصبرك 💚\n\n{site}'+SIGAR},
+ delay:{en:'*Your insight is on its way* 🌿\nDear {name}, we are truly sorry. Your {business} insight (order code {code}) is taking longer than we promised, and we know how much your time and trust matter.\n\nWe are giving your report the care it deserves, and it will reach you {newdue}. Thank you for your patience and understanding. If anything is urgent, just reply here and we will help right away 💚\n\n{site}'+SIGEN,
+  ar:'*بصيرتك في الطريق إليك* 🌿\nعزيزي {name}، نعتذر منك من القلب. تأخّرت بصيرتك من {business} (رمز الطلب {code}) عن الموعد الذي وعدناك به، ونقدّر وقتك وثقتك كثيراً.\n\nنمنح تقريرك العناية التي يستحقها، وسيصلك {newdue}. شكراً لصبرك وتفهّمك. وإن كان لديك أمر عاجل فراسلنا هنا ونحن بجانبك مباشرة 💚\n\n{site}'+SIGAR},
+ report:{en:'*Your insight is ready* ✨\n{name}, a mirror held up with care. Take a quiet moment for yourself, then open your {business} report here:\n\n{link}\n\nWhen you have read it, we would love to hear what it stirred in you. Simply reply to this message 🌿'+SIGEN,
+  ar:'*بصيرتك جاهزة* ✨\n{name}، مرآة تُرفع لك بعناية. خذ لحظة هادئة لنفسك، ثم افتح تقريرك من {business} من هنا:\n\n{link}\n\nوبعد قراءته يسعدنا أن نسمع ما أثاره فيك. فقط أرسل لنا ردك على هذه الرسالة 🌿'+SIGAR},
+ report_file:{en:'*Your insight is ready* ✨\n{name}, your {business} report is attached as a PDF. Read it slowly, one page at a time, and reply here whenever you would like to talk it through 🌿\n\n{site}'+SIGEN,
+  ar:'*بصيرتك جاهزة* ✨\n{name}، تقريرك من {business} مرفق بصيغة PDF. اقرأه على مهل، صفحة بعد صفحة، وراسلنا متى شئت لنتحدث عنه معاً 🌿\n\n{site}'+SIGAR},
+ consult:{en:'*Let us turn insight into a plan* 🌿\nHello {name}, thank you for choosing a one-to-one conversation with your assessment (order code {code}).\n\nWhich days and times suit you this week? We will confirm a time that works for you ✨\n\n{site}'+SIGEN,
+  ar:'*لنحوّل البصيرة إلى خطة* 🌿\nمرحباً {name}، شكراً لاختيارك جلسة فردية مع تقييمك (رمز الطلب {code}).\n\nما الأيام والأوقات المناسبة لك هذا الأسبوع؟ سنؤكد لك موعداً يناسبك ✨\n\n{site}'+SIGAR},
+ consult_confirm:{en:'*Your consultation is confirmed* ✨\n{name}, we look forward to seeing you.\n📅 {date}\n\nCome as you are, with any questions on your mind. If the time no longer suits you, reply here and we will find another 🌿\n\n{site}'+SIGEN,
+  ar:'*تم تأكيد استشارتك* ✨\n{name}، يسعدنا لقاؤك.\n📅 {date}\n\nتعال كما أنت ومعك أسئلتك. وإن لم يعد الموعد مناسباً، راسلنا هنا وسنجد وقتاً آخر 🌿\n\n{site}'+SIGAR},
+ review:{en:'*How was your insight?* 🌟\n{name}, we hope it brought you clarity. Your honest words help us grow, and help others take their first step toward knowing themselves. It takes about two minutes:\n\n{review}\n\nThank you for trusting us 💚'+SIGEN,
+  ar:'*كيف وجدت بصيرتك؟* 🌟\n{name}، نأمل أن تكون قد منحتك وضوحاً. كلماتك الصادقة تساعدنا على النمو، وتساعد غيرك على الخطوة الأولى نحو معرفة نفسه. يستغرق الأمر دقيقتين فقط:\n\n{review}\n\nشكراً لثقتك بنا 💚'+SIGAR}};
 const TPL_NAMES={received:'Payment received',payment_issue:'Payment problem',delay:'Report delay (apology)',report:'Send report link',report_file:'Send report as PDF',consult:'Offer consultation',consult_confirm:'Confirm consultation time',review:'Ask for a review'};
 const KIND_PRESETS={stc:['STC Pay','STC Pay'],bank:['Bank transfer (IBAN)','تحويل بنكي (IBAN)'],apple:['Apple Pay','Apple Pay'],qr:['QR code','رمز QR'],link:['Pay online','الدفع عبر الإنترنت'],other:['Other','أخرى']};
 const KIND_NAMES={stc:'STC Pay',bank:'Bank transfer',apple:'Apple Pay',qr:'QR code',link:'Payment link',other:'Other'};
@@ -1301,7 +1303,7 @@ function tplVars(s,lang){
   const d=s.consult_at?new Date(s.consult_at).toLocaleString(lang==='ar'?'ar-SA':'en-GB',{dateStyle:'full',timeStyle:'short'}):'';
   return{name:(s.full_name||'').trim().split(/\s+/)[0],business:(st.cfg&&st.cfg.business_name)||'Basirah',code:s.id,link:s.pdf_link?location.origin+s.pdf_link.path:'',site:location.origin+'/s',review:s.review_link?location.origin+s.review_link.path:'',date:d,newdue:newDue(lang),reason:s.reject_reason?(lang==='ar'?'\nالسبب: ':'\nReason: ')+s.reject_reason:''};
 }
-const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
+const tplFill=(key,lang,s)=>{const v=tplVars(s,lang);v.site=location.origin+'/s?m='+key+'&l='+lang;return tplEffective(key,lang).replace(/\{(\w+)\}/g,(_,k)=>v[k]!=null?v[k]:'{'+k+'}')};
 const tplBlocked=(key,s)=>key==='report'&&!s.pdf_link?'Create the private link first: open the feedback studio and use “Send to client”.':key==='report_file'&&!s.report_link&&!s.pdf_link?'Write the feedback report first, so there is a PDF to attach.':key==='review'&&!s.review_link?'The review link could not be created. Try again.':key==='consult_confirm'&&!s.consult_at?'Set the consultation date and time first, then save it.':'';
 
 /* ---- message composer in the client drawer ---- */
@@ -1338,7 +1340,7 @@ async function drawerAction(e){
   else if(a==='gother'){openDrawer(b.dataset.v)}
   else if(a==='askrc'){m.tpl='payment_issue';m.text=tplFill('payment_issue',m.lang,s);drawer();setTimeout(()=>{const c=$('#msc');if(c)c.scrollIntoView({block:'center'})},60)}
   else if(a==='lang'){m.lang=b.dataset.v;if(m.tpl&&m.tpl!=='custom')m.text=tplFill(m.tpl,m.lang,s);drawer()}
-  else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(m.text),'_blank','noopener');logContact(s,'whatsapp')}
+  else if(a==='wa'){const ph=normPh(m.phone);if(!ph||!m.text.trim())return;window.open(waLink(ph,m.text),'_blank','noopener');logContact(s,'whatsapp')}
   else if(a==='mail'){window.open('mailto:'+encodeURIComponent(s.contact).replace('%40','@')+'?subject='+encodeURIComponent(((st.cfg&&st.cfg.business_name)||'Basirah')+(m.lang==='ar'?' – تقييمك':' – your assessment'))+'&body='+encodeURIComponent(m.text),'_self');logContact(s,'email')}
   else if(a==='copy'){try{await navigator.clipboard.writeText(m.text);toast('Message copied');logContact(s,'copy')}catch{toast('Copy isn’t available in this browser',true)}}
   else if(a==='copylink'){try{await navigator.clipboard.writeText(location.origin+s.pdf_link.path);toast('Link copied')}catch{toast('Copy isn’t available in this browser',true)}}
@@ -1414,7 +1416,7 @@ function vSettings(m){
   m.onclick=async e=>{
     const b=e.target.closest('button,a');if(!b)return;
     if(b.dataset.copy){try{await navigator.clipboard.writeText(b.dataset.copy);toast('Link copied')}catch{toast('Could not copy. Select the link and copy it by hand.',true)}return}
-    if(b.dataset.test!==undefined){e.preventDefault();const n=normPh(d.whatsapp[+b.dataset.test].number);if(!n)return toast('Enter a valid number first',true);window.open('https://wa.me/'+n,'_blank','noopener');return}
+    if(b.dataset.test!==undefined){e.preventDefault();const n=normPh(d.whatsapp[+b.dataset.test].number);if(!n)return toast('Enter a valid number first',true);window.open(waLink(n,''),'_blank','noopener');return}
     if(b.id==='addwa'){d.whatsapp.push({id:uid(),label:'',label_ar:'',number:''});markDirty();rerender();return}
     if(b.dataset.addpm){const k=b.dataset.addpm;d.payments.push({id:uid(),kind:k,label:KIND_PRESETS[k][0],label_ar:KIND_PRESETS[k][1],value:'',holder:'',bank:'',url:'',note:'',note_ar:'',qr:[]});markDirty();rerender();return}
     if(b.dataset.rm){const ks=b.dataset.rm.split('.'),idx=+ks.pop();let arr=d;ks.forEach(k=>arr=arr[k]);arr.splice(idx,1);markDirty();rerender();return}
