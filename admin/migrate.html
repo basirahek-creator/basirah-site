@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Copy your data · Basirah</title>
+<style>
+body{font:16px/1.55 system-ui,sans-serif;background:#f6f2ea;color:#2a2a2a;margin:0;padding:24px 16px}
+main{max-width:620px;margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 12px #0001}
+h1{font-size:22px;margin:0 0 6px}p{margin:8px 0}label{display:block;margin-top:14px;font-weight:600}
+input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #bbb;border-radius:8px;font-size:16px;margin-top:4px}
+button{margin-top:18px;padding:12px 20px;border:0;border-radius:10px;background:#1f5d50;color:#fff;font-size:16px;cursor:pointer}
+button:disabled{opacity:.5}#bar{height:12px;background:#e5e0d4;border-radius:8px;margin-top:16px;overflow:hidden;display:none}
+#fill{height:100%;width:0;background:#1f5d50;transition:width .3s}#log{white-space:pre-wrap;font-size:14px;margin-top:12px;max-height:260px;overflow:auto;background:#faf8f3;padding:10px;border-radius:8px;display:none}
+.ok{color:#1f6b3a;font-weight:600}.bad{color:#a12626;font-weight:600}
+</style></head><body><main>
+<h1>Copy your data to the new home</h1>
+<p>This page copies every order, setting, promo code, receipt, voice answer, picture and report from your <b>old website</b> to this <b>new one</b>. Nothing is removed from the old site. You can run it again safely.</p>
+<label>Old website address<input id="old" placeholder="https://basirah-personality.netlify.app" autocomplete="off"></label>
+<label>Admin password (the same one you always use)<input id="pw" type="password" autocomplete="current-password"></label>
+<button id="go">Start copying</button>
+<div id="bar"><div id="fill"></div></div><div id="log"></div>
+<script>
+const $ = (i) => document.getElementById(i), log = (t, c) => { const l = $('log'); l.style.display = 'block'; l.insertAdjacentHTML('beforeend', (c ? '<span class="' + c + '">' : '<span>') + t.replace(/</g, '&lt;') + '</span>\n'); l.scrollTop = 1e9; };
+async function login(base, pw) {
+  const r = await fetch(base + '/api/admin/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+  if (!r.ok) throw new Error('Wrong password, or ' + (base || 'this site') + ' is not reachable (' + r.status + ')');
+  return (await r.json()).token;
+}
+const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+$('go').onclick = async () => {
+  const old = $('old').value.trim().replace(/\/+$/, ''), pw = $('pw').value;
+  if (!/^(https:\/\/|http:\/\/localhost)/.test(old) || !pw) return log('Please fill in both boxes (the address starts with https://).', 'bad');
+  $('go').disabled = true; $('bar').style.display = 'block'; $('log').innerHTML = '';
+  try {
+    log('Signing in to the old site…'); const ot = await login(old, pw);
+    log('Signing in to this new site…'); const nt = await login('', pw);
+    const oh = { authorization: 'Bearer ' + ot }, nh = { authorization: 'Bearer ' + nt };
+    let cursor = '', jsonN = 0, binN = 0, total = 0, batches = 0; const parts = {};
+    for (;;) {
+      const r = await fetch(old + '/api/admin/export' + (cursor ? '?cursor=' + encodeURIComponent(cursor) : ''), { headers: oh });
+      if (!r.ok) throw new Error('The old site did not answer the export (' + r.status + '). Did you upload the latest update to it first?');
+      const d = await r.json(); total = d.keys || total; batches++;
+      const js = d.items.filter((i) => i.type === 'json');
+      for (let i = 0; i < js.length; i += 100) {
+        const w = await fetch('/api/admin/import', { method: 'POST', headers: { ...nh, 'content-type': 'application/json' }, body: JSON.stringify({ items: js.slice(i, i + 100) }) });
+        if (!w.ok) throw new Error('The new site refused some records (' + w.status + '): ' + (await w.text()).slice(0, 150));
+        jsonN += js.slice(i, i + 100).length;
+      }
+      for (const it of d.items.filter((i) => i.type === 'bin')) {
+        (parts[it.key] ||= []).push([it.off, b64(it.b64)]);
+        const got = parts[it.key].reduce((n, p) => n + p[1].length, 0);
+        if (got >= it.total) {
+          const all = new Uint8Array(it.total); for (const [o, u] of parts[it.key]) all.set(u, o);
+          const w = await fetch('/api/admin/import-bin?key=' + encodeURIComponent(it.key), { method: 'POST', headers: { ...nh, 'content-type': 'application/octet-stream' }, body: all });
+          if (!w.ok) throw new Error('The new site refused a file (' + w.status + ')');
+          delete parts[it.key]; binN++;
+        }
+      }
+      $('fill').style.width = Math.min(99, Math.round(((jsonN + binN) / Math.max(total, 1)) * 100)) + '%';
+      log('Copied ' + jsonN + ' records and ' + binN + ' files…');
+      if (!d.next) break; cursor = d.next;
+    }
+    $('fill').style.width = '100%';
+    log('Done. ' + jsonN + ' records and ' + binN + ' files copied. Open /admin on this site and check your orders.', 'ok');
+  } catch (e) { log(String(e.message || e), 'bad'); }
+  $('go').disabled = false;
+};
+</script></main></body></html>

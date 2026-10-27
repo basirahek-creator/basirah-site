@@ -5,7 +5,8 @@ import { readFile, mkdir, readdir, writeFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { handleAdmin, handleSubmit, handleSettings, handleReport, memoryStore, PACKAGES } from '../netlify/lib/core.mjs';
+import { supabaseStore } from '../netlify/lib/supabase-store.mjs';
+import { handleAdmin, handleSubmit, handleSettings, handlePromo, handleReport, handleUpload, handleFile, memoryStore, PACKAGES, handleReview, handleShare, handleImage } from '../netlify/lib/core.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -16,13 +17,13 @@ const env = { ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'demo' };
 const dir = path.join(root, '.data');
 await mkdir(dir, { recursive: true });
 
-const fileStore = {
+const fileStore = process.env.MOCK_SUPABASE ? supabaseStore({ url: process.env.MOCK_SUPABASE, key: 'test-service-key' }) : {
   async get(k) { try { return JSON.parse(await readFile(path.join(dir, k.replace('/', '_') + '.json'), 'utf8')); } catch { return null; } },
   async set(k, v) { await writeFile(path.join(dir, k.replace('/', '_') + '.json'), JSON.stringify(v)); },
   async delete(k) { const f = path.join(dir, k.replace('/', '_')); await rm(f + '.json', { force: true }); await rm(f + '.bin', { force: true }); },
   async getBin(k) { try { return await readFile(path.join(dir, k.replace('/', '_') + '.bin')); } catch { return null; } },
   async setBin(k, buf) { await writeFile(path.join(dir, k.replace('/', '_') + '.bin'), buf); },
-  async list(prefix = 'sub/') { const pre = prefix.replace('/', '_'); return (await readdir(dir)).filter((f) => f.startsWith(pre)).map((f) => f.replace('_', '/').replace(/\.json$/, '')); },
+  async list(prefix = 'sub/') { const pre = prefix.replace('/', '_'); return (await readdir(dir)).filter((f) => f.startsWith(pre)).map((f) => f.replace('_', '/').replace(/\.(json|bin)$/, '')); },
 };
 
 if (args.includes('--seed') && !(await fileStore.list()).length) {
@@ -63,8 +64,13 @@ const server = http.createServer(async (rq, rs) => {
     if (url.pathname.startsWith('/api/admin')) return send(await handleAdmin(mk(), fileStore, env));
     if (url.pathname === '/api/submissions') return send(await handleSubmit(mk(), fileStore));
     if (url.pathname === '/api/settings') return send(await handleSettings(mk(), fileStore));
+    if (url.pathname === '/api/promo') return send(await handlePromo(mk(), fileStore));
     if (url.pathname.startsWith('/r/')) return send(await handleReport(mk(), fileStore));
-    if (url.pathname === '/api/upload') return send(new Response(JSON.stringify({ url: 'https://example.com/uploaded-' + Date.now() }), { headers: { 'content-type': 'application/json' } }));
+    if (url.pathname.startsWith('/v/')) return send(await handleReview(mk(), fileStore));
+    if (url.pathname.startsWith('/api/img/')) return send(await handleImage(mk(), fileStore));
+    if (url.pathname === '/s') return send(await handleShare(mk(), fileStore));
+    if (url.pathname === '/api/upload') return send(await handleUpload(mk(), fileStore));
+    if (url.pathname.startsWith('/api/file/')) return send(await handleFile(mk(), fileStore));
     if (url.pathname === '/' && sitePath) return send(new Response(await readFile(sitePath), { headers: { 'content-type': types['.html'] } }));
     if (sitePath && !url.pathname.startsWith('/admin')) { const sf = path.join(path.dirname(path.resolve(sitePath)), url.pathname); if (sf.startsWith(path.dirname(path.resolve(sitePath))) && existsSync(sf) && !sf.endsWith('/')) { rs.writeHead(200, { 'content-type': types[path.extname(sf)] || 'application/octet-stream' }); return rs.end(await readFile(sf)); } }
     let p = url.pathname === '/admin' ? '/admin/' : url.pathname;

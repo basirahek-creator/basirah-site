@@ -193,9 +193,62 @@ const summary = (r, withReport = new Set(), withPdf = new Set()) => {
   return { ...rest, has_report: withReport.has(r.id), has_pdf: withPdf.has(r.id), answered: answers.filter((a) => a.a && !a.a.startsWith('VOICE ANSWER')).length, voice: answers.filter((a) => a.a.startsWith('VOICE ANSWER')).length };
 };
 
+// many records at once: one call when the store can do it (Supabase), otherwise one read per key
+const valuesOf = async (store, prefix) => (store.listValues ? store.listValues(prefix) : (await Promise.all((await store.list(prefix)).map((k) => store.get(k)))).filter(Boolean));
 async function load(store, id) { return id ? store.get(keyOf(id)) : null; }
 
+/* ---------------- moving to another host: the old site hands out everything, the new one takes it in ---------------- */
+const MIG_CHUNK = 2_000_000;
+async function handleExport(req, store) {
+  const cur = new URL(req.url).searchParams.get('cursor') || '';          // "key" or "key|offset" (a big file is sent in parts)
+  const [curKey, curOff] = cur.split('|');
+  const keys = (await store.list('')).filter((k) => !/^promorl\//.test(k) && !k.startsWith('bin:')).sort();
+  const items = []; let bytes = 0, next = null; const t0 = Date.now();
+  for (const key of keys) {
+    if (curKey && key < curKey) continue;
+    if (items.length && (bytes > MIG_CHUNK || Date.now() - t0 > 5000)) { next = key; break; }
+    let v = null; try { v = await store.get(key); } catch { v = null; }
+    if (v !== null && v !== undefined) { items.push({ key, type: 'json', value: v }); bytes += JSON.stringify(v).length; continue; }
+    const buf = await store.getBin(key); if (!buf) continue;
+    const start = key === curKey ? Number(curOff) || 0 : 0, part = buf.subarray(start, start + MIG_CHUNK);
+    items.push({ key, type: 'bin', total: buf.length, off: start, b64: Buffer.from(part).toString('base64') }); bytes += part.length * 1.4;
+    if (start + part.length < buf.length) { next = key + '|' + (start + part.length); break; }
+  }
+  return json({ items, next, keys: keys.length });
+}
+const SAFE_KEY = /^[A-Za-z0-9_\-./:]{1,200}$/;
+async function handleImport(req, store, kind) {
+  if (req.method !== 'POST') return fail(405, 'Method not allowed');
+  if (kind === 'import-bin') {                                              // a whole file, sent as plain bytes
+    const key = new URL(req.url).searchParams.get('key') || '';
+    if (!SAFE_KEY.test(key) || key.includes('..')) return fail(400, 'Bad key');
+    const buf = Buffer.from(await req.arrayBuffer());
+    if (!buf.length) return fail(400, 'Empty file');
+    await store.setBin(key, buf);
+    return json({ ok: true, key, bytes: buf.length });
+  }
+  let b; try { b = await req.json(); } catch { return fail(400, 'Invalid JSON'); }
+  if (!Array.isArray(b?.items) || b.items.length > 500) return fail(400, 'Send up to 500 items at a time');
+  let n = 0;
+  for (const it of b.items) {
+    if (it?.type !== 'json' || !SAFE_KEY.test(it.key || '') || it.key.includes('..') || it.value === undefined) continue;
+    await store.set(it.key, it.value); n++;
+  }
+  return json({ ok: true, imported: n });
+}
+// the copy page lives on the new website, so the old one must allow it to ask (only for sign-in and export, and only with the password)
+const migOrigin = (o, env) => !!o && (/^https:\/\/[a-z0-9-]+\.pages\.dev$/i.test(o) || /^http:\/\/localhost(:\d+)?$/.test(o) || (env.MIGRATE_ORIGIN && o === env.MIGRATE_ORIGIN));
 export async function handleAdmin(req, store, env, base = '/api/admin') {
+  const o = req.headers.get('origin'), p = new URL(req.url).pathname.replace(base, '').replace(/\/+$/, '') || '/';
+  const cors = migOrigin(o, env) && (p === '/login' || p === '/export');
+  const hdrs = { 'access-control-allow-origin': o || '', 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST, OPTIONS', vary: 'origin' };
+  if (cors && req.method === 'OPTIONS') return new Response(null, { status: 204, headers: hdrs });
+  const res = await handleAdminInner(req, store, env, base);
+  if (!cors) return res;
+  const h = new Headers(res.headers); for (const [k, v] of Object.entries(hdrs)) h.set(k, v);
+  return new Response(res.body, { status: res.status, headers: h });
+}
+async function handleAdminInner(req, store, env, base = '/api/admin') {
   if (!env.ADMIN_PASSWORD) return fail(503, 'ADMIN_PASSWORD is not set on the server');
   const url = new URL(req.url);
   const path = url.pathname.replace(base, '').replace(/\/+$/, '') || '/';
@@ -217,6 +270,8 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   }
 
   if (!tokenOk(env, req.headers.get('authorization'))) return fail(401, 'Please sign in again');
+  if (parts[0] === 'export' && m === 'GET') return handleExport(req, store);
+  if (parts[0] === 'import' || parts[0] === 'import-bin') return handleImport(req, store, parts[0]);
   if (parts[0] === 'docs') return handleDocs(req, store, parts[1]);
   if (parts[0] === 'translate') return handleTranslate(req, env);
   if (parts[0] === 'settings') return handleAdminSettings(req, store);
@@ -226,10 +281,9 @@ export async function handleAdmin(req, store, env, base = '/api/admin') {
   const id = parts[1];
 
   if (!id && m === 'GET') {
-    const keys = await store.list('sub/');
     const withReport = new Set((await store.list('doc/')).filter((k) => k.startsWith('doc/r-')).map((k) => k.slice(6)));
     const withPdf = new Set((await store.list('pdfmeta/')).map((k) => k.slice(8)));
-    const recs = (await Promise.all(keys.map((k) => store.get(k)))).filter(Boolean).map((r) => summary(r, withReport, withPdf));
+    const recs = (await valuesOf(store, 'sub/')).map((r) => summary(r, withReport, withPdf));
     recs.sort((a, b) => b.created_at.localeCompare(a.created_at));
     return json({ submissions: recs, server_time: now() });
   }
@@ -368,8 +422,7 @@ const MAX_DOC = 600_000;
 async function handleDocs(req, store, id) {
   const m = req.method;
   if (!id && m === 'GET') {
-    const keys = await store.list('doc/');
-    const docs = (await Promise.all(keys.map((k) => store.get(k)))).filter(Boolean);
+    const docs = await valuesOf(store, 'doc/');
     return json({ docs });
   }
   if (!id || !/^[A-Za-z0-9_-]{3,60}$/.test(id)) return fail(400, 'Invalid document id');
@@ -844,7 +897,7 @@ async function dropReview(store, id) {
   if (had) { await store.delete('review/' + id); await rebuildTestimonials(store); }
 }
 async function rebuildTestimonials(store) {
-  const recs = (await Promise.all((await store.list('review/')).map((k) => store.get(k)))).filter(Boolean);
+  const recs = await valuesOf(store, 'review/');
   const list = recs.filter((r) => r.featured && r.share).sort((a, b) => (a.featured_at || '').localeCompare(b.featured_at || ''))
     .map((r) => ({ id: r.sid, quote: r.quote, quote_ar: r.quote_ar || '', name: r.display_name, stars: r.stars || 0 }));
   await store.set('testimonials', { list });
@@ -855,7 +908,7 @@ const avgOf = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
 async function handleAdminReviews(req, store, sid) {
   const m = req.method;
   if (!sid && m === 'GET') {
-    const recs = (await Promise.all((await store.list('review/')).map((k) => store.get(k)))).filter(Boolean);
+    const recs = await valuesOf(store, 'review/');
     recs.sort((a, b) => b.created_at.localeCompare(a.created_at));
     const sent = (await store.list('rvmeta/')).length;
     return json({ reviews: recs, requested: sent });
